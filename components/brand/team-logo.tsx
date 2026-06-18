@@ -41,7 +41,7 @@ export default function TeamLogo({ src, alt, className = '', imageClassName = ''
         <img
           src={flagSrc || ''}
           alt={alt}
-          className={`relative h-full w-full rounded-[0.35rem] bg-white object-contain shadow-[0_8px_18px_rgba(0,0,0,0.22)] transition-transform duration-300 ease-out group-hover/logo:scale-[1.08] ${imageClassName}`}
+          className={`relative h-full w-full rounded-[0.35rem] object-contain [filter:drop-shadow(0_8px_14px_rgba(0,0,0,0.34))] transition-transform duration-300 ease-out group-hover/logo:scale-[1.08] ${imageClassName}`}
           loading="lazy"
           decoding="async"
           onError={() => setFlagBroken(true)}

@@ -1,6 +1,7 @@
 import { getHomePayload, type ArenaMatch } from '@/lib/data/arena-live-data'
 import type { ArenaPost } from '@/lib/config/site-data'
 import { descriptionFromCaption, inferLeagueLogo, inferTeams, titleFromCaption } from '@/lib/domain/content-inference'
+import { resolveLeagueLogo } from '@/lib/domain/league-logos'
 import { isSupabaseConfigured, supabaseSelect } from '@/lib/services/supabase-rest'
 
 type DbPost = {
@@ -149,7 +150,7 @@ function mapMatch(row: DbMatch): ArenaMatch {
     id: row.provider_match_id || row.id,
     sport: row.sport as ArenaMatch['sport'],
     league: row.league,
-    leagueLogo: row.league_logo || inferLeagueLogo(row.league),
+    leagueLogo: resolveLeagueLogo(row.league, row.league_logo || inferLeagueLogo(row.league)),
     status,
     statusLabel: row.status_label || (status === 'final' ? 'Full time' : status === 'live' ? 'Live' : 'Upcoming'),
     dateLabel: dateLabelFromIso(row.kickoff_time),

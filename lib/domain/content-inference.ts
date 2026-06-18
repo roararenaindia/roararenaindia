@@ -1,4 +1,5 @@
 import { siteConfig } from '@/lib/config/site-data'
+import { resolveLeagueLogo } from '@/lib/domain/league-logos'
 
 type TeamAsset = {
   name: string
@@ -48,12 +49,7 @@ export function inferPostType(text = '') {
 }
 
 export function inferLeagueLogo(category: string) {
-  const normalized = category.toLowerCase()
-  if (normalized.includes('nba')) return '/assets/leagues/nba.png'
-  if (normalized.includes('cricket')) return '/assets/leagues/icc-cricket.png'
-  if (normalized.includes('formula')) return '/assets/leagues/formula-1.png'
-  if (normalized.includes('fifa') || normalized.includes('world cup')) return '/assets/leagues/fifa-world-cup.png'
-  return '/logos/logo-icon-dark-transparent.png'
+  return resolveLeagueLogo(category)
 }
 
 export function inferTeams(text = '') {
