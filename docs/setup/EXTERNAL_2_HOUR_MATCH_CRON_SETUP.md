@@ -17,7 +17,7 @@ It calls the match cron endpoint every 2 hours.
 The workflow calls this endpoint by default:
 
 ```txt
-https://roararenaindia-mu.vercel.app/api/cron/roar
+https://roararenaindia.vercel.app/api/cron/roar
 ```
 
 It sends `CRON_SECRET` as an authorization header, so the secret is not placed in the URL.
@@ -71,7 +71,7 @@ These must exist in Vercel Project Settings > Environment Variables for `Product
 
 ```txt
 CRON_SECRET=your_secret
-NEXT_PUBLIC_SITE_URL=https://roararenaindia-mu.vercel.app
+NEXT_PUBLIC_SITE_URL=https://roararenaindia.vercel.app
 MATCH_DATA_PROVIDER=football-data
 FOOTBALL_DATA_TOKEN=your_football_data_org_token
 FOOTBALL_DATA_COMPETITION=WC
@@ -85,7 +85,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_secret_or_service_role_key
 
 Do not commit real keys to the repo. Add them in Vercel Project Settings > Environment Variables, and use `.env.local` only for local testing.
 
-If `https://roararenaindia-mu.vercel.app/api/public/home` returns `"source":"static-fallback"`, production is missing Supabase read variables. If it returns `401` for admin/cron routes with your local secret, production is missing or using a different `CRON_SECRET`.
+If `https://roararenaindia.vercel.app/api/public/home` returns `"source":"static-fallback"`, production is missing Supabase read variables. If it returns `401` for admin/cron routes with your local secret, production is missing or using a different `CRON_SECRET`.
 
 ## Optional Instagram post automation
 

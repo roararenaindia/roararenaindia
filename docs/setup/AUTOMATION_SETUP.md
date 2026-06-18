@@ -85,7 +85,7 @@ After deployment, add GitHub repository secrets:
 ROAR_CRON_SECRET=the-same-value-as-CRON_SECRET
 ```
 
-The workflow defaults to `https://roararenaindia-mu.vercel.app/api/cron/roar`. Add `ROAR_CRON_URL` only if the production domain changes.
+The workflow defaults to `https://roararenaindia.vercel.app/api/cron/roar`. Add `ROAR_CRON_URL` only if the production domain changes.
 
 Then run:
 
