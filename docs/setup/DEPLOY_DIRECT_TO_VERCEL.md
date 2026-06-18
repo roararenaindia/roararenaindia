@@ -8,7 +8,7 @@ This zip is prepared for direct Vercel deployment.
 - New dynamic Scores + Schedule section
 - Latest results and upcoming fixtures display
 - NBA champions fallback content replacing old Game 5 content
-- FIFA World Cup match engine using API-Football
+- FIFA World Cup match engine using football-data.org, with API-Football as an optional fallback
 - Supabase database layer for saving live match updates
 - Optional Instagram/X sync routes for a later automation phase
 - WhatsApp Channel and email contact links
@@ -29,6 +29,12 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
+MATCH_DATA_PROVIDER=football-data
+FOOTBALL_DATA_TOKEN=your-football-data-org-token
+FOOTBALL_DATA_COMPETITION=WC
+FOOTBALL_DATA_SEASON=2026
+
+# Optional paid/API-Sports fallback
 API_FOOTBALL_KEY=your-api-football-key
 API_FOOTBALL_LEAGUE_ID=1
 API_FOOTBALL_SEASON=2026
@@ -57,7 +63,7 @@ X_SYNC_LIMIT=10
 
 ## Supabase setup
 
-Supabase is required if you want the schedule and results to update automatically. Without Supabase, the public site still loads fallback content, but API-Football results cannot be saved for the homepage.
+Supabase is required if you want the schedule and results to update automatically. Without Supabase, the public site still loads fallback content, but match-provider results cannot be saved for the homepage.
 
 Run the full SQL in:
 
@@ -103,7 +109,7 @@ Then run:
 npm run smoke
 ```
 
-Note: live API-Football calls may not work inside restricted sandboxes. The real check should be run from Vercel preview using `/admin > Match API Check`.
+Note: live match-provider calls may not work inside restricted sandboxes. The real check should be run from Vercel preview using `/admin > Match API Check`.
 
 ## Public site structure
 The active public homepage now uses `components/home/home-experience.tsx`.

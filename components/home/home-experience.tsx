@@ -191,7 +191,7 @@ function MatchDetailsModal({ match, onClose }: { match: ArenaMatch | null; onClo
             </div>
 
             <p className="mt-5 text-sm leading-6 text-muted-foreground">
-              This card is powered by the Roar Arena match layer. When API-Football and Supabase are connected, fixtures and results refresh automatically and this detail view updates with the same data.
+              This card is powered by the Roar Arena match layer. When football-data.org and Supabase are connected, fixtures and results refresh automatically and this detail view updates with the same data.
             </p>
           </motion.div>
         </motion.div>

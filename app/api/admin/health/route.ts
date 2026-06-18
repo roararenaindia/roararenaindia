@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { hasAnyMatchProvider } from '@/lib/services/match-data-provider'
 import { hasSupabaseWriteAccess, isSupabaseConfigured } from '@/lib/services/supabase-rest'
 
 export const dynamic = 'force-dynamic'
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
     supabaseWrite: hasSupabaseWriteAccess(),
     instagramConfigured: Boolean(process.env.INSTAGRAM_USER_ID && process.env.INSTAGRAM_ACCESS_TOKEN),
     xConfigured: Boolean(process.env.X_USER_ID && process.env.X_BEARER_TOKEN),
-    apiFootballConfigured: Boolean(process.env.API_FOOTBALL_KEY),
+    apiFootballConfigured: hasAnyMatchProvider(),
     mode: process.env.NEXT_PUBLIC_ROAR_DATA_MODE || 'static-fallback',
   })
 }

@@ -24,6 +24,8 @@ async function callInternal(origin: string, path: string, secret?: string) {
       status: response.status,
       mode: data?.mode || null,
       message: data?.message || data?.error || null,
+      fetched: typeof data?.fetched === 'number' ? data.fetched : null,
+      providerLabel: data?.providerLabel || null,
     }
   } catch (error) {
     return {
@@ -31,6 +33,8 @@ async function callInternal(origin: string, path: string, secret?: string) {
       ok: false,
       status: 0,
       message: error instanceof Error ? error.message : 'Internal sync call failed',
+      fetched: null,
+      providerLabel: null,
     }
   }
 }
@@ -43,14 +47,22 @@ export async function GET(request: NextRequest) {
   const origin = (process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin).replace(/\/$/, '')
   const secret = process.env.CRON_SECRET
 
-  const paths = [
-    '/api/sync/matches',
-    '/api/admin/auto-curate',
-  ]
-
   const results = []
-  for (const path of paths) {
-    results.push(await callInternal(origin, path, secret))
+  const matchResult = await callInternal(origin, '/api/sync/matches', secret)
+  results.push(matchResult)
+
+  if (matchResult.ok) {
+    results.push(await callInternal(origin, '/api/admin/auto-curate', secret))
+  } else {
+    results.push({
+      path: '/api/admin/auto-curate',
+      ok: false,
+      status: 0,
+      mode: 'skipped',
+      message: 'Auto-curation skipped because match sync did not complete.',
+      fetched: null,
+      providerLabel: null,
+    })
   }
 
   return NextResponse.json({

@@ -1,6 +1,6 @@
 # Roar Arena India
 
-Roar Arena is a Next.js app for a sports fan experience brand. The public site can run with static fallback data, while Supabase and API-Football enable automatic football schedule/result updates.
+Roar Arena is a Next.js app for a sports fan experience brand. The public site can run with static fallback data, while Supabase and football-data.org enable automatic football schedule/result updates.
 
 ## Run Locally
 
@@ -46,13 +46,21 @@ For automatic schedule/results updates, configure:
 
 ```txt
 CRON_SECRET=
-API_FOOTBALL_KEY=
+MATCH_DATA_PROVIDER=football-data
+FOOTBALL_DATA_TOKEN=
+FOOTBALL_DATA_COMPETITION=WC
+FOOTBALL_DATA_SEASON=2026
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+
+# Optional fallback only
+API_FOOTBALL_KEY=
 ```
 
 Instagram and X keys are optional for this phase.
+
+`FOOTBALL_DATA_TOKEN` is the free World Cup provider token. `API_FOOTBALL_KEY` is optional fallback only.
 
 ## Automatic Match Updates
 

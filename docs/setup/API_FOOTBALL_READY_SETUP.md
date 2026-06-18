@@ -1,6 +1,6 @@
-# Roar Arena - API-Football Ready Setup
+# Roar Arena - Match Provider Ready Setup
 
-This project is now ready to use API-Football / API-Sports for FIFA World Cup schedules and scores.
+This project is ready to use football-data.org as the free World Cup provider, with API-Football / API-Sports available only as an optional fallback.
 
 ## Important security rule
 
@@ -11,7 +11,7 @@ Add it only inside Vercel:
 1. Open Vercel
 2. Open the Roar Arena project
 3. Go to Settings > Environment Variables
-4. Add `API_FOOTBALL_KEY`
+4. Add `FOOTBALL_DATA_TOKEN`
 5. Redeploy the project
 
 ## Required Vercel variables
@@ -21,6 +21,12 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 CRON_SECRET=your_long_random_secret
+MATCH_DATA_PROVIDER=football-data
+FOOTBALL_DATA_TOKEN=your_football_data_org_token
+FOOTBALL_DATA_COMPETITION=WC
+FOOTBALL_DATA_SEASON=2026
+
+# Optional paid/API-Sports fallback
 API_FOOTBALL_KEY=your_api_key_here
 API_FOOTBALL_LEAGUE_ID=1
 API_FOOTBALL_SEASON=2026
@@ -34,7 +40,7 @@ Supabase is required for automatic updates because the sync route saves fixtures
 
 The API key is used only on server API routes, not inside browser JavaScript. That means visitors do not see the key.
 
-Free API-Football plans cannot use domain/IP restrictions, but this is okay as long as the key stays in Vercel environment variables.
+The free football-data.org token is used only by server routes, so it stays private as long as it is stored in Vercel environment variables and never committed to GitHub.
 
 ## How to test after deploy
 
@@ -59,7 +65,7 @@ Then:
 - External cron now syncs matches every 2 hours.
 - Auto-curation runs after each match sync.
 - Instagram and X sync are not required for this phase.
-- API-Football key is never hardcoded.
+- Match provider tokens are never hardcoded.
 
 ## Expected result
 

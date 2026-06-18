@@ -409,7 +409,7 @@ export default function AdminDashboard() {
                 <button onClick={() => runCheck('matches')} className="rounded-2xl bg-primary px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground">Check</button>
               </div>
               <div className="grid gap-3">
-                <CheckLine ok={Boolean(matchApi?.checks?.env?.apiFootballKey)} label="API key set" />
+                <CheckLine ok={Boolean(matchApi?.checks?.env?.footballDataToken || matchApi?.checks?.env?.apiFootballKey)} label="Match provider token set" />
                 <CheckLine ok={Boolean(matchApi?.checks?.provider?.fixturesReachable || matchApi?.checks?.provider?.statusReachable)} label="Provider reachable" />
                 <CheckLine ok={Boolean(matchApi?.checks?.supabase?.write)} label="Can save to Supabase" />
               </div>
@@ -442,12 +442,12 @@ export default function AdminDashboard() {
                 <CheckLine ok={Boolean(final?.checks?.supabase?.matchesTable)} label="Matches table" />
                 <CheckLine ok={Boolean(final?.checks?.supabase?.generatedPostsTable)} label="Queue table" />
                 <CheckLine ok={Boolean(final?.checks?.publicHome?.heroReady)} label="Hero data ready" />
-                <CheckLine ok={Boolean(final?.checks?.apiFootball?.fixturesReachable)} label="FIFA API working" />
+                <CheckLine ok={Boolean(final?.checks?.apiFootball?.fixturesReachable)} label="Match provider working" />
                 <CheckLine ok={Boolean(final?.checks?.env?.contactEmail)} label="Contact email ready" />
               </div>
               {final?.checks?.apiFootball ? (
                 <p className="mt-4 text-xs leading-5 text-muted-foreground">
-                  API fixtures found: {String(final.checks.apiFootball.sampleCount ?? 0)}. Production ready: {final.productionReady ? 'yes' : 'not yet'}.
+                  Provider fixtures found: {String(final.checks.apiFootball.sampleCount ?? 0)}. Production ready: {final.productionReady ? 'yes' : 'not yet'}.
                 </p>
               ) : null}
               {final?.warnings?.length ? <p className="mt-3 text-xs leading-5 text-muted-foreground">{final.warnings.join(' ')}</p> : null}

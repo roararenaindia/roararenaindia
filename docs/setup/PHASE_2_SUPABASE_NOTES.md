@@ -14,7 +14,7 @@ This build connects the website to Supabase without adding fragile client depend
   - Upserts into `roar_posts`.
 
 - `/api/sync/matches`
-  - Fetches FIFA World Cup fixtures/results from API-Football.
+  - Fetches FIFA World Cup fixtures/results from football-data.org.
   - Upserts into `roar_matches`.
 
 - `/api/admin/seed`
@@ -44,7 +44,7 @@ This build connects the website to Supabase without adding fragile client depend
    - `/api/admin/seed` with `Authorization: Bearer YOUR_CRON_SECRET`
 6. Check:
    - `/api/public/home`
-7. Add Instagram and API-Football credentials.
+7. Add Instagram credentials only if needed, and add the football-data.org token for match sync.
 8. Use the external 2-hour match scheduler, or manually call:
    - `/api/sync/instagram`
    - `/api/sync/matches`

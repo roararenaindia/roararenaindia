@@ -11,7 +11,7 @@ Instagram Graph API
   → /api/public/home
   → Latest from Arena
 
-API-Football
+football-data.org
   → /api/sync/matches
   → Supabase roar_matches
   → /api/public/home
@@ -68,7 +68,10 @@ Every 2 hours for this phase.
 Add:
 
 ```txt
-API_FOOTBALL_KEY=
+MATCH_DATA_PROVIDER=football-data
+FOOTBALL_DATA_TOKEN=
+FOOTBALL_DATA_COMPETITION=WC
+FOOTBALL_DATA_SEASON=2026
 ```
 
 Then External scheduler calls:

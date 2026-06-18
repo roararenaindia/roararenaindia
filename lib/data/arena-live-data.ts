@@ -195,7 +195,7 @@ export const automationStatus = [
   {
     title: 'Match Data Sync',
     status: 'Ready',
-    detail: 'API-Football sync is wired to refresh FIFA fixtures and scores every 2 hours when Supabase and cron are configured.',
+    detail: 'football-data.org sync is wired to refresh FIFA fixtures and scores every 2 hours when Supabase and cron are configured.',
   },
   {
     title: 'Manual Override',
