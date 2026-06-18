@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
+  Activity,
   ArrowRight,
   Bell,
   CalendarDays,
@@ -127,7 +128,7 @@ function MatchTeam({ match, side, size = 'regular' }: { match: ArenaMatch; side:
   return (
     <div className={`min-w-0 text-center transition-opacity duration-300 ${isLoser ? 'opacity-60' : 'opacity-100'}`}>
       <div className="relative inline-block">
-        <TeamLogo src={team.logo} alt={`${team.name} logo`} className={`mx-auto rounded-2xl p-2 ${logoSize}`} />
+        <TeamLogo src={team.logo} alt={`${team.name} logo`} className={`mx-auto rounded-[1rem] p-2 ${logoSize}`} />
         {isWinner ? (
           <span className="absolute -right-1.5 -top-1.5 grid h-6 w-6 place-items-center rounded-full border border-primary/40 bg-primary text-primary-foreground shadow-glow">
             <CheckCircle2 className="h-3.5 w-3.5" />
@@ -141,9 +142,11 @@ function MatchTeam({ match, side, size = 'regular' }: { match: ArenaMatch; side:
 }
 
 function MatchScoreBlock({ match, large = false }: { match: ArenaMatch; large?: boolean }) {
+  const isLive = match.status === 'live'
+
   return (
     <div className="flex flex-col items-center text-center">
-      <div className={`grid place-items-center rounded-full border border-primary/40 bg-primary/10 shadow-soft-glow ${large ? 'min-h-20 min-w-20 sm:min-h-28 sm:min-w-28' : 'min-h-16 min-w-16 sm:min-h-20 sm:min-w-20'}`}>
+      <div className={`grid place-items-center rounded-full border border-primary/40 bg-primary/10 shadow-soft-glow ${isLive ? 'animate-score-pulse' : ''} ${large ? 'min-h-20 min-w-20 sm:min-h-28 sm:min-w-28' : 'min-h-16 min-w-16 sm:min-h-20 sm:min-w-20'}`}>
         <span className={`font-display uppercase leading-none text-primary ${large ? 'text-3xl sm:text-5xl' : 'text-2xl sm:text-4xl'}`}>{scoreText(match)}</span>
       </div>
       {match.winner === 'draw' ? (
@@ -279,6 +282,8 @@ function MatchPoster({ match, onOpen }: { match?: ArenaMatch; onOpen: (match: Ar
 }
 
 function CompactMatchCard({ match, onOpen }: { match: ArenaMatch; onOpen: (match: ArenaMatch) => void }) {
+  const isLive = match.status === 'live'
+
   return (
     <motion.button
       type="button"
@@ -288,11 +293,14 @@ function CompactMatchCard({ match, onOpen }: { match: ArenaMatch; onOpen: (match
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ type: 'spring', stiffness: 260, damping: 26 }}
       whileHover={{ y: -5 }}
+      whileTap={{ scale: 0.985 }}
       onClick={() => onOpen(match)}
-      className="group relative overflow-hidden rounded-[1.5rem] border border-border bg-card/86 p-4 text-left transition-colors duration-300 hover:border-primary/45 hover:shadow-soft-glow sm:p-5"
+      className="group relative overflow-hidden rounded-[1.35rem] border border-border bg-card p-4 text-left shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-colors duration-300 hover:border-primary/45 hover:shadow-soft-glow sm:p-5"
       aria-label={`Open ${match.home.name} vs ${match.away.name} details`}
     >
+      <span className={`pointer-events-none absolute inset-y-0 left-0 w-1 ${isLive ? 'bg-red-500' : match.status === 'final' ? 'bg-primary' : 'bg-border'}`} />
       <span className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           <LivePill status={match.status} />
@@ -440,16 +448,82 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
     const ordered = [...matches].sort((a, b) => rank(a) - rank(b) || b.priority - a.priority)
     return filter === 'all' ? ordered : ordered.filter((m) => m.status === filter)
   }, [matches, filter])
+  const spotlightMatch = matches.find((match) => match.status === 'live') || matches.find((match) => match.status === 'upcoming') || matches[0]
+  const latestResult = matches.find((match) => match.status === 'final')
+  const activeFilterLabel = LIVE_FILTERS.find((tab) => tab.key === filter)?.label || 'All'
 
   return (
     <section id="matches" className="relative overflow-hidden bg-surface py-14 sm:py-20 lg:py-20">
+      <div className="absolute inset-0 section-gradient" />
+      <div className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-glow-shift" />
       <div className="absolute -right-28 top-24 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
+      <div className="absolute inset-0 opacity-[0.08] animate-grid-drift [background-image:linear-gradient(rgba(255,75,31,.28)_1px,transparent_1px),linear-gradient(90deg,rgba(255,75,31,.24)_1px,transparent_1px)] [background-size:40px_40px]" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="Match center"
-          title="Results now. Fixtures next."
-          body="Follow the matches, results, and upcoming games we are tracking for the Roar Arena community. These are community watch picks, not hosted live events yet."
+          eyebrow="Live match center"
+          title="The board should feel alive."
+          body="Fast fixtures, recent results, and community watch picks in one animated command center. Tap a match for the full story."
         />
+
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+          className="mb-6 overflow-hidden rounded-[1.45rem] border border-border bg-card shadow-soft-glow backdrop-blur-xl"
+        >
+          <div className="relative grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
+            <span className="pointer-events-none absolute inset-y-0 left-0 w-1/2 animate-live-scan bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+            <div className="relative p-5 sm:p-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-primary">
+                  <Radio className="h-3.5 w-3.5" /> Auto-updating board
+                </span>
+                <span className="rounded-full border border-border bg-surface px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">
+                  Showing {activeFilterLabel}
+                </span>
+              </div>
+              <h3 className="mt-4 font-display text-[clamp(2rem,5vw,4.2rem)] uppercase leading-[0.92] text-foreground">
+                {spotlightMatch ? `${spotlightMatch.home.short || spotlightMatch.home.name} vs ${spotlightMatch.away.short || spotlightMatch.away.name}` : 'Connect the match feed'}
+              </h3>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+                {spotlightMatch ? `${winnerText(spotlightMatch)} • ${spotlightMatch.timeLabel} • ${spotlightMatch.venue || 'Venue TBA'}` : 'Once matches sync, this panel highlights the next best fixture automatically.'}
+              </p>
+            </div>
+
+            <div className="grid border-t border-border bg-background p-4 sm:grid-cols-3 lg:border-l lg:border-t-0">
+              {[
+                { label: 'Live', value: counts.live, icon: Activity },
+                { label: 'Upcoming', value: counts.upcoming, icon: Zap },
+                { label: 'Results', value: counts.final, icon: Trophy },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl p-3 text-center sm:p-4">
+                  <p className="mx-auto grid h-10 w-10 place-items-center rounded-full border border-primary/25 bg-primary/10 text-primary">
+                    <item.icon className="h-4 w-4" />
+                  </p>
+                  <p className="mt-3 font-display text-4xl uppercase leading-none text-foreground">{item.value}</p>
+                  <p className="mt-1 text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">{item.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {latestResult ? (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            className="mb-6 flex flex-col gap-3 rounded-[1.25rem] border border-border bg-background p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary">Latest result pulse</p>
+              <p className="mt-1 text-sm font-black text-foreground">{latestResult.home.name} {scoreText(latestResult)} {latestResult.away.name}</p>
+            </div>
+            <p className="text-xs font-bold text-muted-foreground">{winnerText(latestResult)}</p>
+          </motion.div>
+        ) : null}
 
         <div className="mb-8 flex flex-wrap items-center justify-center gap-2">
           {LIVE_FILTERS.map((tab) => {
@@ -460,8 +534,8 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
                 type="button"
                 onClick={() => setFilter(tab.key)}
                 aria-pressed={active}
-                className={`relative inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.14em] transition-colors ${
-                  active ? 'border-primary/50 text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground'
+                className={`relative inline-flex items-center gap-2 overflow-hidden rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.14em] transition-colors ${
+                  active ? 'border-primary/50 text-primary-foreground shadow-soft-glow' : 'border-border bg-card text-muted-foreground hover:border-primary/35 hover:text-foreground'
                 }`}
               >
                 {active ? (
