@@ -380,6 +380,13 @@ export default function AdminDashboard() {
                 <CheckLine ok={Boolean(instagram?.checks?.supabase?.write)} label="Can save to Supabase" />
               </div>
               {instagram?.nextStep && <p className="mt-4 text-xs leading-5 text-muted-foreground">{instagram.nextStep}</p>}
+              <div className="mt-4 rounded-2xl border border-border bg-surface p-4 text-xs leading-5 text-muted-foreground">
+                <p className="font-black uppercase tracking-[0.14em] text-foreground">Important</p>
+                <p className="mt-2">Instagram password is not used by this app. For auto-sync, create a Meta developer token for the Roar Arena professional Instagram account, then add:</p>
+                <p className="mt-2 font-mono text-[11px] text-primary">INSTAGRAM_USER_ID</p>
+                <p className="font-mono text-[11px] text-primary">INSTAGRAM_ACCESS_TOKEN</p>
+                <p className="mt-2">Use a long-lived token and refresh it before expiry.</p>
+              </div>
             </section>
 
             <section className="rounded-[1.7rem] border border-border bg-card p-5">
