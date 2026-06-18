@@ -82,9 +82,10 @@ The workflow file is:
 After deployment, add GitHub repository secrets:
 
 ```txt
-ROAR_CRON_URL=https://YOUR_DOMAIN.com/api/cron/roar
 ROAR_CRON_SECRET=the-same-value-as-CRON_SECRET
 ```
+
+The workflow defaults to `https://roararenaindia-mu.vercel.app/api/cron/roar`. Add `ROAR_CRON_URL` only if the production domain changes.
 
 Then run:
 
@@ -112,3 +113,5 @@ INSTAGRAM_ACCESS_TOKEN=
 X_USER_ID=
 X_BEARER_TOKEN=
 ```
+
+If these Instagram/X variables are empty in Vercel, social posts will not auto-sync. That is expected for the current phase.

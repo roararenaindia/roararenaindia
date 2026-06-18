@@ -14,13 +14,15 @@ It calls the match cron endpoint every 2 hours.
 
 ## Endpoint
 
-The workflow calls this endpoint:
+The workflow calls this endpoint by default:
 
 ```txt
-https://YOUR_DOMAIN.com/api/cron/roar
+https://roararenaindia-mu.vercel.app/api/cron/roar
 ```
 
 It sends `CRON_SECRET` as an authorization header, so the secret is not placed in the URL.
+
+If the production domain changes later, add `ROAR_CRON_URL` in GitHub Actions secrets to override the default.
 
 ## GitHub Actions secrets
 
@@ -39,8 +41,13 @@ Settings > Secrets and variables > Actions > New repository secret
 Add:
 
 ```txt
-ROAR_CRON_URL=https://YOUR_DOMAIN.com/api/cron/roar
 ROAR_CRON_SECRET=your_same_vercel_cron_secret
+```
+
+Optional only if the domain changes:
+
+```txt
+ROAR_CRON_URL=https://YOUR_DOMAIN.com/api/cron/roar
 ```
 
 Then open:
@@ -60,26 +67,36 @@ If the manual run succeeds, GitHub will call it automatically every 2 hours.
 
 ## Required env vars
 
+These must exist in Vercel Project Settings > Environment Variables for `Production`, then the project must be redeployed.
+
 ```txt
 CRON_SECRET=your_secret
-NEXT_PUBLIC_SITE_URL=https://YOUR_DOMAIN.com
-API_FOOTBALL_KEY=your_api_football_key
+NEXT_PUBLIC_SITE_URL=https://roararenaindia-mu.vercel.app
 MATCH_DATA_PROVIDER=football-data
 FOOTBALL_DATA_TOKEN=your_football_data_org_token
 FOOTBALL_DATA_COMPETITION=WC
 FOOTBALL_DATA_SEASON=2026
-API_FOOTBALL_LEAGUE_ID=1
-API_FOOTBALL_SEASON=2026
-MATCH_SYNC_PAST_DAYS=2
-MATCH_SYNC_FUTURE_DAYS=7
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_publishable_or_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_secret_or_service_role_key
 ```
 
 `API_FOOTBALL_KEY` is optional. The free default provider is `FOOTBALL_DATA_TOKEN` from football-data.org.
 
 Do not commit real keys to the repo. Add them in Vercel Project Settings > Environment Variables, and use `.env.local` only for local testing.
+
+If `https://roararenaindia-mu.vercel.app/api/public/home` returns `"source":"static-fallback"`, production is missing Supabase read variables. If it returns `401` for admin/cron routes with your local secret, production is missing or using a different `CRON_SECRET`.
+
+## Optional Instagram post automation
+
+Posts do not auto-sync from Instagram until these are added in Vercel:
+
+```txt
+INSTAGRAM_USER_ID=your_instagram_business_user_id
+INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_token
+```
+
+Without these, the site can still show manual/database posts, but it will not fetch new Instagram posts automatically.
 
 ## Test after deploy
 

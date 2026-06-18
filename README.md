@@ -64,11 +64,15 @@ Instagram and X keys are optional for this phase.
 
 ## Automatic Match Updates
 
-Use an external scheduler to call:
+Use the included GitHub Actions scheduler. It defaults to:
 
 ```txt
-GET https://YOUR_DOMAIN.com/api/cron/roar
+GET https://roararenaindia-mu.vercel.app/api/cron/roar
 Authorization: Bearer YOUR_CRON_SECRET
 ```
 
-Run it every 2 hours. Use the query-string secret only as a last-resort fallback. See `docs/setup/EXTERNAL_2_HOUR_MATCH_CRON_SETUP.md`.
+Add GitHub secret `ROAR_CRON_SECRET` with the same value as Vercel `CRON_SECRET`, then run the workflow manually once from GitHub Actions. It will continue every 2 hours. Use `ROAR_CRON_URL` only if the production domain changes.
+
+If production shows stale matches, check `https://roararenaindia-mu.vercel.app/api/public/home`. `"source":"static-fallback"` means Vercel is missing Supabase environment variables.
+
+Use the query-string secret only as a last-resort fallback. See `docs/setup/EXTERNAL_2_HOUR_MATCH_CRON_SETUP.md`.

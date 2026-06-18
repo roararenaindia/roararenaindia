@@ -17,6 +17,8 @@ jobs:
         run: |
           set -euo pipefail
 
+          ROAR_CRON_URL="${ROAR_CRON_URL:-https://roararenaindia-mu.vercel.app/api/cron/roar}"
+
           if [ -z "${ROAR_CRON_URL}" ]; then
             echo "::error::Missing GitHub secret ROAR_CRON_URL"
             exit 1
