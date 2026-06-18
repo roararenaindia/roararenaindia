@@ -57,13 +57,13 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.97 }}
             transition={{ duration: 0.24, ease: 'easeOut' }}
-            className="relative grid max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl md:grid-cols-[1.08fr_0.92fr]"
+            className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl md:grid md:grid-cols-[1.08fr_0.92fr]"
           >
-            <div className="relative min-h-[320px] bg-surface md:min-h-[680px]">
+            <div className="relative h-[min(42vh,320px)] shrink-0 bg-surface md:h-auto md:min-h-[680px]">
               <img src={post.image} alt={post.title} className="h-full w-full object-contain p-3 sm:p-4" />
             </div>
 
-            <div className="flex max-h-[92vh] flex-col overflow-y-auto p-5 sm:p-7 lg:p-9">
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-5 sm:p-7 md:max-h-[92vh] lg:p-9">
               <button
                 ref={closeRef}
                 type="button"

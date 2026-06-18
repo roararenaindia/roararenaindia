@@ -5,7 +5,7 @@ export const maxDuration = 60
 
 function isAuthorized(request: NextRequest) {
   const secret = process.env.CRON_SECRET
-  if (!secret) return true
+  if (!secret) return process.env.NODE_ENV !== 'production'
   const authHeader = request.headers.get('authorization')
   const querySecret = request.nextUrl.searchParams.get('secret')
   return authHeader === `Bearer ${secret}` || querySecret === secret
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Unauthorized cron request' }, { status: 401 })
   }
 
-  const origin = (process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin).replace(/\/$/, '')
+  const origin = request.nextUrl.origin.replace(/\/$/, '')
   const secret = process.env.CRON_SECRET
 
   const results = []

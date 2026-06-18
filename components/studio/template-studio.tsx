@@ -239,19 +239,19 @@ export default function TemplateStudio() {
 
       <section className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-col gap-5 rounded-[2rem] border border-border bg-card/85 p-5 shadow-soft-glow backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-4">
-            <BrandLogo variant="icon" className="h-14 w-14" priority />
-            <div>
+          <div className="flex min-w-0 items-center gap-4">
+            <BrandLogo variant="icon" className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" priority />
+            <div className="min-w-0">
               <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-primary">
                 <Wand2 className="h-4 w-4" /> Template system
               </p>
-              <h1 className="mt-1 font-display text-4xl uppercase leading-none text-foreground sm:text-5xl">
+              <h1 className="mt-1 break-words font-display text-[clamp(2rem,9vw,3rem)] uppercase leading-none text-foreground sm:text-5xl">
                 Roar Arena Studio
               </h1>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link href="/admin" className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-foreground transition hover:border-primary/45 hover:text-primary">
               <ArrowLeft className="h-4 w-4" /> Admin
             </Link>
@@ -274,7 +274,7 @@ export default function TemplateStudio() {
           <div className="grid gap-5">
             <div className="rounded-[1.6rem] border border-border bg-card p-5">
               <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-primary">Template type</p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-3">
                 {(['result', 'fixtures', 'preview'] as TemplateKind[]).map((kind) => (
                   <button
                     key={kind}
@@ -345,13 +345,13 @@ export default function TemplateStudio() {
             )}
           </div>
 
-          <div className="sticky top-6 h-fit rounded-[2rem] border border-border bg-card p-4 shadow-soft-glow">
+          <div className="h-fit rounded-[2rem] border border-border bg-card p-4 shadow-soft-glow lg:sticky lg:top-6">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">Preview</p>
                 <p className="mt-1 text-xs text-muted-foreground">1080 × 1080 Instagram-ready template</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button onClick={() => svg && downloadText(filename, svg)} disabled={!svg} className="inline-flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-foreground disabled:opacity-50">
                   <Download className="h-4 w-4" /> SVG
                 </button>

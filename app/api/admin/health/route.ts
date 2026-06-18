@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 function isAuthorized(request: NextRequest) {
   const secret = process.env.CRON_SECRET
-  if (!secret) return true
+  if (!secret) return process.env.NODE_ENV !== 'production'
   return request.headers.get('authorization') === `Bearer ${secret}`
 }
 
@@ -23,6 +23,6 @@ export async function GET(request: NextRequest) {
     instagramConfigured: Boolean(process.env.INSTAGRAM_USER_ID && process.env.INSTAGRAM_ACCESS_TOKEN),
     xConfigured: Boolean(process.env.X_USER_ID && process.env.X_BEARER_TOKEN),
     apiFootballConfigured: hasAnyMatchProvider(),
-    mode: process.env.NEXT_PUBLIC_ROAR_DATA_MODE || 'static-fallback',
+    mode: isSupabaseConfigured('read') ? 'supabase-ready' : 'static-fallback',
   })
 }

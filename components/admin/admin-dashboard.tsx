@@ -37,10 +37,23 @@ type AdminPost = {
   caption?: string | null
   description?: string | null
   media_url: string
+  permalink?: string | null
   post_type?: string | null
   category?: string | null
   is_featured?: boolean | null
   is_hidden?: boolean | null
+}
+
+type ManualPostDraft = {
+  title: string
+  description: string
+  caption: string
+  media_url: string
+  permalink: string
+  category: string
+  post_type: string
+  logo: string
+  is_featured: boolean
 }
 
 type AdminMatch = {
@@ -120,6 +133,17 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState<Toast | null>(null)
   const [postDrafts, setPostDrafts] = useState<Record<string, Partial<AdminPost>>>({})
+  const [manualPost, setManualPost] = useState<ManualPostDraft>({
+    title: '',
+    description: '',
+    caption: '',
+    media_url: '',
+    permalink: '',
+    category: 'Roar Arena',
+    post_type: 'Instagram',
+    logo: '',
+    is_featured: false,
+  })
   const [matchDrafts, setMatchDrafts] = useState<Record<string, Partial<AdminMatch>>>({})
   const [queueDrafts, setQueueDrafts] = useState<Record<string, Partial<GeneratedPost>>>({})
   const [instagramCheck, setInstagramCheck] = useState<CheckResult | null>(null)
@@ -228,6 +252,39 @@ export default function AdminDashboard() {
     }
   }
 
+  async function createManualPost() {
+    if (!manualPost.media_url.trim()) {
+      notify('error', 'Add an image/media URL first')
+      return
+    }
+
+    try {
+      await api('/api/admin/posts', {
+        method: 'POST',
+        body: JSON.stringify(manualPost),
+      })
+      notify('success', 'Manual post added')
+      setManualPost({
+        title: '',
+        description: '',
+        caption: '',
+        media_url: '',
+        permalink: '',
+        category: 'Roar Arena',
+        post_type: 'Instagram',
+        logo: '',
+        is_featured: false,
+      })
+      await loadAll()
+    } catch (error) {
+      notify('error', error instanceof Error ? error.message : 'Could not add post')
+    }
+  }
+
+  function updateManualPost<Field extends keyof ManualPostDraft>(field: Field, value: ManualPostDraft[Field]) {
+    setManualPost((draft) => ({ ...draft, [field]: value }))
+  }
+
   async function publishGenerated(id: string) {
     try {
       await api('/api/admin/generated-posts/publish', {
@@ -252,19 +309,19 @@ export default function AdminDashboard() {
 
       <section className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col gap-5 rounded-[2rem] border border-border bg-card/80 p-5 shadow-soft-glow backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-4">
-            <BrandLogo variant="icon" className="h-14 w-14" priority />
-            <div>
+          <div className="flex min-w-0 items-center gap-4">
+            <BrandLogo variant="icon" className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" priority />
+            <div className="min-w-0">
               <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-primary">
                 <Shield className="h-4 w-4" /> Private control room
               </p>
-              <h1 className="mt-1 font-display text-4xl uppercase leading-none text-foreground sm:text-5xl">
+              <h1 className="mt-1 break-words font-display text-[clamp(2rem,9vw,3rem)] uppercase leading-none text-foreground sm:text-5xl">
                 Roar Arena Admin
               </h1>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <a href="/studio" className="rounded-2xl bg-primary px-5 py-3 text-center text-xs font-black uppercase tracking-[0.14em] text-primary-foreground transition hover:shadow-glow">
               Open Studio
             </a>
@@ -294,7 +351,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="grid min-w-[280px] grid-cols-2 gap-3 rounded-[1.5rem] border border-border bg-card p-4">
+          <div className="grid min-w-0 grid-cols-2 gap-3 rounded-[1.5rem] border border-border bg-card p-4 lg:min-w-[280px]">
             <StatusPill active={health?.supabaseRead} label="DB read" />
             <StatusPill active={health?.supabaseWrite} label="DB write" />
             <StatusPill active={health?.instagramConfigured} label="IG optional" />
@@ -315,7 +372,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        <div className="mb-6 grid gap-3 md:grid-cols-3 xl:grid-cols-7">
+        <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-7">
           <button onClick={() => runAction('Seed content', '/api/admin/seed')} className="rounded-[1.4rem] border border-border bg-card p-5 text-left transition hover:-translate-y-1 hover:border-primary/45">
             <Database className="mb-4 h-6 w-6 text-primary" />
             <p className="font-display text-3xl uppercase leading-none">Seed</p>
@@ -354,7 +411,7 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        <div className="mb-6 grid grid-cols-4 rounded-[1.4rem] border border-border bg-card p-2">
+        <div className="mb-6 grid grid-cols-2 gap-2 rounded-[1.4rem] border border-border bg-card p-2 sm:grid-cols-4">
           {(['setup', 'queue', 'posts', 'matches'] as const).map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)} className={`rounded-2xl px-4 py-3 text-xs font-black uppercase tracking-[0.14em] transition ${activeTab === tab ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
               {tab === 'queue' ? `Queue (${generatedPosts.length})` : tab}
@@ -520,6 +577,78 @@ export default function AdminDashboard() {
 
         {activeTab === 'posts' && (
           <div className="grid gap-5">
+            <section className="rounded-[1.7rem] border border-primary/25 bg-card p-4 shadow-soft-glow sm:p-5">
+              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">Manual post</p>
+                  <h2 className="mt-1 font-display text-3xl uppercase leading-none">Add Instagram-style update</h2>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">No Instagram login needed. Paste the image URL, caption, and link, then save it to the live site.</p>
+                </div>
+                <label className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-foreground">
+                  <input
+                    type="checkbox"
+                    checked={manualPost.is_featured}
+                    onChange={(event) => updateManualPost('is_featured', event.target.checked)}
+                    className="accent-primary"
+                  />
+                  Feature
+                </label>
+              </div>
+
+              <div className="grid gap-3 md:grid-cols-2">
+                <input
+                  value={manualPost.title}
+                  onChange={(event) => updateManualPost('title', event.target.value)}
+                  placeholder="Post title"
+                  className="rounded-2xl border border-border bg-background px-4 py-3 text-sm font-bold text-foreground outline-none focus:border-primary/50"
+                />
+                <input
+                  value={manualPost.media_url}
+                  onChange={(event) => updateManualPost('media_url', event.target.value)}
+                  placeholder="Image/media URL or /posts/file-name.png"
+                  className="rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-primary/50"
+                />
+                <input
+                  value={manualPost.category}
+                  onChange={(event) => updateManualPost('category', event.target.value)}
+                  placeholder="Category, e.g. FIFA World Cup 2026"
+                  className="rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-primary/50"
+                />
+                <input
+                  value={manualPost.post_type}
+                  onChange={(event) => updateManualPost('post_type', event.target.value)}
+                  placeholder="Type, e.g. Result / Fixtures / Instagram"
+                  className="rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-primary/50"
+                />
+                <input
+                  value={manualPost.permalink}
+                  onChange={(event) => updateManualPost('permalink', event.target.value)}
+                  placeholder="Instagram post link"
+                  className="rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-primary/50 md:col-span-2"
+                />
+                <textarea
+                  value={manualPost.description}
+                  onChange={(event) => updateManualPost('description', event.target.value)}
+                  placeholder="Short card description"
+                  rows={2}
+                  className="rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-primary/50 md:col-span-2"
+                />
+                <textarea
+                  value={manualPost.caption}
+                  onChange={(event) => updateManualPost('caption', event.target.value)}
+                  placeholder="Full Instagram caption"
+                  rows={4}
+                  className="rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-primary/50 md:col-span-2"
+                />
+              </div>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs leading-5 text-muted-foreground">Best temporary workflow: download the Instagram image, place it in <span className="font-mono text-primary">public/posts</span>, then use <span className="font-mono text-primary">/posts/name.png</span>.</p>
+                <button onClick={createManualPost} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow">
+                  <Save className="h-4 w-4" /> Add Post
+                </button>
+              </div>
+            </section>
+
             {posts.map((post) => {
               const draft = postDrafts[post.id] || {}
               const merged = { ...post, ...draft }

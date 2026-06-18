@@ -1,0 +1,9 @@
+.codex-dev*
+.codex-screens/
+.next/
+node_modules/
+tsconfig.tsbuildinfo
+*.log
+.env*.local
+docs/notes/
+docs/qa/

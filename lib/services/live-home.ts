@@ -1,7 +1,7 @@
 import { getHomePayload, type ArenaMatch } from '@/lib/data/arena-live-data'
 import type { ArenaPost } from '@/lib/config/site-data'
 import { descriptionFromCaption, inferLeagueLogo, inferTeams, titleFromCaption } from '@/lib/domain/content-inference'
-import { resolveLeagueLogo } from '@/lib/domain/league-logos'
+import { resolveLeagueLogo, resolveLeagueLogoFrame, resolveLeagueLogoLight } from '@/lib/domain/league-logos'
 import { isSupabaseConfigured, supabaseSelect } from '@/lib/services/supabase-rest'
 
 type DbPost = {
@@ -141,6 +141,7 @@ function pickHomeMatches(matches: ArenaMatch[]) {
 
 function mapMatch(row: DbMatch): ArenaMatch {
   const status = normalizeStatus(row.status)
+  const leagueLogo = resolveLeagueLogo(row.league, row.league_logo || inferLeagueLogo(row.league))
   const winner =
     row.winner === 'home' || row.winner === 'away' || row.winner === 'draw'
       ? row.winner
@@ -150,7 +151,9 @@ function mapMatch(row: DbMatch): ArenaMatch {
     id: row.provider_match_id || row.id,
     sport: row.sport as ArenaMatch['sport'],
     league: row.league,
-    leagueLogo: resolveLeagueLogo(row.league, row.league_logo || inferLeagueLogo(row.league)),
+    leagueLogo,
+    leagueLogoLight: resolveLeagueLogoLight(row.league, leagueLogo),
+    leagueLogoFrame: resolveLeagueLogoFrame(row.league, leagueLogo),
     status,
     statusLabel: row.status_label || (status === 'final' ? 'Full time' : status === 'live' ? 'Live' : 'Upcoming'),
     dateLabel: dateLabelFromIso(row.kickoff_time),
@@ -184,7 +187,7 @@ export async function getLiveHomePayload() {
       'select=id,instagram_id,title,caption,description,media_url,remote_media_url,thumbnail_url,permalink,media_type,post_type,category,logo,teams,posted_at,is_featured',
       'is_hidden=eq.false',
       'order=posted_at.desc.nullslast',
-      'limit=9',
+      'limit=6',
     ].join('&'),
   )
 

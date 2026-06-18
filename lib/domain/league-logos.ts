@@ -1,4 +1,4 @@
-import { leagueLogos } from '@/lib/domain/logo-assets'
+import { leagueLogos, type LogoAsset } from '@/lib/domain/logo-assets'
 
 const fallbackLogo = '/logos/logo-icon-dark-transparent.png'
 
@@ -48,23 +48,52 @@ const leagueAliases: Record<string, string> = {
 }
 
 const logoBySlug = Object.fromEntries(leagueLogos.map((league) => [league.slug, league.logo]))
+const assetBySlug = Object.fromEntries(leagueLogos.map((league) => [league.slug, league])) as Record<string, LogoAsset>
 
-export function resolveLeagueLogo(name: string | null | undefined, fallback = fallbackLogo): string {
-  if (!name) return fallback
+function resolveLeagueSlug(name: string | null | undefined) {
+  if (!name) return null
 
   const normalized = normalizeLeagueName(name)
   const directSlug = normalized.replace(/\s+/g, '-')
-  if (logoBySlug[directSlug]) return logoBySlug[directSlug]
+  if (logoBySlug[directSlug]) return directSlug
 
   const aliasSlug = leagueAliases[normalized]
-  if (aliasSlug && logoBySlug[aliasSlug]) return logoBySlug[aliasSlug]
+  if (aliasSlug && logoBySlug[aliasSlug]) return aliasSlug
 
   const partialMatch = Object.entries(leagueAliases).find(([alias]) => normalized.includes(alias))
   if (partialMatch) {
     const slug = partialMatch[1]
-    if (logoBySlug[slug]) return logoBySlug[slug]
+    if (logoBySlug[slug]) return slug
   }
 
+  return null
+}
+
+export function resolveLeagueLogo(name: string | null | undefined, fallback = fallbackLogo): string {
+  const slug = resolveLeagueSlug(name)
+  if (slug && logoBySlug[slug]) return logoBySlug[slug]
   return fallback
 }
 
+export function resolveLeagueLogoLight(name: string | null | undefined, logo?: string | null): string | undefined {
+  const slug = resolveLeagueSlug(name)
+  if (slug && assetBySlug[slug]?.lightLogo) return assetBySlug[slug].lightLogo || undefined
+
+  const normalizedLogo = (logo || '').toLowerCase()
+  if (normalizedLogo.includes('fifa-world-cup')) return '/assets/leagues/fifa-world-cup-2026-light.png'
+  if (normalizedLogo.includes('nba')) return '/assets/leagues/nba-light.svg'
+  if (normalizedLogo.includes('ipl')) return '/assets/leagues/ipl-light.svg'
+  if (normalizedLogo.includes('formula-1') || normalizedLogo.includes('f1')) return '/assets/leagues/formula-1-red.svg'
+
+  return undefined
+}
+
+export function resolveLeagueLogoFrame(name: string | null | undefined, logo?: string | null): 'default' | 'clear' | 'dark-chip' | 'light-chip' {
+  const slug = resolveLeagueSlug(name)
+  if (slug && assetBySlug[slug]?.logoFrame) return assetBySlug[slug].logoFrame || 'default'
+
+  const normalizedLogo = (logo || '').toLowerCase()
+  if (normalizedLogo.includes('fifa-world-cup')) return 'clear'
+
+  return 'default'
+}

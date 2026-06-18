@@ -21,7 +21,6 @@ This zip is prepared for direct Vercel deployment.
 ## Must add in Vercel Environment Variables
 
 ```txt
-NEXT_PUBLIC_ROAR_DATA_MODE=live
 NEXT_PUBLIC_SITE_URL=https://your-vercel-domain.vercel.app
 CRON_SECRET=make-a-long-random-secret
 
@@ -34,7 +33,7 @@ FOOTBALL_DATA_TOKEN=your-football-data-org-token
 FOOTBALL_DATA_COMPETITION=WC
 FOOTBALL_DATA_SEASON=2026
 
-# Optional paid/API-Sports fallback
+# Optional paid/API-Sports fallback only
 API_FOOTBALL_KEY=your-api-football-key
 API_FOOTBALL_LEAGUE_ID=1
 API_FOOTBALL_SEASON=2026
@@ -131,4 +130,4 @@ After deployment, open `/admin` and run:
 
 ## Important: 2-hour match updates
 
-This project does not rely on Vercel Cron for this phase. Use `docs/setup/EXTERNAL_2_HOUR_MATCH_CRON_SETUP.md` and call `/api/cron/roar?secret=CRON_SECRET` every 2 hours from an external scheduler.
+This project does not rely on Vercel Cron for this phase. Use `docs/setup/EXTERNAL_2_HOUR_MATCH_CRON_SETUP.md` and call `/api/cron/roar` every 2 hours from an external scheduler with `Authorization: Bearer CRON_SECRET`.

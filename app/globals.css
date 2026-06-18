@@ -65,6 +65,11 @@
   100% { transform: translateX(-50%); }
 }
 
+@keyframes marqueeReverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
 
 @keyframes liveScan {
   0% { transform: translateX(-120%); opacity: 0; }
@@ -160,7 +165,12 @@
   .hero-gradient { background: var(--hero-gradient); }
   .section-gradient { background: var(--section-gradient); }
   .animate-marquee { animation: marquee 38s linear infinite; }
+  .animate-marquee-reverse { animation: marqueeReverse 38s linear infinite; }
   .animate-marquee-slow { animation: marquee 54s linear infinite; }
+  .animate-league-rail {
+    animation: marquee 30s linear infinite;
+    will-change: transform;
+  }
   .animate-glow-shift { animation: glowShift 8s ease-in-out infinite; }
   .animate-live-scan { animation: liveScan 3.8s ease-in-out infinite; }
   .animate-float-soft { animation: floatSoft 6s ease-in-out infinite; }
@@ -184,6 +194,48 @@
   [data-theme='dark'] .brand-logo-dark { display: block; }
   [data-theme='light'] .brand-logo-light { display: block; }
   [data-theme='light'] .brand-logo-dark { display: none; }
+  .asset-logo-clear-light {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+  .asset-logo-clear-light::before,
+  .asset-logo-clear-light::after {
+    opacity: 0;
+  }
+  .asset-logo-frame.asset-logo-dark-chip {
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    background: linear-gradient(145deg, #050505 0%, #171717 58%, #0a0a0a 100%) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 16px 44px rgba(0, 0, 0, 0.24);
+  }
+  .asset-logo-dark-chip::before {
+    background: radial-gradient(circle at 32% 16%, rgba(255, 255, 255, 0.24), transparent 44%);
+  }
+  .asset-logo-dark-chip::after {
+    background: linear-gradient(135deg, transparent 0%, rgba(255, 75, 31, 0.12) 52%, transparent 76%);
+  }
+  .asset-logo-frame.asset-logo-light-chip {
+    border-color: rgba(15, 15, 15, 0.14) !important;
+    background: linear-gradient(145deg, #ffffff 0%, #f5f1ea 58%, #ffffff 100%) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.78),
+      0 16px 44px rgba(0, 0, 0, 0.16);
+  }
+  .asset-logo-light-chip::before {
+    background: radial-gradient(circle at 32% 16%, rgba(255, 255, 255, 0.72), transparent 48%);
+  }
+  .asset-logo-light-chip::after {
+    background: linear-gradient(135deg, transparent 0%, rgba(255, 75, 31, 0.08) 52%, transparent 76%);
+  }
+  .asset-logo-light { display: none; }
+  .asset-logo-dark { display: block; }
+  [data-theme='dark'] .asset-logo-light { display: none; }
+  [data-theme='dark'] .asset-logo-dark { display: block; }
+  [data-theme='light'] .asset-logo-light { display: block; }
+  [data-theme='light'] .asset-logo-has-light .asset-logo-dark { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -192,5 +244,18 @@
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .animate-league-rail,
+  .animate-marquee,
+  .animate-marquee-reverse,
+  .animate-marquee-slow,
+  .animate-glow-shift,
+  .animate-live-scan,
+  .animate-float-soft,
+  .animate-grid-drift,
+  .animate-score-pulse {
+    animation: none !important;
+    transform: none !important;
   }
 }

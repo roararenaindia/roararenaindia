@@ -67,7 +67,8 @@ Instagram and X keys are optional for this phase.
 Use an external scheduler to call:
 
 ```txt
-https://YOUR_DOMAIN.com/api/cron/roar?secret=YOUR_CRON_SECRET
+GET https://YOUR_DOMAIN.com/api/cron/roar
+Authorization: Bearer YOUR_CRON_SECRET
 ```
 
-Run it every 2 hours. See `docs/setup/EXTERNAL_2_HOUR_MATCH_CRON_SETUP.md`.
+Run it every 2 hours. Use the query-string secret only as a last-resort fallback. See `docs/setup/EXTERNAL_2_HOUR_MATCH_CRON_SETUP.md`.

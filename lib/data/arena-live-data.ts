@@ -9,6 +9,8 @@ export type ArenaMatch = {
   sport: 'football' | 'basketball' | 'cricket' | 'formula-1' | 'multi-sport'
   league: string
   leagueLogo: string
+  leagueLogoLight?: string
+  leagueLogoFrame?: 'default' | 'clear' | 'dark-chip' | 'light-chip'
   status: 'final' | 'live' | 'upcoming'
   statusLabel: string
   dateLabel: string
@@ -38,7 +40,8 @@ export type ArenaSocialPost = {
 
 import { resolveTeamLogo } from '@/lib/domain/team-logos'
 
-const fifaLogo = '/assets/leagues/fifa-world-cup.png'
+const fifaLogo = '/assets/leagues/fifa-world-cup-dark.png'
+const fifaLogoLight = '/assets/leagues/fifa-world-cup-2026-light.png'
 
 // Resolve a country logo, falling back to the generic FIFA crest.
 const teamLogo = (name: string) => resolveTeamLogo(name) || ''
@@ -49,6 +52,8 @@ export const liveMatches: ArenaMatch[] = [
     sport: 'football',
     league: 'FIFA World Cup 2026',
     leagueLogo: fifaLogo,
+    leagueLogoLight: fifaLogoLight,
+    leagueLogoFrame: 'clear',
     status: 'upcoming',
     statusLabel: 'Today',
     dateLabel: 'June 15, 2026',
@@ -64,6 +69,8 @@ export const liveMatches: ArenaMatch[] = [
     sport: 'football',
     league: 'FIFA World Cup 2026',
     leagueLogo: fifaLogo,
+    leagueLogoLight: fifaLogoLight,
+    leagueLogoFrame: 'clear',
     status: 'upcoming',
     statusLabel: 'Today',
     dateLabel: 'June 15, 2026',
@@ -79,6 +86,8 @@ export const liveMatches: ArenaMatch[] = [
     sport: 'football',
     league: 'FIFA World Cup 2026',
     leagueLogo: fifaLogo,
+    leagueLogoLight: fifaLogoLight,
+    leagueLogoFrame: 'clear',
     status: 'final',
     statusLabel: 'Full time',
     dateLabel: 'June 14, 2026',
@@ -97,6 +106,8 @@ export const liveMatches: ArenaMatch[] = [
     sport: 'football',
     league: 'FIFA World Cup 2026',
     leagueLogo: fifaLogo,
+    leagueLogoLight: fifaLogoLight,
+    leagueLogoFrame: 'clear',
     status: 'final',
     statusLabel: 'Full time',
     dateLabel: 'June 13, 2026',
@@ -115,6 +126,7 @@ export const liveMatches: ArenaMatch[] = [
     sport: 'basketball',
     league: 'NBA Finals 2026',
     leagueLogo: '/assets/leagues/nba.svg',
+    leagueLogoLight: '/assets/leagues/nba-light.svg',
     status: 'final',
     statusLabel: 'Champions',
     dateLabel: 'June 2026',
@@ -131,6 +143,8 @@ export const liveMatches: ArenaMatch[] = [
     sport: 'football',
     league: 'FIFA World Cup 2026',
     leagueLogo: fifaLogo,
+    leagueLogoLight: fifaLogoLight,
+    leagueLogoFrame: 'clear',
     status: 'upcoming',
     statusLabel: 'Up next',
     dateLabel: 'June 16, 2026',
@@ -208,7 +222,7 @@ export function getHomePayload() {
   const heroMatch = [...liveMatches].sort((a, b) => b.priority - a.priority)[0]
   return {
     generatedAt: new Date().toISOString(),
-    source: process.env.NEXT_PUBLIC_ROAR_DATA_MODE || 'static-fallback',
+    source: 'static-fallback',
     heroMatch,
     matches: liveMatches,
     posts: arenaSocialPosts,

@@ -77,6 +77,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 ```
 
+`API_FOOTBALL_KEY` is optional. The free default provider is `FOOTBALL_DATA_TOKEN` from football-data.org.
+
 Do not commit real keys to the repo. Add them in Vercel Project Settings > Environment Variables, and use `.env.local` only for local testing.
 
 ## Test after deploy
@@ -87,4 +89,4 @@ Open this in the browser after replacing the values:
 https://YOUR_DOMAIN.com/api/cron/roar?secret=YOUR_CRON_SECRET
 ```
 
-If it returns `ok: true`, the deployed endpoint is ready. Then run the GitHub Actions workflow manually once.
+This browser URL is only a manual fallback because browsers cannot easily add the `Authorization` header. If it returns `ok: true`, the deployed endpoint is ready. Then run the GitHub Actions workflow manually once, which uses the safer header-based secret.

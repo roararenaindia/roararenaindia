@@ -201,31 +201,3 @@ create index if not exists roar_sync_runs_source_created_idx
 on public.roar_sync_runs (source, created_at desc);
 
 alter table public.roar_sync_runs enable row level security;
-
-
--- Automation v2: X sync and stronger source tracking
-alter table public.roar_posts add column if not exists remote_media_url text;
-alter table public.roar_posts add column if not exists thumbnail_url text;
-alter table public.roar_posts add column if not exists storage_path text;
-alter table public.roar_posts add column if not exists sync_source text default 'manual';
-alter table public.roar_posts add column if not exists source_payload jsonb default '{}'::jsonb;
-alter table public.roar_posts add column if not exists last_synced_at timestamptz;
-
-create table if not exists public.roar_sync_runs (
-  id uuid primary key default gen_random_uuid(),
-  source text not null,
-  status text not null,
-  fetched_count int default 0,
-  saved_count int default 0,
-  message text,
-  details jsonb default '{}'::jsonb,
-  created_at timestamptz default now()
-);
-
-create index if not exists roar_sync_runs_created_idx
-on public.roar_sync_runs (created_at desc);
-
-create index if not exists roar_sync_runs_source_created_idx
-on public.roar_sync_runs (source, created_at desc);
-
-alter table public.roar_sync_runs enable row level security;

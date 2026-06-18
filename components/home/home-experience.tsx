@@ -64,11 +64,21 @@ function toModalPost(post: PostLike): ArenaPost {
 type FilterKey = 'all' | 'live' | 'upcoming' | 'final'
 
 const LIVE_FILTERS: { key: FilterKey; label: string }[] = [
-  { key: 'all', label: 'All' },
-  { key: 'live', label: 'Live' },
   { key: 'upcoming', label: 'Upcoming' },
   { key: 'final', label: 'Results' },
+  { key: 'live', label: 'Live' },
+  { key: 'all', label: 'All' },
 ]
+
+type LogoFrame = 'default' | 'clear' | 'dark-chip' | 'light-chip' | undefined
+
+function clearLogoClass(frame: LogoFrame, clearClass: string, defaultClass: string) {
+  return frame === 'clear' ? clearClass : defaultClass
+}
+
+function clearLogoImgClass(frame: LogoFrame, defaultClass = '') {
+  return frame === 'clear' ? 'scale-95' : defaultClass
+}
 
 function statusTone(status?: ArenaMatch['status']) {
   if (status === 'live') return 'border-red-400 bg-red-500 text-white shadow-[0_0_30px_rgba(239,68,68,0.35)]'
@@ -143,10 +153,13 @@ function MatchTeam({ match, side, size = 'regular' }: { match: ArenaMatch; side:
 
 function MatchScoreBlock({ match, large = false }: { match: ArenaMatch; large?: boolean }) {
   const isLive = match.status === 'live'
+  const sizeClass = large
+    ? 'min-h-20 min-w-20 sm:min-h-28 sm:min-w-28'
+    : 'min-h-14 min-w-14 min-[420px]:min-h-16 min-[420px]:min-w-16 sm:min-h-20 sm:min-w-20'
 
   return (
     <div className="flex flex-col items-center text-center">
-      <div className={`grid place-items-center rounded-full border border-primary/40 bg-primary/10 shadow-soft-glow ${isLive ? 'animate-score-pulse' : ''} ${large ? 'min-h-20 min-w-20 sm:min-h-28 sm:min-w-28' : 'min-h-16 min-w-16 sm:min-h-20 sm:min-w-20'}`}>
+      <div className={`grid place-items-center rounded-full border border-primary/40 bg-primary/10 shadow-soft-glow ${isLive ? 'animate-score-pulse' : ''} ${sizeClass}`}>
         <span className={`font-display uppercase leading-none text-primary ${large ? 'text-3xl sm:text-5xl' : 'text-2xl sm:text-4xl'}`}>{scoreText(match)}</span>
       </div>
       {match.winner === 'draw' ? (
@@ -178,7 +191,7 @@ function MatchDetailsModal({ match, onClose }: { match: ArenaMatch | null; onClo
             className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] border border-border bg-card p-5 shadow-soft-glow sm:p-6"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
+            <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-primary/20 blur-3xl sm:h-72 sm:w-72" />
             <div className="relative flex items-start justify-between gap-4">
               <div>
                 <LivePill status={match.status} />
@@ -250,7 +263,16 @@ function MatchPoster({ match, onOpen }: { match?: ArenaMatch; onOpen: (match: Ar
           <p className="mt-4 text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">{match.league}</p>
           <h3 className="mt-2 font-display text-[clamp(2.1rem,5vw,3.9rem)] uppercase leading-none text-foreground">Matchday Board</h3>
         </div>
-        <AssetLogo src={match.leagueLogo} alt={`${match.league} logo`} variant="stage" tone="strong" className="h-14 w-14 shrink-0" />
+        <AssetLogo
+          src={match.leagueLogo}
+          lightSrc={match.leagueLogoLight}
+          lightFrame={match.leagueLogoFrame}
+          alt={`${match.league} logo`}
+          variant="stage"
+          tone="strong"
+          className={clearLogoClass(match.leagueLogoFrame, 'h-16 w-12 shrink-0 p-0', 'h-14 w-14 shrink-0')}
+          imgClassName={clearLogoImgClass(match.leagueLogoFrame)}
+        />
       </div>
 
       <div className="relative z-10 mt-5 grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4">
@@ -299,17 +321,25 @@ function CompactMatchCard({ match, onOpen }: { match: ArenaMatch; onOpen: (match
       aria-label={`Open ${match.home.name} vs ${match.away.name} details`}
     >
       <span className={`pointer-events-none absolute inset-y-0 left-0 w-1 ${isLive ? 'bg-red-500' : match.status === 'final' ? 'bg-primary' : 'bg-border'}`} />
-      <span className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <span className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:h-40 sm:w-40" />
       <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           <LivePill status={match.status} />
           <p className="mt-3 truncate text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">{match.league}</p>
         </div>
-        <AssetLogo src={match.leagueLogo} alt={`${match.league} logo`} variant="stage" className="h-11 w-11 shrink-0 rounded-xl p-1.5" />
+        <AssetLogo
+          src={match.leagueLogo}
+          lightSrc={match.leagueLogoLight}
+          lightFrame={match.leagueLogoFrame}
+          alt={`${match.league} logo`}
+          variant="stage"
+          className={clearLogoClass(match.leagueLogoFrame, 'h-12 w-9 shrink-0 p-0', 'h-11 w-11 shrink-0 rounded-xl p-1.5')}
+          imgClassName={clearLogoImgClass(match.leagueLogoFrame)}
+        />
       </div>
 
-      <div className="relative mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+      <div className="relative mt-5 grid grid-cols-1 items-center gap-3 min-[420px]:grid-cols-[1fr_auto_1fr]">
         <MatchTeam match={match} side="home" />
         <MatchScoreBlock match={match} />
         <MatchTeam match={match} side="away" />
@@ -412,7 +442,7 @@ function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof
         </motion.div>
 
         <motion.div variants={reveal} initial="hidden" animate="visible" className="mt-7 overflow-hidden rounded-full border border-border bg-surface/82 py-3 backdrop-blur-xl">
-          <div className="animate-marquee flex w-max gap-6 whitespace-nowrap px-4">
+          <div className="animate-marquee-reverse flex w-max gap-6 whitespace-nowrap px-4">
             {[...siteConfig.hero.ticker, ...siteConfig.hero.ticker].map((item, index) => (
               <span key={`${item}-${index}`} className="inline-flex items-center gap-6 text-xs font-black uppercase tracking-[0.16em] text-primary">
                 <Flame className="h-3.5 w-3.5" /> {item}
@@ -427,7 +457,7 @@ function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof
 }
 
 function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicHome>['data']; onOpenMatch: (match: ArenaMatch) => void }) {
-  const [filter, setFilter] = useState<FilterKey>('all')
+  const [filter, setFilter] = useState<FilterKey>('upcoming')
   const matches = useMemo(
     () => (data.matches || []).filter((match) => !match.isHidden),
     [data.matches],
@@ -444,7 +474,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
   )
 
   const visible = useMemo(() => {
-    const rank = (m: ArenaMatch) => (m.status === 'live' ? 0 : m.status === 'upcoming' ? 1 : 2)
+    const rank = (m: ArenaMatch) => (m.status === 'upcoming' ? 0 : m.status === 'final' ? 1 : 2)
     const ordered = [...matches].sort((a, b) => rank(a) - rank(b) || b.priority - a.priority)
     return filter === 'all' ? ordered : ordered.filter((m) => m.status === filter)
   }, [matches, filter])
@@ -460,8 +490,8 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
   return (
     <section id="matches" className="relative overflow-hidden bg-surface py-14 sm:py-20 lg:py-20">
       <div className="absolute inset-0 section-gradient" />
-      <div className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-glow-shift" />
-      <div className="absolute -right-28 top-24 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
+      <div className="absolute left-0 top-20 h-72 w-72 rounded-full bg-primary/10 blur-3xl animate-glow-shift sm:h-96 sm:w-96" />
+      <div className="absolute right-0 top-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl sm:h-80 sm:w-80" />
       <div className="absolute inset-0 opacity-[0.08] animate-grid-drift [background-image:linear-gradient(rgba(255,75,31,.28)_1px,transparent_1px),linear-gradient(90deg,rgba(255,75,31,.24)_1px,transparent_1px)] [background-size:40px_40px]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -480,7 +510,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
         >
           <div className="relative grid gap-0 lg:grid-cols-[1.08fr_0.92fr]">
             <span className="pointer-events-none absolute inset-y-0 left-0 w-1/2 animate-live-scan bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-            <span className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
+            <span className="pointer-events-none absolute left-0 top-0 h-56 w-56 rounded-full bg-primary/15 blur-3xl sm:h-72 sm:w-72" />
             <div className="relative p-5 sm:p-7">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-2 rounded-full border border-primary/35 bg-primary/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-primary shadow-[0_0_28px_rgba(255,75,31,0.12)]">
@@ -494,11 +524,17 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
                 <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center">
                   <AssetLogo
                     src={spotlightMatch.leagueLogo}
+                    lightSrc={spotlightMatch.leagueLogoLight}
+                    lightFrame={spotlightMatch.leagueLogoFrame}
                     alt={`${spotlightMatch.league} logo`}
                     variant="stage"
                     tone="strong"
-                    className="h-24 w-24 rounded-[1.5rem] sm:h-28 sm:w-28"
-                    imgClassName="scale-105"
+                    className={clearLogoClass(
+                      spotlightMatch.leagueLogoFrame,
+                      'h-28 w-20 p-0 sm:h-32 sm:w-24',
+                      'h-24 w-24 rounded-[1.5rem] sm:h-28 sm:w-28',
+                    )}
+                    imgClassName={clearLogoImgClass(spotlightMatch.leagueLogoFrame, 'scale-105')}
                   />
                   <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">{spotlightMatch.league}</p>
                 </div>
@@ -545,7 +581,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
                   transition={{ duration: 0.35, delay: index * 0.05 }}
                   className="group relative overflow-hidden rounded-[1.35rem] border border-border bg-card/86 p-4 transition duration-300 hover:-translate-y-1 hover:border-primary/40"
                 >
-                  <span className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-primary/10 blur-2xl opacity-0 transition-opacity group-hover:opacity-100" />
+                  <span className="pointer-events-none absolute right-0 top-0 h-24 w-24 rounded-full bg-primary/10 blur-2xl opacity-0 transition-opacity group-hover:opacity-100 sm:h-28 sm:w-28" />
                   <div className="relative flex items-center justify-between gap-4">
                     <div className="grid h-12 w-12 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
                       <item.icon className="h-5 w-5" />
@@ -670,7 +706,7 @@ function BuildingSection() {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
       <div className="absolute left-1/2 top-16 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start xl:gap-12">
+        <div className="grid gap-5 lg:grid-cols-[0.78fr_1.22fr] lg:items-start xl:gap-8">
           <div className="rounded-[2rem] border border-border bg-card/70 p-5 shadow-soft-glow backdrop-blur-xl sm:p-7 lg:sticky lg:top-24">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-primary">What we are building</p>
             <h2 className="mt-3 font-display text-[clamp(2rem,4.8vw,4.2rem)] uppercase leading-[0.96] text-foreground text-balance">Built for fans who do not want to watch alone.</h2>
@@ -684,55 +720,57 @@ function BuildingSection() {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            {cards.map((card) => (
-              <div key={card.title} className="group relative overflow-hidden rounded-[1.7rem] border border-border bg-card p-5 shadow-soft-glow transition duration-300 hover:-translate-y-1 hover:border-primary/45 sm:p-6">
-                <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity group-hover:opacity-100" />
-                <div className="relative grid h-12 w-12 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
-                  <card.icon className="h-5 w-5" />
+          <div className="flex flex-col gap-4 sm:gap-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {cards.map((card) => (
+                <div key={card.title} className="group relative min-h-[210px] overflow-hidden rounded-[1.7rem] border border-border bg-card p-5 shadow-soft-glow transition duration-300 hover:-translate-y-1 hover:border-primary/45 sm:p-6">
+                  <div className="absolute right-0 top-0 h-36 w-36 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity group-hover:opacity-100 sm:h-48 sm:w-48" />
+                  <div className="relative grid h-12 w-12 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+                    <card.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="relative mt-5 font-display text-[clamp(1.5rem,2.35vw,2.1rem)] uppercase leading-[0.94] text-foreground text-balance">{card.title}</h3>
+                  <p className="relative mt-3 text-sm leading-6 text-muted-foreground">{card.description}</p>
                 </div>
-                <h3 className="relative mt-5 font-display text-[clamp(1.65rem,3vw,2.45rem)] uppercase leading-[0.95] text-foreground text-balance">{card.title}</h3>
-                <p className="relative mt-3 text-sm leading-6 text-muted-foreground">{card.description}</p>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              className="relative overflow-hidden rounded-[1.7rem] border border-border bg-card p-3 shadow-soft-glow sm:p-4"
+            >
+              <div className="absolute inset-x-8 top-1/2 hidden h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-primary/50 to-transparent lg:block" />
+              <div className="relative grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {pathway.map((step, index) => (
+                  <div key={step.label} className="group relative rounded-[1.25rem] border border-border bg-background p-4 pt-8 transition duration-300 hover:-translate-y-1 hover:border-primary/45">
+                    <span className="absolute left-4 top-2 rounded-full border border-primary/30 bg-primary px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-primary-foreground">0{index + 1}</span>
+                    <div className="grid h-11 w-11 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+                      <step.icon className="h-4 w-4" />
+                    </div>
+                    <p className="mt-4 font-display text-2xl uppercase leading-none text-foreground">{step.label}</p>
+                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">{step.body}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </motion.div>
           </div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-          className="relative mt-8 overflow-hidden rounded-[1.7rem] border border-border bg-card p-4 shadow-soft-glow sm:p-5"
-        >
-          <div className="absolute inset-x-8 top-1/2 hidden h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-primary/50 to-transparent md:block" />
-          <div className="relative grid gap-3 md:grid-cols-4">
-            {pathway.map((step, index) => (
-              <div key={step.label} className="group relative rounded-[1.25rem] border border-border bg-background p-4 transition duration-300 hover:-translate-y-1 hover:border-primary/45">
-                <span className="absolute -top-2 left-4 rounded-full border border-primary/30 bg-primary px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-primary-foreground">0{index + 1}</span>
-                <div className="grid h-11 w-11 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
-                  <step.icon className="h-4 w-4" />
-                </div>
-                <p className="mt-4 font-display text-2xl uppercase leading-none text-foreground">{step.label}</p>
-                <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">{step.body}</p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
       </div>
     </section>
   )
 }
 
 function EventsSection() {
-  const marqueeSports = [...siteConfig.sports, ...siteConfig.sports]
+  const marqueeSports = siteConfig.sports
   const spotlightEvents = siteConfig.futureEvents.slice(0, 4)
   const communityEvents = siteConfig.futureEvents.slice(4)
 
   return (
     <section id="events" className="relative overflow-hidden bg-surface py-14 sm:py-20 lg:py-20">
       <div className="absolute inset-0 section-gradient" />
-      <div className="absolute -right-32 top-20 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-glow-shift" />
+      <div className="absolute right-0 top-20 h-72 w-72 rounded-full bg-primary/10 blur-3xl animate-glow-shift sm:h-96 sm:w-96" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Live events coming soon"
@@ -740,7 +778,7 @@ function EventsSection() {
           body="We are preparing our first Roar Arena fan experiences. Expect live screenings, sports watch parties, fan meetups, and local sports events soon."
         />
 
-        <div className="mb-8 grid gap-4 lg:grid-cols-4">
+        <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {spotlightEvents.map((event, index) => (
             <motion.div
               key={event.title}
@@ -751,14 +789,23 @@ function EventsSection() {
               className="group relative min-h-[280px] overflow-hidden rounded-[1.85rem] border border-border bg-card p-5 shadow-soft-glow transition duration-300 hover:-translate-y-1.5 hover:border-primary/45"
             >
               <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_12%,rgba(255,75,31,0.2),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.05),transparent)]" />
-              <span className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-primary/10 blur-3xl transition-opacity group-hover:opacity-100" />
+              <span className="pointer-events-none absolute right-0 top-0 h-36 w-36 rounded-full bg-primary/10 blur-3xl transition-opacity group-hover:opacity-100 sm:h-44 sm:w-44" />
               <div className="relative flex h-full flex-col">
                 <div className="flex items-start justify-between gap-3">
-                  <AssetLogo src={event.logo} alt={`${event.title} logo`} variant="stage" tone="strong" className="h-24 w-24 rounded-[1.45rem] p-2.5" imgClassName="scale-105" />
+                  <AssetLogo
+                    src={event.logo}
+                    lightSrc={event.lightLogo}
+                    lightFrame={event.logoFrame}
+                    alt={`${event.title} logo`}
+                    variant="stage"
+                    tone="strong"
+                    className={clearLogoClass(event.logoFrame, 'h-32 w-24 p-0', 'h-28 w-28 rounded-[1.45rem] p-2')}
+                    imgClassName={clearLogoImgClass(event.logoFrame, 'scale-110')}
+                  />
                   <span className="rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-primary">{event.tag}</span>
                 </div>
-                <div className="mt-auto pt-8">
-                  <h3 className="font-display text-[clamp(2rem,3.3vw,3.2rem)] uppercase leading-[0.9] text-foreground text-balance">{event.title}</h3>
+                <div className="mt-auto max-w-full pt-8">
+                  <h3 className="max-w-full break-words font-display text-[clamp(2rem,2.45vw,2.55rem)] uppercase leading-[0.92] text-foreground text-balance [overflow-wrap:anywhere]">{event.title}</h3>
                   <p className="mt-4 text-sm leading-6 text-muted-foreground">{event.description}</p>
                 </div>
               </div>
@@ -767,16 +814,28 @@ function EventsSection() {
         </div>
 
         <div className="relative mb-8 overflow-hidden rounded-[1.5rem] border border-border bg-card/90 py-4 shadow-soft-glow backdrop-blur-xl">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-[linear-gradient(90deg,var(--card),transparent)]" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-[linear-gradient(270deg,var(--card),transparent)]" />
-          <div className="animate-marquee-slow flex w-max gap-4 px-4">
-            {marqueeSports.map((sport, index) => (
-              <div key={`${sport.name}-${index}`} className="flex min-w-[210px] items-center gap-3 rounded-2xl border border-border bg-background/80 px-3 py-2 backdrop-blur-xl">
-                <AssetLogo src={sport.logo} alt={`${sport.name} logo`} variant="stage" className="h-12 w-12 rounded-xl p-1.5" />
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-primary">{sport.label}</p>
-                  <p className="text-xs font-black uppercase text-foreground">{sport.name}</p>
-                </div>
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-[linear-gradient(90deg,var(--card),transparent)]" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-[linear-gradient(270deg,var(--card),transparent)]" />
+          <div className="animate-league-rail flex w-max gap-4 px-4">
+            {[0, 1].map((loop) => (
+              <div key={loop} className="flex shrink-0 gap-4" aria-hidden={loop === 1}>
+                {marqueeSports.map((sport) => (
+                  <div key={`${sport.name}-${loop}`} className="flex min-w-[250px] items-center gap-3 rounded-2xl border border-border bg-background/86 px-4 py-3 backdrop-blur-xl">
+                    <AssetLogo
+                      src={sport.logo}
+                      lightSrc={sport.lightLogo}
+                      lightFrame={sport.logoFrame}
+                      alt={`${sport.name} logo`}
+                      variant="stage"
+                      className={clearLogoClass(sport.logoFrame, 'h-14 w-11 p-0', 'h-14 w-14 rounded-xl p-1.5')}
+                      imgClassName={clearLogoImgClass(sport.logoFrame, 'scale-105')}
+                    />
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-black uppercase tracking-[0.16em] text-primary">{sport.label}</p>
+                      <p className="truncate text-xs font-black uppercase text-foreground">{sport.name}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
@@ -793,9 +852,18 @@ function EventsSection() {
               transition={{ duration: 0.35, delay: index * 0.04 }}
               className="group relative overflow-hidden rounded-[1.5rem] border border-border bg-card p-5 transition duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-soft-glow"
             >
-              <span className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity group-hover:opacity-100" />
+              <span className="pointer-events-none absolute right-0 top-0 h-28 w-28 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity group-hover:opacity-100 sm:h-32 sm:w-32" />
               <div className="relative flex items-center gap-4">
-                <AssetLogo src={event.logo} alt={`${event.title} logo`} variant="stage" tone="strong" className="h-16 w-16 rounded-[1.2rem] p-2" imgClassName="scale-105" />
+                <AssetLogo
+                  src={event.logo}
+                  lightSrc={event.lightLogo}
+                  lightFrame={event.logoFrame}
+                  alt={`${event.title} logo`}
+                  variant="stage"
+                  tone="strong"
+                  className={clearLogoClass(event.logoFrame, 'h-16 w-12 shrink-0 p-0', 'h-16 w-16 rounded-[1.2rem] p-2')}
+                  imgClassName={clearLogoImgClass(event.logoFrame, 'scale-105')}
+                />
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary">{event.tag}</p>
                   <h3 className="mt-1 text-sm font-black uppercase text-foreground">{event.title}</h3>
@@ -830,33 +898,33 @@ function CommunitySection() {
 
   return (
     <section id="community" className="relative overflow-hidden bg-background py-14 sm:py-20 lg:py-20">
-      <div className="absolute -left-32 bottom-0 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
+      <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl sm:h-80 sm:w-80" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-[2rem] border border-border bg-card p-6 shadow-soft-glow sm:p-8 lg:p-10">
+        <div className="overflow-hidden rounded-[2rem] border border-border bg-card p-4 shadow-soft-glow sm:p-8 lg:p-10">
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-            <div>
+            <div className="min-w-0">
               <p className="text-xs font-black uppercase tracking-[0.22em] text-primary">Community</p>
               <h2 className="mt-3 font-display text-[clamp(2.2rem,5.8vw,4.8rem)] uppercase leading-[0.98] text-foreground">Not just fans. A whole arena.</h2>
               <p className="mt-5 text-base leading-7 text-muted-foreground">Roar Arena is starting with a community of fans who want better match nights, sharper updates, and real sports energy.</p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <a href={siteConfig.links.whatsappChannel} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow">
+                <a href={siteConfig.links.whatsappChannel} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow sm:w-auto">
                   <MessageCircle className="h-4 w-4" /> Join WhatsApp Channel
                 </a>
-                <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-foreground">
+                <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-foreground sm:w-auto">
                   <Flame className="h-4 w-4" /> Follow Instagram
                 </a>
               </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
               {links.map((link) => (
-                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="group rounded-[1.5rem] border border-border bg-background/70 p-5 transition hover:-translate-y-1 hover:border-primary/45">
-                  <div className="flex items-center gap-4">
+                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="group min-w-0 overflow-hidden rounded-[1.5rem] border border-border bg-background/70 p-4 transition hover:-translate-y-1 hover:border-primary/45 sm:p-5">
+                  <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                     <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary"><link.icon className="h-5 w-5" /></div>
                     <div className="min-w-0">
                       <p className="font-black uppercase text-foreground">{link.label}</p>
                       <p className="truncate text-sm text-muted-foreground">{link.body}</p>
                     </div>
-                    <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-primary transition group-hover:translate-x-1" />
+                    <ArrowRight className="ml-auto hidden h-4 w-4 shrink-0 text-primary transition group-hover:translate-x-1 min-[420px]:block" />
                   </div>
                 </a>
               ))}

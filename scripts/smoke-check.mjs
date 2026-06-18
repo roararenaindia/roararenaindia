@@ -15,6 +15,7 @@ const requiredFiles = [
   'components/admin/admin-dashboard.tsx',
   'supabase/schema.sql',
   'vercel.json',
+  '.github/workflows/roar-cron.yml',
   'public/posts/knicks-champions.png',
   'public/posts/germany-curacao-boss-fight.png',
   'public/posts/brazil-morocco-one-save.png',
@@ -34,6 +35,32 @@ if (Array.isArray(vercel.crons) && vercel.crons.length > 0) {
 }
 if (!fs.existsSync(path.join(root, 'app/api/cron/roar/route.ts'))) {
   console.error('Missing external cron endpoint: app/api/cron/roar/route.ts')
+  process.exit(1)
+}
+
+const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
+if (!packageJson.packageManager?.startsWith('npm@')) {
+  console.error('package.json must pin npm via packageManager for deterministic Vercel installs.')
+  process.exit(1)
+}
+if (packageJson.dependencies?.['lucide-react'] || packageJson.devDependencies?.['lucide-react']) {
+  console.error('lucide-react dependency found. Use components/ui/icon-set.tsx to avoid icon export/build drift.')
+  process.exit(1)
+}
+if (fs.existsSync(path.join(root, 'pnpm-lock.yaml'))) {
+  console.error('pnpm-lock.yaml found. This project deploys with npm and package-lock.json only.')
+  process.exit(1)
+}
+
+const nextConfig = fs.readFileSync(path.join(root, 'next.config.mjs'), 'utf8')
+if (nextConfig.includes('ignoreBuildErrors')) {
+  console.error('next.config.mjs must not ignore TypeScript build errors for production deploys.')
+  process.exit(1)
+}
+
+const workflow = fs.readFileSync(path.join(root, '.github/workflows/roar-cron.yml'), 'utf8')
+if (!workflow.includes("cron: '0 */2 * * *'") || !workflow.includes('Authorization: Bearer ${ROAR_CRON_SECRET}')) {
+  console.error('GitHub Actions cron must call /api/cron/roar every 2 hours using the Authorization header.')
   process.exit(1)
 }
 
@@ -70,6 +97,48 @@ for (const token of ['futureEvents', 'posts', 'sports', 'mobileStickyCtA']) {
   }
 }
 
+const logoAssets = fs.readFileSync(path.join(root, 'lib/domain/logo-assets.ts'), 'utf8')
+const logoSourceManifest = fs.readFileSync(path.join(root, 'public/assets/leagues/OFFICIAL_SOURCES.md'), 'utf8')
+const legacyLogoBasenames = [
+  'icc-cricket.png',
+  'mlb.png',
+  'nfl.png',
+  'nhl.png',
+  'ufc.png',
+  'premier-league.png',
+  'uefa-champions-league.png',
+  'olympics.png',
+  'motogp.png',
+  'wimbledon.png',
+  'pga-tour.png',
+  'the-masters.png',
+]
+const legacyLogoRefs = legacyLogoBasenames.map((basename) => `/assets/leagues/${basename}`)
+for (const ref of legacyLogoRefs) {
+  if (siteData.includes(ref) || logoAssets.includes(ref)) {
+    console.error(`Legacy placeholder logo is still configured: ${ref}`)
+    process.exit(1)
+  }
+}
+const configuredLeagueRefs = new Set()
+for (const content of [siteData, logoAssets]) {
+  for (const match of content.matchAll(/["']\/assets\/leagues\/[^"']+["']/g)) {
+    configuredLeagueRefs.add(match[0].slice(1, -1))
+  }
+}
+for (const ref of configuredLeagueRefs) {
+  const target = path.join(root, 'public', ref.replace(/^\//, ''))
+  if (!fs.existsSync(target)) {
+    console.error(`Configured league logo file is missing: ${ref}`)
+    process.exit(1)
+  }
+  const basename = path.basename(ref)
+  if (!logoSourceManifest.includes(`\`${basename}\``)) {
+    console.error(`Configured league logo is missing from OFFICIAL_SOURCES.md: ${basename}`)
+    process.exit(1)
+  }
+}
+
 const sourceFiles = []
 function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -81,6 +150,10 @@ function walk(dir) {
 for (const dir of ['app', 'components', 'lib']) walk(path.join(root, dir))
 for (const file of sourceFiles) {
   const content = fs.readFileSync(file, 'utf8')
+  if (file.includes(`${path.sep}app${path.sep}api${path.sep}`) && content.includes('if (!secret) return true')) {
+    console.error(`Production-unsafe missing-secret auth fallback found in ${path.relative(root, file)}`)
+    process.exit(1)
+  }
   if (content.includes("from 'lucide-react'") || content.includes('from \"lucide-react\"')) {
     console.error(`Direct lucide-react import found in ${path.relative(root, file)}`)
     process.exit(1)
@@ -103,6 +176,7 @@ for (const ref of publicRefs) {
 }
 
 console.log('No direct lucide-react imports in source files.')
+console.log('No production-unsafe admin/cron auth fallback found.')
 console.log('All checked public asset references exist.')
 console.log('siteConfig contains required public sections.')
 console.log('Roar Arena smoke check passed.')

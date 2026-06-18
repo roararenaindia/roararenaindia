@@ -186,88 +186,121 @@ export const leagueLogos = [
   {
     "name": "FIFA World Cup",
     "slug": "fifa-world-cup",
-    "logo": "/assets/leagues/fifa-world-cup.png"
+    "logo": "/assets/leagues/fifa-world-cup-dark.png",
+    "lightLogo": "/assets/leagues/fifa-world-cup-2026-light.png",
+    "logoFrame": "clear"
   },
   {
     "name": "FIFA",
     "slug": "fifa",
-    "logo": "/assets/leagues/fifa.png"
+    "logo": "/assets/leagues/fifa-world-cup-dark.png",
+    "lightLogo": "/assets/leagues/fifa-world-cup-2026-light.png",
+    "logoFrame": "clear"
   },
   {
     "name": "Formula 1",
     "slug": "formula-1",
-    "logo": "/assets/leagues/formula-1.svg"
+    "logo": "/assets/leagues/formula-1.svg",
+    "lightLogo": "/assets/leagues/formula-1-red.svg"
   },
   {
     "name": "ICC Cricket",
     "slug": "icc-cricket",
-    "logo": "/assets/leagues/icc-cricket.png"
+    "logo": "/assets/leagues/icc-cricket-official.png",
+    "lightLogo": "/assets/leagues/icc-cricket-official.png",
+    "logoFrame": "dark-chip"
   },
   {
     "name": "IPL",
     "slug": "ipl",
-    "logo": "/assets/leagues/ipl.svg"
+    "logo": "/assets/leagues/ipl.svg",
+    "lightLogo": "/assets/leagues/ipl-light.svg"
   },
   {
     "name": "MLB",
     "slug": "mlb",
-    "logo": "/assets/leagues/mlb.svg"
+    "logo": "/assets/leagues/mlb.svg",
+    "lightLogo": "/assets/leagues/mlb.svg"
   },
   {
     "name": "MotoGP",
     "slug": "motogp",
-    "logo": "/assets/leagues/motogp.svg"
+    "logo": "/assets/leagues/motogp.svg",
+    "lightLogo": "/assets/leagues/motogp.svg",
+    "logoFrame": "light-chip"
   },
   {
     "name": "NBA",
     "slug": "nba",
-    "logo": "/assets/leagues/nba.svg"
+    "logo": "/assets/leagues/nba.svg",
+    "lightLogo": "/assets/leagues/nba-light.svg"
   },
   {
     "name": "NFL",
     "slug": "nfl",
-    "logo": "/assets/leagues/nfl.svg"
+    "logo": "/assets/leagues/nfl.svg",
+    "lightLogo": "/assets/leagues/nfl.svg",
+    "logoFrame": "dark-chip"
   },
   {
     "name": "NHL",
     "slug": "nhl",
-    "logo": "/assets/leagues/nhl.svg"
+    "logo": "/assets/leagues/nhl.svg",
+    "lightLogo": "/assets/leagues/nhl.svg",
+    "logoFrame": "light-chip"
   },
   {
     "name": "Olympics",
     "slug": "olympics",
-    "logo": "/assets/leagues/olympics.png"
+    "logo": "/assets/leagues/olympics-official.svg",
+    "lightLogo": "/assets/leagues/olympics-official.svg",
+    "logoFrame": "light-chip"
   },
   {
     "name": "PGA Tour",
     "slug": "pga-tour",
-    "logo": "/assets/leagues/pga-tour.png"
+    "logo": "/assets/leagues/pga-tour-official.svg",
+    "lightLogo": "/assets/leagues/pga-tour-official.svg"
   },
   {
     "name": "Premier League",
     "slug": "premier-league",
-    "logo": "/assets/leagues/premier-league.svg"
+    "logo": "/assets/leagues/premier-league.svg",
+    "lightLogo": "/assets/leagues/premier-league.svg",
+    "logoFrame": "dark-chip"
   },
   {
     "name": "The Masters",
     "slug": "the-masters",
-    "logo": "/assets/leagues/the-masters.png"
+    "logo": "/assets/leagues/the-masters-official.png",
+    "lightLogo": "/assets/leagues/the-masters-official.png",
+    "logoFrame": "light-chip"
   },
   {
     "name": "UEFA Champions League",
     "slug": "uefa-champions-league",
-    "logo": "/assets/leagues/uefa-champions-league.png"
+    "logo": "/assets/leagues/uefa-champions-league-official-dark.jpg",
+    "lightLogo": "/assets/leagues/uefa-champions-league-official-light.jpg"
   },
   {
     "name": "UFC",
     "slug": "ufc",
-    "logo": "/assets/leagues/ufc-official.png"
+    "logo": "/assets/leagues/ufc-official.png",
+    "lightLogo": "/assets/leagues/ufc-official.png",
+    "logoFrame": "light-chip"
   },
   {
     "name": "Wimbledon",
     "slug": "wimbledon",
-    "logo": "/assets/leagues/wimbledon.svg"
+    "logo": "/assets/leagues/wimbledon.svg",
+    "lightLogo": "/assets/leagues/wimbledon.svg"
   }
 ] as const
 
-export type LogoAsset = { name: string; slug: string; logo: string }
+export type LogoAsset = {
+  name: string
+  slug: string
+  logo: string
+  lightLogo?: string | null
+  logoFrame?: 'default' | 'clear' | 'dark-chip' | 'light-chip'
+}

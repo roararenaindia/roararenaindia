@@ -14,6 +14,8 @@ type PublicHomePayload = {
   automationStatus?: ReadonlyArray<{ title: string; status: string; detail: string }>
 }
 
+const publicHomeRefreshIntervalMs = 5 * 60_000
+
 export function usePublicHome() {
   const [data, setData] = useState<PublicHomePayload>(() => getHomePayload())
   const [isLoading, setIsLoading] = useState(true)
@@ -22,6 +24,8 @@ export function usePublicHome() {
     let active = true
 
     async function load() {
+      if (document.visibilityState === 'hidden') return
+
       try {
         const response = await fetch('/api/public/home', { cache: 'no-store' })
         if (!response.ok) return
@@ -35,10 +39,13 @@ export function usePublicHome() {
     }
 
     load()
-    const interval = window.setInterval(load, 60_000)
+    const interval = window.setInterval(load, publicHomeRefreshIntervalMs)
+    document.addEventListener('visibilitychange', load)
+
     return () => {
       active = false
       window.clearInterval(interval)
+      document.removeEventListener('visibilitychange', load)
     }
   }, [])
 
