@@ -196,7 +196,7 @@ export const leagueLogos = [
   {
     "name": "Formula 1",
     "slug": "formula-1",
-    "logo": "/assets/leagues/formula-1.png"
+    "logo": "/assets/leagues/formula-1.svg"
   },
   {
     "name": "ICC Cricket",
@@ -206,32 +206,32 @@ export const leagueLogos = [
   {
     "name": "IPL",
     "slug": "ipl",
-    "logo": "/assets/leagues/ipl.png"
+    "logo": "/assets/leagues/ipl.svg"
   },
   {
     "name": "MLB",
     "slug": "mlb",
-    "logo": "/assets/leagues/mlb.png"
+    "logo": "/assets/leagues/mlb.svg"
   },
   {
     "name": "MotoGP",
     "slug": "motogp",
-    "logo": "/assets/leagues/motogp.png"
+    "logo": "/assets/leagues/motogp.svg"
   },
   {
     "name": "NBA",
     "slug": "nba",
-    "logo": "/assets/leagues/nba.png"
+    "logo": "/assets/leagues/nba.svg"
   },
   {
     "name": "NFL",
     "slug": "nfl",
-    "logo": "/assets/leagues/nfl.png"
+    "logo": "/assets/leagues/nfl.svg"
   },
   {
     "name": "NHL",
     "slug": "nhl",
-    "logo": "/assets/leagues/nhl.png"
+    "logo": "/assets/leagues/nhl.svg"
   },
   {
     "name": "Olympics",
@@ -246,7 +246,7 @@ export const leagueLogos = [
   {
     "name": "Premier League",
     "slug": "premier-league",
-    "logo": "/assets/leagues/premier-league.png"
+    "logo": "/assets/leagues/premier-league.svg"
   },
   {
     "name": "The Masters",
@@ -261,12 +261,12 @@ export const leagueLogos = [
   {
     "name": "UFC",
     "slug": "ufc",
-    "logo": "/assets/leagues/ufc.png"
+    "logo": "/assets/leagues/ufc-official.png"
   },
   {
     "name": "Wimbledon",
     "slug": "wimbledon",
-    "logo": "/assets/leagues/wimbledon.png"
+    "logo": "/assets/leagues/wimbledon.svg"
   }
 ] as const
 

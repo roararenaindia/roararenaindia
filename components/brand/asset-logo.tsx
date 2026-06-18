@@ -53,7 +53,7 @@ export default function AssetLogo({
         <img
           src={src || ''}
           alt={alt}
-          className={`relative z-10 block h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.24)] ${imgClassName}`}
+          className={`relative z-10 block h-full w-full object-contain drop-shadow-[0_1px_1px_rgba(0,0,0,0.78)] drop-shadow-[0_10px_18px_rgba(0,0,0,0.28)] ${imgClassName}`}
           loading="lazy"
           decoding="async"
           onError={() => setBroken(true)}

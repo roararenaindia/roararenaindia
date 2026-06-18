@@ -10,19 +10,19 @@ const sports = [
   {
     title: 'NBA Watch Nights',
     label: 'Basketball',
-    logo: '/assets/leagues/nba.png',
+    logo: '/assets/leagues/nba.svg',
     copy: 'Finals updates, game previews, and watch-chat energy.',
   },
   {
     title: 'IPL Screenings',
     label: 'Cricket',
-    logo: '/assets/leagues/ipl.png',
+    logo: '/assets/leagues/ipl.svg',
     copy: 'Big-screen cricket nights built for groups and cities.',
   },
   {
     title: 'F1 Race Weekends',
     label: 'Formula 1',
-    logo: '/assets/leagues/formula-1.png',
+    logo: '/assets/leagues/formula-1.svg',
     copy: 'Race weekends, live reactions, and Grand Prix watch plans.',
   },
   {

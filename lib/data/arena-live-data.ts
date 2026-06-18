@@ -114,7 +114,7 @@ export const liveMatches: ArenaMatch[] = [
     id: 'nba-knicks-champions-2026',
     sport: 'basketball',
     league: 'NBA Finals 2026',
-    leagueLogo: '/assets/leagues/nba.png',
+    leagueLogo: '/assets/leagues/nba.svg',
     status: 'final',
     statusLabel: 'Champions',
     dateLabel: 'June 2026',
