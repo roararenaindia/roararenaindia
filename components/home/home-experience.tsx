@@ -205,7 +205,7 @@ function MatchDetailsModal({ match, onClose }: { match: ArenaMatch | null; onClo
               </button>
             </div>
 
-            <div className="relative mt-6 grid grid-cols-1 items-center gap-3 rounded-[1.6rem] border border-border bg-background/55 p-4 sm:grid-cols-[1fr_auto_1fr] sm:gap-5 sm:p-5">
+            <div className="relative mt-6 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[1.6rem] border border-border bg-background/55 p-3 min-[420px]:gap-3 sm:gap-5 sm:p-5">
               <MatchTeam match={match} side="home" size="hero" />
               <MatchScoreBlock match={match} large />
               <MatchTeam match={match} side="away" size="hero" />
@@ -275,7 +275,7 @@ function MatchPoster({ match, onOpen }: { match?: ArenaMatch; onOpen: (match: Ar
         />
       </div>
 
-      <div className="relative z-10 mt-5 grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4">
+      <div className="relative z-10 mt-5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 min-[420px]:gap-3 sm:gap-4">
         <div className="rounded-[1.4rem] border border-border bg-background/65 p-3 text-center backdrop-blur-xl sm:p-4">
           <MatchTeam match={match} side="home" size="hero" />
         </div>

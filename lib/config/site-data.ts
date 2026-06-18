@@ -20,7 +20,7 @@ export type ArenaPost = {
 const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/roararenaindia/'
 const xUrl = process.env.NEXT_PUBLIC_X_URL || 'https://x.com/RoarArenaIndia'
 const whatsappUrl = process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R'
-const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'apex36office@gmail.com'
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'roararenaindia@gmail.com'
 const contactSubject = encodeURIComponent('Roar Arena collaboration')
 
 export const siteConfig = {

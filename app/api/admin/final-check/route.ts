@@ -51,13 +51,13 @@ export async function GET(request: NextRequest) {
       apiFootballKey: Boolean(process.env.API_FOOTBALL_KEY),
       xUserId: Boolean(process.env.X_USER_ID),
       xBearerToken: Boolean(process.env.X_BEARER_TOKEN),
-      contactEmail: Boolean(process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'apex36office@gmail.com'),
+      contactEmail: Boolean(process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'roararenaindia@gmail.com'),
     },
     socialLinks: {
       instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/roararenaindia/',
       x: process.env.NEXT_PUBLIC_X_URL || 'https://x.com/RoarArenaIndia',
       whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R',
-      email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'apex36office@gmail.com',
+      email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'roararenaindia@gmail.com',
     },
     supabase: {
       read: isSupabaseConfigured('read'),
