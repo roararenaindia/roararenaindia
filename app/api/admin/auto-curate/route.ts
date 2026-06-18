@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabasePatch, supabasePatchByQuery, supabaseSelect } from '@/lib/supabase-rest'
-import { writeSyncLog } from '@/lib/sync-log'
+import { supabasePatch, supabasePatchByQuery, supabaseSelect } from '@/lib/services/supabase-rest'
+import { writeSyncLog } from '@/lib/services/sync-log'
 
 export const dynamic = 'force-dynamic'
 

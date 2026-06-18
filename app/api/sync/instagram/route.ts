@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { descriptionFromCaption, inferCategory, inferLeagueLogo, inferPostType, inferTeams, titleFromCaption } from '@/lib/content-inference'
-import { mirrorInstagramMedia } from '@/lib/supabase-storage'
-import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/supabase-rest'
-import { writeSyncLog } from '@/lib/sync-log'
+import { descriptionFromCaption, inferCategory, inferLeagueLogo, inferPostType, inferTeams, titleFromCaption } from '@/lib/domain/content-inference'
+import { mirrorInstagramMedia } from '@/lib/services/supabase-storage'
+import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/services/supabase-rest'
+import { writeSyncLog } from '@/lib/services/sync-log'
 
 export const dynamic = 'force-dynamic'
 

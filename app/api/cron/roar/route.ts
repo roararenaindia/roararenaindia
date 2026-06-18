@@ -46,8 +46,6 @@ export async function GET(request: NextRequest) {
   const paths = [
     '/api/sync/matches',
     '/api/admin/auto-curate',
-    '/api/sync/instagram',
-    '/api/sync/x',
   ]
 
   const results = []
@@ -57,8 +55,8 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     ok: results.every((item) => item.ok),
-    mode: 'external_cron_30_min_sync',
-    schedule: 'Use this endpoint from an external scheduler every 30 minutes on Vercel Hobby.',
+    mode: 'external_cron_2_hour_match_sync',
+    schedule: 'Use this endpoint from an external scheduler every 2 hours to update fixtures, results, and homepage curation.',
     results,
     checkedAt: new Date().toISOString(),
   })

@@ -1,4 +1,4 @@
-import TemplateStudio from '@/components/template-studio'
+import TemplateStudio from '@/components/studio/template-studio'
 
 export const dynamic = 'force-dynamic'
 

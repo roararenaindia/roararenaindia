@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { hasSupabaseWriteAccess, isSupabaseConfigured } from '@/lib/supabase-rest'
-import { getLatestSyncLogs } from '@/lib/sync-log'
+import { hasSupabaseWriteAccess, isSupabaseConfigured } from '@/lib/services/supabase-rest'
+import { getLatestSyncLogs } from '@/lib/services/sync-log'
 
 export const dynamic = 'force-dynamic'
 

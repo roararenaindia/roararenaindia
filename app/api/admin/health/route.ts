@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { hasSupabaseWriteAccess, isSupabaseConfigured } from '@/lib/supabase-rest'
+import { hasSupabaseWriteAccess, isSupabaseConfigured } from '@/lib/services/supabase-rest'
 
 export const dynamic = 'force-dynamic'
 

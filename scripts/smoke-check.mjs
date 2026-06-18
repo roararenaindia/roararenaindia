@@ -11,8 +11,8 @@ const requiredFiles = [
   'app/api/sync/instagram/route.ts',
   'app/api/sync/x/route.ts',
   'app/api/sync/all/route.ts',
-  'components/home-experience.tsx',
-  'components/admin-dashboard.tsx',
+  'components/home/home-experience.tsx',
+  'components/admin/admin-dashboard.tsx',
   'supabase/schema.sql',
   'vercel.json',
   'public/posts/knicks-champions.png',
@@ -29,7 +29,7 @@ if (missing.length) {
 
 const vercel = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))
 if (Array.isArray(vercel.crons) && vercel.crons.length > 0) {
-  console.error('vercel.json contains cron jobs. Vercel Hobby rejects 30-minute schedules; use /api/cron/roar with an external scheduler instead.')
+  console.error('vercel.json contains cron jobs. Use /api/cron/roar with an external scheduler for the 2-hour match sync.')
   process.exit(1)
 }
 if (!fs.existsSync(path.join(root, 'app/api/cron/roar/route.ts'))) {
@@ -53,8 +53,8 @@ for (const component of ['HomeExperience', 'Header', 'Footer', 'MobileStickyCtA'
   }
 }
 
-const homeExperience = fs.readFileSync(path.join(root, 'components/home-experience.tsx'), 'utf8')
-for (const section of ['id="live"', 'id="updates"', 'id="engine"', 'id="sports"', 'id="connect"']) {
+const homeExperience = fs.readFileSync(path.join(root, 'components/home/home-experience.tsx'), 'utf8')
+for (const section of ['id="updates"', 'id="matches"', 'id="building"', 'id="events"', 'id="community"']) {
   if (!homeExperience.includes(section)) {
     console.error(`Home experience missing ${section}`)
     process.exit(1)
@@ -62,7 +62,7 @@ for (const section of ['id="live"', 'id="updates"', 'id="engine"', 'id="sports"'
 }
 
 
-const siteData = fs.readFileSync(path.join(root, 'lib/site-data.ts'), 'utf8')
+const siteData = fs.readFileSync(path.join(root, 'lib/config/site-data.ts'), 'utf8')
 for (const token of ['futureEvents', 'posts', 'sports', 'mobileStickyCtA']) {
   if (!siteData.includes(token)) {
     console.error(`siteConfig missing ${token}`)
@@ -106,5 +106,5 @@ console.log('No direct lucide-react imports in source files.')
 console.log('All checked public asset references exist.')
 console.log('siteConfig contains required public sections.')
 console.log('Roar Arena smoke check passed.')
-console.log('Vercel Cron disabled for Hobby-safe deployment. Use /api/cron/roar every 30 minutes from an external scheduler.')
+console.log('Vercel Cron disabled for Hobby-safe deployment. Use /api/cron/roar every 2 hours from an external scheduler.')
 console.log('Note: live API-Football key check must run from Vercel/v0 because this sandbox has no DNS access to v3.football.api-sports.io.')

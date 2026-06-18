@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getLiveHomePayload } from '@/lib/live-home'
+import { getLiveHomePayload } from '@/lib/services/live-home'
 
 export const dynamic = 'force-dynamic'
 

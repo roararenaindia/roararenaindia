@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabasePatch, supabaseSelect } from '@/lib/supabase-rest'
+import { supabasePatch, supabaseSelect } from '@/lib/services/supabase-rest'
 
 export const dynamic = 'force-dynamic'
 

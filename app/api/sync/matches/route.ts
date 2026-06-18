@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { inferLeagueLogo } from '@/lib/content-inference'
-import { resolveTeamLogo } from '@/lib/team-logos'
-import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/supabase-rest'
-import { writeSyncLog } from '@/lib/sync-log'
+import { inferLeagueLogo } from '@/lib/domain/content-inference'
+import { resolveTeamLogo } from '@/lib/domain/team-logos'
+import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/services/supabase-rest'
+import { writeSyncLog } from '@/lib/services/sync-log'
 
 export const dynamic = 'force-dynamic'
 
@@ -162,14 +162,6 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  if (!hasSupabaseWriteAccess()) {
-    return NextResponse.json({
-      ok: true,
-      mode: 'database_not_configured',
-      message: 'Match fetch is ready, but SUPABASE_SERVICE_ROLE_KEY is missing. Add Supabase env vars to persist matches.',
-    })
-  }
-
   const pastDays = Number(process.env.MATCH_SYNC_PAST_DAYS || 2)
   const futureDays = Number(process.env.MATCH_SYNC_FUTURE_DAYS || 7)
   const from = isoDateOffset(-pastDays)
@@ -178,6 +170,20 @@ export async function GET(request: NextRequest) {
   try {
     const { fixtures, quota, query } = await fetchFixturesRange(from, to, apiKey)
     const records = fixtures.map(mapFixture)
+
+    if (!hasSupabaseWriteAccess()) {
+      return NextResponse.json({
+        ok: false,
+        mode: 'database_not_configured',
+        from,
+        to,
+        fetched: fixtures.length,
+        quota,
+        query,
+        error: 'Supabase write access is missing, so fetched matches cannot be saved to the homepage.',
+        nextStep: 'Add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, and SUPABASE_SERVICE_ROLE_KEY, then run sync again.',
+      }, { status: 424 })
+    }
 
     const upsertResult = await supabaseUpsert('roar_matches', records, 'provider_match_id')
 
@@ -197,12 +203,16 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       ok: true,
-      mode: 'synced',
+      mode: records.length ? 'synced' : 'no_fixtures_found',
       from,
       to,
       fetched: fixtures.length,
       upserted: upsertResult.data?.length || records.length,
       quota,
+      query,
+      nextStep: records.length
+        ? 'Matches saved. Run auto-curate or wait for /api/cron/roar to update the featured match.'
+        : 'The API key worked, but this league/season/date range returned zero fixtures.',
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown API-Football error'

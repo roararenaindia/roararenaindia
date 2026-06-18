@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { hasSupabaseWriteAccess, isSupabaseConfigured } from '@/lib/supabase-rest'
-import { checkInstagramStorageBucket } from '@/lib/supabase-storage'
-import { getLatestSyncLogs } from '@/lib/sync-log'
+import { hasSupabaseWriteAccess, isSupabaseConfigured } from '@/lib/services/supabase-rest'
+import { checkInstagramStorageBucket } from '@/lib/services/supabase-storage'
+import { getLatestSyncLogs } from '@/lib/services/sync-log'
 
 export const dynamic = 'force-dynamic'
 

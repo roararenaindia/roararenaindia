@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getLiveHomePayload } from '@/lib/live-home'
-import { hasSupabaseWriteAccess, isSupabaseConfigured, supabaseSelect } from '@/lib/supabase-rest'
-import { checkInstagramStorageBucket } from '@/lib/supabase-storage'
+import { getLiveHomePayload } from '@/lib/services/live-home'
+import { hasSupabaseWriteAccess, isSupabaseConfigured, supabaseSelect } from '@/lib/services/supabase-rest'
+import { checkInstagramStorageBucket } from '@/lib/services/supabase-storage'
 
 export const dynamic = 'force-dynamic'
 
@@ -149,8 +149,9 @@ export async function GET(request: NextRequest) {
       xRoute: true,
       autoCurateRoute: true,
       matchRoute: true,
-      matchCronEvery30Minutes: true,
-      autoCurateCronEvery30Minutes: true,
+      matchCronEvery2Hours: true,
+      autoCurateAfterMatchSync: true,
+      socialCronDisabledForThisPhase: true,
       templateStudio: true,
       approvalQueue: !queue.error,
       syncLogging: !syncRuns.error,
@@ -178,11 +179,11 @@ export async function GET(request: NextRequest) {
     productionReady: required.every(Boolean),
     checks,
     warnings: [
-      !checks.env.instagramUserId || !checks.env.instagramAccessToken ? 'Instagram is not connected yet. Site can still go live with static fallback and match data.' : null,
-      !checks.supabase.instagramStorageBucket ? 'Instagram storage bucket is not ready. Sync can auto-create it when Supabase service role is configured.' : null,
+      !checks.env.instagramUserId || !checks.env.instagramAccessToken ? 'Instagram automation is intentionally optional for this phase.' : null,
+      !checks.supabase.instagramStorageBucket ? 'Instagram storage is optional for this phase.' : null,
       !checks.apiFootball.configured ? 'Match API key is not connected yet.' : null,
       checks.apiFootball.configured && !checks.apiFootball.fixturesReachable ? `Match API could not fetch fixtures: ${checks.apiFootball.error}` : null,
-      !checks.env.xUserId || !checks.env.xBearerToken ? 'X API is not connected yet. Public X link is still active.' : null,
+      !checks.env.xUserId || !checks.env.xBearerToken ? 'X automation is intentionally optional for this phase.' : null,
       payload.source?.includes('fallback') ? 'Homepage is still using fallback data until Supabase sync runs.' : null,
     ].filter(Boolean),
   })

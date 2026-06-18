@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { descriptionFromCaption, inferCategory, inferLeagueLogo, inferPostType, inferTeams, titleFromCaption } from '@/lib/content-inference'
-import { createXTextCardDataUri } from '@/lib/x-post-card'
-import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/supabase-rest'
-import { writeSyncLog } from '@/lib/sync-log'
+import { descriptionFromCaption, inferCategory, inferLeagueLogo, inferPostType, inferTeams, titleFromCaption } from '@/lib/domain/content-inference'
+import { createXTextCardDataUri } from '@/lib/templates/x-post-card'
+import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/services/supabase-rest'
+import { writeSyncLog } from '@/lib/services/sync-log'
 
 export const dynamic = 'force-dynamic'
 

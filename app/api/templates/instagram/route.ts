@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateInstagramSvg } from '@/lib/post-template-svg'
-import { defaultInstagramTemplate } from '@/lib/post-template-types'
+import { generateInstagramSvg } from '@/lib/templates/post-template-svg'
+import { defaultInstagramTemplate } from '@/lib/templates/post-template-types'
 
 export const dynamic = 'force-dynamic'
 

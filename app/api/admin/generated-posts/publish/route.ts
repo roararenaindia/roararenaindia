@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { inferCategory, inferLeagueLogo, inferPostType, inferTeams } from '@/lib/content-inference'
-import { supabasePatch, supabaseSelect, supabaseUpsert } from '@/lib/supabase-rest'
+import { inferCategory, inferLeagueLogo, inferPostType, inferTeams } from '@/lib/domain/content-inference'
+import { supabasePatch, supabaseSelect, supabaseUpsert } from '@/lib/services/supabase-rest'
 
 export const dynamic = 'force-dynamic'
 

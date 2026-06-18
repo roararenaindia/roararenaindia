@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { hasSupabaseWriteAccess } from '@/lib/supabase-rest'
+import { hasSupabaseWriteAccess } from '@/lib/services/supabase-rest'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,6 +20,15 @@ function apiErrorsToString(errors: unknown) {
   if (Array.isArray(errors) && errors.length === 0) return null
   if (typeof errors === 'object' && Object.keys(errors as Record<string, unknown>).length === 0) return null
   return typeof errors === 'string' ? errors : JSON.stringify(errors)
+}
+
+function explainApiFootballError(error: string | null, season: string) {
+  if (!error) return null
+  const lower = error.toLowerCase()
+  if (lower.includes('free plans') && lower.includes('season')) {
+    return `Your API-Football key is active, but the free plan cannot access season ${season}. Use an allowed season for testing or upgrade API-Sports access for this season.`
+  }
+  return error
 }
 
 async function apiFootballGet(path: string, apiKey: string) {
@@ -102,11 +111,12 @@ export async function GET(request: NextRequest) {
 
   if (!status.ok || !fixtures.ok) {
     checks.provider.error = fixtures.error || status.error || 'API-Football did not return valid data.'
+    const explanation = explainApiFootballError(checks.provider.error, season)
     return NextResponse.json({
       ok: true,
       ready: false,
       checks,
-      nextStep: 'API-Football key is not ready. Check key, subscription, quota, and World Cup endpoint access.',
+      nextStep: explanation || 'API-Football key is not ready. Check key, subscription, quota, and World Cup endpoint access.',
     })
   }
 

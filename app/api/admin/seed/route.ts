@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { liveMatches } from '@/lib/arena-live-data'
-import { siteConfig } from '@/lib/site-data'
-import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/supabase-rest'
+import { liveMatches } from '@/lib/data/arena-live-data'
+import { siteConfig } from '@/lib/config/site-data'
+import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/services/supabase-rest'
 
 export const dynamic = 'force-dynamic'
 
