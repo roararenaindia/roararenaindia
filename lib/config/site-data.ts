@@ -184,7 +184,7 @@ export const siteConfig = {
       title: 'Turf Battles',
       tag: 'Coming soon',
       description: 'Future 5v5 and 7v7 local turf tournaments for squads.',
-      logo: '/logo-icon.png',
+      logo: '/logos/logo-icon-dark-transparent.png',
     },
   ],
   sports: [
@@ -192,10 +192,16 @@ export const siteConfig = {
     { name: 'NBA', label: 'Basketball', logo: '/assets/leagues/nba.png' },
     { name: 'IPL', label: 'Cricket', logo: '/assets/leagues/ipl.png' },
     { name: 'Formula 1', label: 'Racing', logo: '/assets/leagues/formula-1.png' },
+    { name: 'ICC Cricket', label: 'Cricket', logo: '/assets/leagues/icc-cricket.png' },
+    { name: 'MLB', label: 'Baseball', logo: '/assets/leagues/mlb.png' },
+    { name: 'NFL', label: 'American football', logo: '/assets/leagues/nfl.png' },
+    { name: 'NHL', label: 'Hockey', logo: '/assets/leagues/nhl.png' },
     { name: 'UFC', label: 'Fight night', logo: '/assets/leagues/ufc.png' },
     { name: 'Premier League', label: 'Club football', logo: '/assets/leagues/premier-league.png' },
     { name: 'Champions League', label: 'European nights', logo: '/assets/leagues/uefa-champions-league.png' },
     { name: 'Olympics', label: 'Global stage', logo: '/assets/leagues/olympics.png' },
+    { name: 'MotoGP', label: 'Moto racing', logo: '/assets/leagues/motogp.png' },
+    { name: 'Wimbledon', label: 'Tennis', logo: '/assets/leagues/wimbledon.png' },
   ],
   footer: {
     disclaimer:

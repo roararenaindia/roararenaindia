@@ -38,14 +38,16 @@ export default function TeamLogo({ src, alt, className = '', imageClassName = ''
     <div className={`group/logo relative grid place-items-center overflow-hidden rounded-[1rem] border border-border bg-background/60 p-2.5 shadow-soft-glow ${className}`}>
       <span className="pointer-events-none absolute inset-0 rounded-[1rem] bg-[radial-gradient(circle_at_50%_30%,rgba(255,75,31,0.18),transparent_70%)] opacity-0 transition-opacity duration-300 group-hover/logo:opacity-100" />
       {usableFlagSrc ? (
-        <img
-          src={flagSrc || ''}
-          alt={alt}
-          className={`relative h-full w-full rounded-[0.35rem] object-contain [filter:drop-shadow(0_8px_14px_rgba(0,0,0,0.34))] transition-transform duration-300 ease-out group-hover/logo:scale-[1.08] ${imageClassName}`}
-          loading="lazy"
-          decoding="async"
-          onError={() => setFlagBroken(true)}
-        />
+        <span className="relative grid h-full w-full place-items-center rounded-[0.72rem] border-[3px] border-black bg-transparent p-[4px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16),0_10px_24px_rgba(0,0,0,0.36)] transition-transform duration-300 ease-out group-hover/logo:scale-[1.08]">
+          <img
+            src={flagSrc || ''}
+            alt={alt}
+            className={`h-full w-full rounded-[0.38rem] object-cover ${imageClassName}`}
+            loading="lazy"
+            decoding="async"
+            onError={() => setFlagBroken(true)}
+          />
+        </span>
       ) : usableSrc ? (
         <img
           src={src || ''}

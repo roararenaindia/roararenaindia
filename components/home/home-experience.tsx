@@ -601,6 +601,12 @@ function BuildingSection() {
     ...feature,
     icon: icons[index] || Sparkles,
   }))
+  const pathway = [
+    { label: 'Follow', body: 'Get fixtures and results', icon: Bell },
+    { label: 'Pick', body: 'Choose the match night', icon: CalendarDays },
+    { label: 'Gather', body: 'Bring the fan group', icon: Users },
+    { label: 'Roar', body: 'Show up when events open', icon: Trophy },
+  ]
 
   return (
     <section id="building" className="relative overflow-hidden bg-background py-14 sm:py-20 lg:py-24">
@@ -634,28 +640,79 @@ function BuildingSection() {
             ))}
           </div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+          className="relative mt-8 overflow-hidden rounded-[1.7rem] border border-border bg-card p-4 shadow-soft-glow sm:p-5"
+        >
+          <div className="absolute inset-x-8 top-1/2 hidden h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-primary/50 to-transparent md:block" />
+          <div className="relative grid gap-3 md:grid-cols-4">
+            {pathway.map((step, index) => (
+              <div key={step.label} className="group relative rounded-[1.25rem] border border-border bg-background p-4 transition duration-300 hover:-translate-y-1 hover:border-primary/45">
+                <span className="absolute -top-2 left-4 rounded-full border border-primary/30 bg-primary px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-primary-foreground">0{index + 1}</span>
+                <div className="grid h-11 w-11 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+                  <step.icon className="h-4 w-4" />
+                </div>
+                <p className="mt-4 font-display text-2xl uppercase leading-none text-foreground">{step.label}</p>
+                <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </section>
   )
 }
 
 function EventsSection() {
+  const marqueeSports = [...siteConfig.sports, ...siteConfig.sports]
+
   return (
-    <section id="events" className="bg-surface py-14 sm:py-20 lg:py-20">
+    <section id="events" className="relative overflow-hidden bg-surface py-14 sm:py-20 lg:py-20">
+      <div className="absolute inset-0 section-gradient" />
+      <div className="absolute -right-32 top-20 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-glow-shift" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Live events coming soon"
           title="First fan experiences are being built."
           body="We are preparing our first Roar Arena fan experiences. Expect live screenings, sports watch parties, fan meetups, and local sports events soon."
         />
+
+        <div className="relative mb-8 overflow-hidden rounded-[1.5rem] border border-border bg-card py-4 shadow-soft-glow">
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-[linear-gradient(90deg,var(--card),transparent)]" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-[linear-gradient(270deg,var(--card),transparent)]" />
+          <div className="animate-marquee flex w-max gap-4 px-4">
+            {marqueeSports.map((sport, index) => (
+              <div key={`${sport.name}-${index}`} className="flex min-w-[190px] items-center gap-3 rounded-2xl border border-border bg-background px-3 py-2">
+                <AssetLogo src={sport.logo} alt={`${sport.name} logo`} className="h-12 w-12 rounded-xl bg-transparent p-1.5" />
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-primary">{sport.label}</p>
+                  <p className="text-xs font-black uppercase text-foreground">{sport.name}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {siteConfig.futureEvents.map((event) => (
-            <div key={event.title} className="group rounded-[1.5rem] border border-border bg-card p-5 text-center transition duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-soft-glow">
-              <AssetLogo src={event.logo} alt={`${event.title} logo`} className="mx-auto h-20 w-20 bg-black/25 p-3" />
+          {siteConfig.futureEvents.map((event, index) => (
+            <motion.div
+              key={event.title}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.35, delay: index * 0.04 }}
+              className="group relative overflow-hidden rounded-[1.5rem] border border-border bg-card p-5 text-center transition duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-soft-glow"
+            >
+              <span className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity group-hover:opacity-100" />
+              <AssetLogo src={event.logo} alt={`${event.title} logo`} className="relative mx-auto h-20 w-20 rounded-[1.2rem] bg-background p-2.5" imgClassName="scale-105" />
               <p className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-primary">{event.tag}</p>
               <h3 className="mt-2 text-sm font-black uppercase text-foreground">{event.title}</h3>
               <p className="mt-2 text-xs leading-5 text-muted-foreground">{event.description}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
         <div className="mt-8 text-center">

@@ -102,7 +102,9 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                         <div key={team.name} className="rounded-2xl border border-border bg-card p-3 text-center">
                           <div className="relative mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-3xl leading-none">
                             {flagSrc ? (
-                              <img src={flagSrc} alt={`${team.name} flag`} className="h-full w-full rounded-md object-contain [filter:drop-shadow(0_6px_12px_rgba(0,0,0,0.30))]" loading="lazy" decoding="async" />
+                              <span className="grid h-full w-full place-items-center rounded-xl border-[3px] border-black bg-transparent p-[3px] shadow-[0_8px_18px_rgba(0,0,0,0.28)]">
+                                <img src={flagSrc} alt={`${team.name} flag`} className="h-full w-full rounded-md object-cover" loading="lazy" decoding="async" />
+                              </span>
                             ) : (
                               <img src={team.logo} alt={`${team.name} logo`} className="h-full w-full object-contain p-1.5" loading="lazy" decoding="async" />
                             )}
