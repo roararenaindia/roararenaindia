@@ -339,7 +339,7 @@ function CompactMatchCard({ match, onOpen }: { match: ArenaMatch; onOpen: (match
         />
       </div>
 
-      <div className="relative mt-5 grid grid-cols-1 items-center gap-3 min-[420px]:grid-cols-[1fr_auto_1fr]">
+      <div className="relative mt-5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 min-[420px]:gap-3">
         <MatchTeam match={match} side="home" />
         <MatchScoreBlock match={match} />
         <MatchTeam match={match} side="away" />
