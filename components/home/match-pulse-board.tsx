@@ -91,7 +91,7 @@ function MatchCard({ match }: { match: ArenaMatch }) {
 
       <div className="relative mb-4 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <AssetLogo src={match.leagueLogo} alt={`${match.league} logo`} className="h-10 w-10 shrink-0 rounded-xl bg-black/35 p-1.5" />
+          <AssetLogo src={match.leagueLogo} alt={`${match.league} logo`} variant="stage" className="h-10 w-10 shrink-0 rounded-xl p-1.5" />
           <div className="min-w-0">
             <p className="truncate text-[10px] font-black uppercase tracking-[0.16em] text-primary">{match.league}</p>
             <p className="truncate text-[11px] font-bold text-muted-foreground">{matchTime(match)}</p>

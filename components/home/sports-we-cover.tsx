@@ -69,7 +69,9 @@ export default function SportsWeCover() {
                 <AssetLogo
                   src={sport.logo}
                   alt={`${sport.title} logo`}
-                  className="h-28 w-28 shrink-0 rounded-[1.5rem] border-primary/15 bg-black/35 p-1.5 transition group-hover:border-primary/45"
+                  variant="stage"
+                  tone="strong"
+                  className="h-28 w-28 shrink-0 rounded-[1.5rem] p-1.5 transition group-hover:border-primary/45"
                   imgClassName="scale-110"
                 />
                 <div>

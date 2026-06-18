@@ -50,7 +50,7 @@ export default function LiveCommandCentre() {
                     </h3>
                     <p className="mt-2 text-sm text-muted-foreground">{heroMatch.venue}</p>
                   </div>
-                  <AssetLogo src={heroMatch.leagueLogo} alt={`${heroMatch.league} logo`} className="h-16 w-16 rounded-2xl bg-black/30 p-1.5" />
+                  <AssetLogo src={heroMatch.leagueLogo} alt={`${heroMatch.league} logo`} variant="stage" tone="strong" className="h-16 w-16 rounded-2xl p-1.5" />
                 </div>
 
                 <div className="mt-8 grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-5">
@@ -102,7 +102,7 @@ export default function LiveCommandCentre() {
               <article key={match.id} className="rounded-[1.5rem] border border-border bg-card p-4 transition hover:border-primary/40">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
-                    <AssetLogo src={match.leagueLogo} alt={`${match.league} logo`} className="h-11 w-11 shrink-0 rounded-xl bg-black/30 p-1" />
+                    <AssetLogo src={match.leagueLogo} alt={`${match.league} logo`} variant="stage" className="h-11 w-11 shrink-0 rounded-xl p-1" />
                     <div className="min-w-0">
                       <p className="truncate text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">{match.league}</p>
                       <p className="truncate text-sm font-bold text-foreground">{match.home.name} vs {match.away.name}</p>

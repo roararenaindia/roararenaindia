@@ -76,7 +76,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
 
               <div className="pr-12">
                 <div className="flex items-center gap-3">
-                  <AssetLogo src={post.logo} alt={`${post.category} logo`} className="h-14 w-14 rounded-2xl" />
+                  <AssetLogo src={post.logo} alt={`${post.category} logo`} variant="stage" tone="strong" className="h-14 w-14 rounded-2xl" />
                   <div>
                     <div className="flex flex-wrap gap-2">
                       <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary">{post.category}</span>
@@ -102,8 +102,8 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                         <div key={team.name} className="rounded-2xl border border-border bg-card p-3 text-center">
                           <div className="relative mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-3xl leading-none">
                             {flagSrc ? (
-                              <span className="grid h-full w-full place-items-center rounded-xl border-[3px] border-black bg-transparent p-[3px] shadow-[0_8px_18px_rgba(0,0,0,0.28)]">
-                                <img src={flagSrc} alt={`${team.name} flag`} className="h-full w-full rounded-md object-cover" loading="lazy" decoding="async" />
+                              <span className="grid h-full w-full place-items-center overflow-hidden rounded-xl border border-black/80 bg-transparent p-[3px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.22),inset_0_0_0_4px_rgba(0,0,0,0.82),0_8px_18px_rgba(0,0,0,0.24)]">
+                                <img src={flagSrc} alt={`${team.name} flag`} className="h-full w-full rounded-md object-cover ring-1 ring-white/35" loading="lazy" decoding="async" />
                               </span>
                             ) : (
                               <img src={team.logo} alt={`${team.name} logo`} className="h-full w-full object-contain p-1.5" loading="lazy" decoding="async" />
