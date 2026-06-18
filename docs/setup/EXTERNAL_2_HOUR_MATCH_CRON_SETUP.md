@@ -2,17 +2,54 @@
 
 This phase only needs automatic football schedule/result updates. Instagram and X sync can stay off until the social automation phase.
 
-Use an external scheduler to call the match cron endpoint every 2 hours. This keeps the site lightweight and avoids needing social API keys now.
+Use GitHub Actions as the external scheduler. This keeps the site lightweight, avoids Vercel Cron limits on free/hobby plans, and avoids needing social API keys now.
+
+This repo includes:
+
+```txt
+.github/workflows/roar-cron.yml
+```
+
+It calls the match cron endpoint every 2 hours.
 
 ## Endpoint
 
-Use this URL in an external scheduler such as cron-job.org:
+The workflow calls this endpoint:
 
 ```txt
-https://YOUR_DOMAIN.com/api/cron/roar?secret=YOUR_CRON_SECRET
+https://YOUR_DOMAIN.com/api/cron/roar
 ```
 
-Schedule it for every 2 hours.
+It sends `CRON_SECRET` as an authorization header, so the secret is not placed in the URL.
+
+## GitHub Actions secrets
+
+After Vercel deployment, open the GitHub repo:
+
+```txt
+https://github.com/roararenaindia/roararenaindia
+```
+
+Go to:
+
+```txt
+Settings > Secrets and variables > Actions > New repository secret
+```
+
+Add:
+
+```txt
+ROAR_CRON_URL=https://YOUR_DOMAIN.com/api/cron/roar
+ROAR_CRON_SECRET=your_same_vercel_cron_secret
+```
+
+Then open:
+
+```txt
+Actions > Roar Arena 2-hour match sync > Run workflow
+```
+
+If the manual run succeeds, GitHub will call it automatically every 2 hours.
 
 ## What it runs
 
@@ -50,4 +87,4 @@ Open this in the browser after replacing the values:
 https://YOUR_DOMAIN.com/api/cron/roar?secret=YOUR_CRON_SECRET
 ```
 
-If it returns `ok: true`, the scheduler can call it every 2 hours.
+If it returns `ok: true`, the deployed endpoint is ready. Then run the GitHub Actions workflow manually once.

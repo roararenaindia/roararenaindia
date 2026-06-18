@@ -1,0 +1,50 @@
+name: Roar Arena 2-hour match sync
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync-matches:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Call Roar Arena cron endpoint
+        env:
+          ROAR_CRON_URL: ${{ secrets.ROAR_CRON_URL }}
+          ROAR_CRON_SECRET: ${{ secrets.ROAR_CRON_SECRET }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${ROAR_CRON_URL}" ]; then
+            echo "::error::Missing GitHub secret ROAR_CRON_URL"
+            exit 1
+          fi
+
+          if [ -z "${ROAR_CRON_SECRET}" ]; then
+            echo "::error::Missing GitHub secret ROAR_CRON_SECRET"
+            exit 1
+          fi
+
+          response="$(curl --fail --silent --show-error --retry 2 --retry-delay 5 --max-time 60 \
+            --header "Authorization: Bearer ${ROAR_CRON_SECRET}" \
+            "${ROAR_CRON_URL}")"
+
+          node - "$response" <<'NODE'
+          const payload = JSON.parse(process.argv[2])
+
+          if (!payload.ok) {
+            console.error(JSON.stringify(payload, null, 2))
+            process.exit(1)
+          }
+
+          const summary = {
+            ok: payload.ok,
+            mode: payload.mode,
+            checkedAt: payload.checkedAt,
+            results: payload.results,
+          }
+
+          console.log(JSON.stringify(summary, null, 2))
+          NODE
