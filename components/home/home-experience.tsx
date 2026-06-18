@@ -20,9 +20,10 @@ import {
 import AssetLogo from '@/components/brand/asset-logo'
 import BrandLogo from '@/components/brand/brand-logo'
 import TeamLogo from '@/components/brand/team-logo'
+import PostModal from '@/components/home/post-modal'
 import { usePublicHome } from '@/components/hooks/use-public-home'
 import type { ArenaMatch } from '@/lib/data/arena-live-data'
-import { siteConfig } from '@/lib/config/site-data'
+import { siteConfig, type ArenaPost } from '@/lib/config/site-data'
 
 const reveal = {
   hidden: { opacity: 0, y: 22 },
@@ -37,9 +38,26 @@ type PostLike = {
   description?: string
   image: string
   logo?: string
+  teams?: { name: string; logo?: string }[]
   caption?: string
   permalink?: string
   timestamp?: string
+}
+
+function toModalPost(post: PostLike): ArenaPost {
+  return {
+    id: post.id,
+    title: post.title,
+    category: post.category,
+    type: post.type,
+    description: post.description || post.caption || 'Latest Roar Arena update.',
+    image: post.image,
+    logo: post.logo || '/logos/logo-icon-dark-transparent.png',
+    teams: post.teams?.map((team) => ({ name: team.name, logo: team.logo || '' })) || [],
+    caption: post.caption || post.description || 'Open this update to read the full Roar Arena post context.',
+    permalink: post.permalink,
+    timestamp: post.timestamp,
+  }
 }
 
 type FilterKey = 'all' | 'live' | 'upcoming' | 'final'
@@ -297,13 +315,12 @@ function CompactMatchCard({ match, onOpen }: { match: ArenaMatch; onOpen: (match
   )
 }
 
-function PostCard({ post }: { post: PostLike }) {
+function PostCard({ post, onOpen }: { post: PostLike; onOpen: (post: ArenaPost) => void }) {
   return (
-    <a
-      href={post.permalink || siteConfig.links.instagram}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex h-full flex-col overflow-hidden rounded-[1.6rem] border border-border bg-card transition duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-soft-glow"
+    <button
+      type="button"
+      onClick={() => onOpen(toModalPost(post))}
+      className="group flex h-full flex-col overflow-hidden rounded-[1.6rem] border border-border bg-card text-left transition duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-soft-glow focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-square">
         <img src={post.image} alt={post.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" decoding="async" />
@@ -318,10 +335,10 @@ function PostCard({ post }: { post: PostLike }) {
         <h3 className="mt-2 font-display text-2xl uppercase leading-none text-foreground sm:text-3xl">{post.title}</h3>
         <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{post.description || post.caption || 'Latest Roar Arena update.'}</p>
         <span className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary">
-          View post <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
+          Read full post <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
         </span>
       </div>
-    </a>
+    </button>
   )
 }
 
@@ -485,7 +502,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
   )
 }
 
-function UpdatesSection({ data }: { data: ReturnType<typeof usePublicHome>['data'] }) {
+function UpdatesSection({ data, onOpenPost }: { data: ReturnType<typeof usePublicHome>['data']; onOpenPost: (post: ArenaPost) => void }) {
   const posts = ((data.posts || siteConfig.posts) as PostLike[]).slice(0, 6)
 
   return (
@@ -494,10 +511,10 @@ function UpdatesSection({ data }: { data: ReturnType<typeof usePublicHome>['data
         <SectionHeader
           eyebrow="Latest from the arena"
           title="Match updates live now."
-          body="Match results, upcoming fixtures, big moments, and sports stories from the Roar Arena feed while our first fan events are being built."
+          body="Match results, upcoming fixtures, big moments, and sports stories from the Roar Arena feed. Tap any post to read the full caption without leaving the site."
         />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => <PostCard key={post.id} post={post} />)}
+          {posts.map((post) => <PostCard key={post.id} post={post} onOpen={onOpenPost} />)}
         </div>
       </div>
     </section>
@@ -651,17 +668,19 @@ function FinalSection() {
 export default function HomeExperience() {
   const { data, isLoading } = usePublicHome()
   const [selectedMatch, setSelectedMatch] = useState<ArenaMatch | null>(null)
+  const [selectedPost, setSelectedPost] = useState<ArenaPost | null>(null)
 
   return (
     <>
       <HeroSection data={data} isLoading={isLoading} onOpenMatch={setSelectedMatch} />
-      <UpdatesSection data={data} />
+      <UpdatesSection data={data} onOpenPost={setSelectedPost} />
       <LiveSection data={data} onOpenMatch={setSelectedMatch} />
       <BuildingSection />
       <EventsSection />
       <CommunitySection />
       <FinalSection />
       <MatchDetailsModal match={selectedMatch} onClose={() => setSelectedMatch(null)} />
+      {selectedPost ? <PostModal isOpen={Boolean(selectedPost)} onClose={() => setSelectedPost(null)} post={selectedPost} /> : null}
     </>
   )
 }

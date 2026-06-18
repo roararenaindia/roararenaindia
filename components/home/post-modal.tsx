@@ -5,6 +5,7 @@ import { ExternalLink, MessageCircle, X } from '@/components/ui/icon-set'
 import { useEffect, useRef } from 'react'
 import AssetLogo from '@/components/brand/asset-logo'
 import { ArenaPost, siteConfig } from '@/lib/config/site-data'
+import { resolveTeamFlag } from '@/lib/domain/team-logos'
 
 type PostModalProps = {
   isOpen: boolean
@@ -90,19 +91,29 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                 </h2>
               </div>
 
-              <div className="mt-5 rounded-3xl border border-border bg-surface p-4">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary">Teams in this post</p>
-                <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
-                  {post.teams.map((team) => (
-                    <div key={team.name} className="rounded-2xl border border-border bg-card p-3 text-center">
-                      <div className="relative mx-auto h-12 w-12">
-                        <img src={team.logo} alt={`${team.name} logo`} className="h-full w-full object-contain" loading="lazy" decoding="async" />
-                      </div>
-                      <p className="mt-2 line-clamp-2 text-[10px] font-black uppercase leading-4 text-foreground">{team.name}</p>
-                    </div>
-                  ))}
+              {post.teams.length ? (
+                <div className="mt-5 rounded-3xl border border-border bg-surface p-4">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-primary">Teams in this post</p>
+                  <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+                    {post.teams.map((team) => {
+                      const flag = resolveTeamFlag(team.name)
+
+                      return (
+                        <div key={team.name} className="rounded-2xl border border-border bg-card p-3 text-center">
+                          <div className="relative mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-3xl leading-none">
+                            {flag ? (
+                              <span aria-label={`${team.name} flag`}>{flag}</span>
+                            ) : (
+                              <img src={team.logo} alt={`${team.name} logo`} className="h-full w-full object-contain p-1.5" loading="lazy" decoding="async" />
+                            )}
+                          </div>
+                          <p className="mt-2 line-clamp-2 text-[10px] font-black uppercase leading-4 text-foreground">{team.name}</p>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
+              ) : null}
 
               <p className="mt-5 text-base leading-7 text-muted-foreground">{post.description}</p>
 
