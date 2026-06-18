@@ -96,13 +96,13 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                   <p className="text-xs font-black uppercase tracking-[0.16em] text-primary">Teams in this post</p>
                   <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
                     {post.teams.map((team) => {
-                      const flag = resolveTeamFlag(team.name)
+                      const flagSrc = resolveTeamFlag(team.name)
 
                       return (
                         <div key={team.name} className="rounded-2xl border border-border bg-card p-3 text-center">
                           <div className="relative mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-3xl leading-none">
-                            {flag ? (
-                              <span aria-label={`${team.name} flag`}>{flag}</span>
+                            {flagSrc ? (
+                              <img src={flagSrc} alt={`${team.name} flag`} className="h-full w-full rounded-xl object-cover" loading="lazy" decoding="async" />
                             ) : (
                               <img src={team.logo} alt={`${team.name} logo`} className="h-full w-full object-contain p-1.5" loading="lazy" decoding="async" />
                             )}

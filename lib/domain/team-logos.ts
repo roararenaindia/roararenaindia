@@ -38,8 +38,62 @@ const countryLogoFiles: Record<string, string> = {
   usa: `${FIFA_BASE}/usa.png`,
 }
 
-// Country slug -> emoji flag. These are tiny text glyphs, so the public match UI can
-// avoid loading multi-MB country crest PNGs while still staying immediately readable.
+// Country slug -> tiny SVG flag code from flagcdn.com.
+// This avoids loading multi-MB crest PNGs and is more reliable than emoji flags on Windows.
+const countryFlagCodes: Record<string, string> = {
+  algeria: 'dz',
+  argentina: 'ar',
+  australia: 'au',
+  austria: 'at',
+  belgium: 'be',
+  'bosnia-herzegovina': 'ba',
+  brazil: 'br',
+  canada: 'ca',
+  'cape-verde': 'cv',
+  colombia: 'co',
+  'congo-dr': 'cd',
+  croatia: 'hr',
+  curacao: 'cw',
+  czechia: 'cz',
+  ecuador: 'ec',
+  egypt: 'eg',
+  england: 'gb-eng',
+  france: 'fr',
+  germany: 'de',
+  ghana: 'gh',
+  haiti: 'ht',
+  iran: 'ir',
+  iraq: 'iq',
+  italy: 'it',
+  'ivory-coast': 'ci',
+  japan: 'jp',
+  jordan: 'jo',
+  mexico: 'mx',
+  morocco: 'ma',
+  netherlands: 'nl',
+  'new-zealand': 'nz',
+  nigeria: 'ng',
+  norway: 'no',
+  panama: 'pa',
+  paraguay: 'py',
+  portugal: 'pt',
+  qatar: 'qa',
+  'saudi-arabia': 'sa',
+  scotland: 'gb-sct',
+  senegal: 'sn',
+  'south-africa': 'za',
+  'south-korea': 'kr',
+  spain: 'es',
+  sweden: 'se',
+  switzerland: 'ch',
+  tunisia: 'tn',
+  turkiye: 'tr',
+  uruguay: 'uy',
+  usa: 'us',
+  uzbekistan: 'uz',
+}
+
+// Legacy emoji mapping retained only as a fallback if a browser blocks external images.
 const countryFlagEmojis: Record<string, string> = {
   algeria: '🇩🇿',
   argentina: '🇦🇷',
@@ -255,7 +309,7 @@ function slugForName(name: string): string | undefined {
   if (nameAliases[normalized]) return nameAliases[normalized]
   // Slugified direct match (e.g. "South Africa" -> "south-africa")
   const slug = normalized.replace(/\s+/g, '-')
-  if (countryLogoFiles[slug] || countryFlagEmojis[slug]) return slug
+  if (countryLogoFiles[slug] || countryFlagCodes[slug] || countryFlagEmojis[slug]) return slug
   return undefined
 }
 
@@ -270,10 +324,20 @@ export function resolveTeamLogo(name: string | null | undefined): string | undef
 }
 
 /**
- * Resolve a team name to an emoji flag.
+ * Resolve a team name to a lightweight SVG flag URL.
  * Used by the public UI because flags are much lighter than image crest files.
  */
 export function resolveTeamFlag(name: string | null | undefined): string | undefined {
+  if (!name) return undefined
+  const slug = slugForName(name)
+  const flagCode = slug ? countryFlagCodes[slug] : undefined
+  return flagCode ? `https://flagcdn.com/${flagCode}.svg` : undefined
+}
+
+/**
+ * Resolve a team name to a text fallback flag.
+ */
+export function resolveTeamFlagEmoji(name: string | null | undefined): string | undefined {
   if (!name) return undefined
   const slug = slugForName(name)
   return slug ? countryFlagEmojis[slug] : undefined
