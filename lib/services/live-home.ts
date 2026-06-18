@@ -103,6 +103,41 @@ function pickHeroMatch(matches: ArenaMatch[], fallback: ArenaMatch) {
   return [...visible].sort((a, b) => matchRecencyScore(b) - matchRecencyScore(a))[0]
 }
 
+function kickoffTime(match: ArenaMatch) {
+  const parsed = match.kickoffIso ? Date.parse(match.kickoffIso) : Number.NaN
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
+function pickHomeMatches(matches: ArenaMatch[]) {
+  const visible = matches.filter((match) => !match.isHidden)
+  const selected = new Map<string, ArenaMatch>()
+
+  const add = (match: ArenaMatch) => {
+    selected.set(match.id, match)
+  }
+
+  visible.filter((match) => match.isFeatured).forEach(add)
+
+  visible
+    .filter((match) => match.status === 'live')
+    .sort((a, b) => b.priority - a.priority || kickoffTime(a) - kickoffTime(b))
+    .forEach(add)
+
+  visible
+    .filter((match) => match.status === 'upcoming')
+    .sort((a, b) => kickoffTime(a) - kickoffTime(b) || b.priority - a.priority)
+    .slice(0, 12)
+    .forEach(add)
+
+  visible
+    .filter((match) => match.status === 'final')
+    .sort((a, b) => kickoffTime(b) - kickoffTime(a) || b.priority - a.priority)
+    .slice(0, 8)
+    .forEach(add)
+
+  return Array.from(selected.values())
+}
+
 function mapMatch(row: DbMatch): ArenaMatch {
   const status = normalizeStatus(row.status)
   const winner =
@@ -157,13 +192,14 @@ export async function getLiveHomePayload() {
     [
       'select=id,provider_match_id,sport,league,league_logo,home_team,away_team,home_short,away_short,home_logo,away_logo,home_score,away_score,status,status_label,kickoff_time,venue,winner,priority,is_featured,is_hidden',
       'or=(is_hidden.is.null,is_hidden.eq.false)',
-      'order=priority.desc,kickoff_time.asc.nullslast',
-      'limit=12',
+      'order=kickoff_time.asc.nullslast',
+      'limit=80',
     ].join('&'),
   )
 
   const posts = postsResult.data?.map(mapPost).filter(Boolean) || []
-  const matches = matchesResult.data?.map(mapMatch).filter(Boolean) || []
+  const allMatches = matchesResult.data?.map(mapMatch).filter(Boolean) || []
+  const matches = pickHomeMatches(allMatches)
   const heroMatch = pickHeroMatch(matches, fallback.heroMatch)
 
   return {

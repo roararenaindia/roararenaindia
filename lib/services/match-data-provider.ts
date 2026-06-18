@@ -257,7 +257,7 @@ function mapFootballDataMatch(match: FootballDataMatch): MatchProviderRecord {
     status,
     status_label: statusLabel(status),
     kickoff_time: match.utcDate,
-    venue: [match.stage, match.group].filter(Boolean).join(' • ') || league,
+    venue: [match.stage, match.group].filter(Boolean).join(' - ') || league,
     winner: footballDataWinner(match),
     priority: priorityForStatus(status),
     updated_at: new Date().toISOString(),
