@@ -361,7 +361,7 @@ function PostCard({ post, onOpen }: { post: PostLike; onOpen: (post: ArenaPost) 
       className="group flex h-full flex-col overflow-hidden rounded-[1.6rem] border border-border bg-card text-left transition duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-soft-glow focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-square">
-        <img src={post.image} alt={post.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" decoding="async" />
+        <img src={post.image} alt={post.title} className="h-full w-full object-contain transition duration-700" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
         <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/15 bg-black/60 px-3 py-1.5 backdrop-blur-xl">
           <AssetLogo src={post.logo || '/logos/logo-icon-dark-transparent.png'} alt={`${post.category} logo`} variant="minimal" className="h-7 w-7 border-0 bg-transparent p-0" imgClassName="drop-shadow-none" />
