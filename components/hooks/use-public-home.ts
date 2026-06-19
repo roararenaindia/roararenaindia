@@ -27,7 +27,7 @@ export function usePublicHome() {
       if (document.visibilityState === 'hidden') return
 
       try {
-        const response = await fetch('/api/public/home', { cache: 'no-store' })
+        const response = await fetch(`/api/public/home?t=${Date.now()}`, { cache: 'no-store' })
         if (!response.ok) return
         const payload = await response.json()
         if (active) setData(payload)
