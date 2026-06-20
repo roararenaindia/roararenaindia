@@ -103,10 +103,10 @@ Without these, the cron skips Instagram and the site can still show manual/datab
 
 ## Test after deploy
 
-Open this in the browser after replacing the values:
+Use a request tool that can send headers:
 
-```txt
-https://YOUR_DOMAIN.com/api/cron/roar?secret=YOUR_CRON_SECRET
+```bash
+curl -H "Authorization: Bearer YOUR_CRON_SECRET" https://YOUR_DOMAIN.com/api/cron/roar
 ```
 
-This browser URL is only a manual fallback because browsers cannot easily add the `Authorization` header. If it returns `ok: true`, the deployed endpoint is ready. Then run the GitHub Actions workflow manually once, which uses the safer header-based secret.
+Do not place `CRON_SECRET` in a browser URL. URLs can be saved in browser history, analytics, proxies, and logs. If the header-based request returns `ok: true`, the deployed endpoint is ready. Then run the GitHub Actions workflow manually once.

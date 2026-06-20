@@ -75,4 +75,4 @@ Add GitHub secret `ROAR_CRON_SECRET` with the same value as Vercel `CRON_SECRET`
 
 If production shows stale matches, check `https://roararenaindia.vercel.app/api/public/home`. `"source":"static-fallback"` means Vercel is missing Supabase environment variables.
 
-Use the query-string secret only as a last-resort fallback. See `docs/setup/EXTERNAL_2_HOUR_MATCH_CRON_SETUP.md`.
+Cron and sync endpoints require the `Authorization` header. Do not place `CRON_SECRET` in URLs.

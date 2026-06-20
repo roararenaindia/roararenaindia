@@ -151,6 +151,10 @@ for (const file of sourceFiles) {
     console.error(`Production-unsafe missing-secret auth fallback found in ${path.relative(root, file)}`)
     process.exit(1)
   }
+  if (file.includes(`${path.sep}app${path.sep}api${path.sep}`) && content.includes("searchParams.get('secret')")) {
+    console.error(`Query-string secret fallback found in ${path.relative(root, file)}. Use Authorization headers only.`)
+    process.exit(1)
+  }
   if (content.includes("from 'lucide-react'") || content.includes('from \"lucide-react\"')) {
     console.error(`Direct lucide-react import found in ${path.relative(root, file)}`)
     process.exit(1)
