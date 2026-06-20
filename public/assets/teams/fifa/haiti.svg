@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" role="img" aria-label="Haiti flag">
+  <rect width="120" height="40" fill="#00209f"/>
+  <rect y="40" width="120" height="40" fill="#d21034"/>
+  <rect x="44" y="27" width="32" height="26" rx="2" fill="#fff"/>
+  <path d="M50 48h20l-4-12H54z" fill="#0a8f3c"/>
+  <path d="M60 31v16" stroke="#7b4a18" stroke-width="3"/>
+</svg>

@@ -15,6 +15,7 @@ type PostModalProps = {
 
 export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
   const closeRef = useRef<HTMLButtonElement>(null)
+  const fullCaption = post.caption || post.description
 
   useEffect(() => {
     if (!isOpen) return
@@ -117,12 +118,12 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                 </div>
               ) : null}
 
-              <p className="mt-5 text-base leading-7 text-muted-foreground">{post.description}</p>
-
-              <div className="mt-6 rounded-3xl border border-border bg-surface p-5">
-                <p className="text-sm font-bold uppercase tracking-[0.14em] text-primary">Caption</p>
-                <p className="mt-3 text-sm leading-7 text-foreground">{post.caption}</p>
-              </div>
+              {fullCaption ? (
+                <div className="mt-6 rounded-3xl border border-border bg-surface p-5">
+                  <p className="text-sm font-bold uppercase tracking-[0.14em] text-primary">Caption</p>
+                  <p className="mt-3 text-sm leading-7 text-foreground">{fullCaption}</p>
+                </div>
+              ) : null}
 
               <div className="mt-7 grid gap-3 sm:grid-cols-2">
                 <a

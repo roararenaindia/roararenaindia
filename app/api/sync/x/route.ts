@@ -83,7 +83,7 @@ function mapXPost(post: XPost, media: Map<string, XMedia>) {
     post_type: postType,
     category,
     logo: inferLeagueLogo(category),
-    teams: inferTeams(caption),
+    teams: inferTeams(caption, category),
     sync_source: 'x',
     source_payload: post,
     last_synced_at: new Date().toISOString(),

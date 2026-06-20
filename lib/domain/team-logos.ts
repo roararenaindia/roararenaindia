@@ -10,6 +10,7 @@ export const FIFA_FALLBACK_LOGO = '/assets/leagues/fifa-world-cup.png'
 
 // Country slug -> local file that actually exists in public/assets/teams/fifa.
 const countryLogoFiles: Record<string, string> = {
+  algeria: `${FIFA_BASE}/algeria.svg`,
   argentina: `${FIFA_BASE}/argentina.png`,
   australia: `${FIFA_BASE}/australia.png`,
   belgium: `${FIFA_BASE}/belgium.png`,
@@ -17,11 +18,14 @@ const countryLogoFiles: Record<string, string> = {
   brazil: `${FIFA_BASE}/brazil.png`,
   canada: `${FIFA_BASE}/canada.png`,
   'cape-verde': `${FIFA_BASE}/cape-verde.png`,
+  'congo-dr': `${FIFA_BASE}/dr-congo.svg`,
   croatia: `${FIFA_BASE}/croatia.png`,
+  curacao: `${FIFA_BASE}/curacao.svg`,
   england: `${FIFA_BASE}/england.png`,
   france: `${FIFA_BASE}/france.png`,
   germany: `${FIFA_BASE}/germany.png`,
   ghana: `${FIFA_BASE}/ghana.png`,
+  haiti: `${FIFA_BASE}/haiti.svg`,
   italy: `${FIFA_BASE}/italy.png`,
   japan: `${FIFA_BASE}/japan.png`,
   mexico: `${FIFA_BASE}/mexico.png`,
@@ -30,6 +34,8 @@ const countryLogoFiles: Record<string, string> = {
   nigeria: `${FIFA_BASE}/nigeria.png`,
   paraguay: `${FIFA_BASE}/paraguay.png`,
   portugal: `${FIFA_BASE}/portugal.png`,
+  qatar: `${FIFA_BASE}/qatar.svg`,
+  scotland: `${FIFA_BASE}/scotland.svg`,
   senegal: `${FIFA_BASE}/senegal.png`,
   'south-africa': `${FIFA_BASE}/south-africa.png`,
   spain: `${FIFA_BASE}/spain.png`,

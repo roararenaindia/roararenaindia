@@ -69,7 +69,7 @@ function mapPost(row: DbPost): ArenaPost {
     description: row.description || descriptionFromCaption(caption) || 'Latest update from Roar Arena.',
     image: row.media_url,
     logo: row.logo || inferLeagueLogo(category),
-    teams: Array.isArray(row.teams) && row.teams.length ? [...row.teams] : [...inferTeams(`${row.title || ''} ${caption}`)],
+    teams: Array.isArray(row.teams) && row.teams.length ? [...row.teams] : [...inferTeams(`${row.title || ''} ${caption}`, category)],
     caption,
     permalink: row.permalink || undefined,
     timestamp: row.posted_at || undefined,

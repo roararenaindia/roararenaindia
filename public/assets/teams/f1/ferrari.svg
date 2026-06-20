@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Ferrari team badge">
+  <defs>
+    <linearGradient id="ferrariBadge" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ff2b17"/>
+      <stop offset="1" stop-color="#8b0000"/>
+    </linearGradient>
+  </defs>
+  <path d="M18 12h84v48c0 28-17.5 45-42 54C35.5 105 18 88 18 60z" fill="url(#ferrariBadge)" stroke="#111" stroke-width="6"/>
+  <path d="M18 12h84v18H18z" fill="#111"/>
+  <path d="M25 30h70v8H25z" fill="#f5d328"/>
+  <text x="60" y="67" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="34" font-weight="900" fill="#fff">SF</text>
+  <text x="60" y="89" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="13" font-weight="900" letter-spacing="1.4" fill="#fff">FERRARI</text>
+</svg>

@@ -39,7 +39,7 @@ async function mapInstagramPost(item: InstagramMedia) {
     post_type: postType,
     category,
     logo: inferLeagueLogo(category),
-    teams: inferTeams(caption),
+    teams: inferTeams(caption, category),
     sync_source: 'instagram',
     source_payload: item,
     last_synced_at: new Date().toISOString(),

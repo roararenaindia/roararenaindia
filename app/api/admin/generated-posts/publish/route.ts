@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     post_type: postType,
     category,
     logo: typeof payload.leagueLogo === 'string' ? payload.leagueLogo : inferLeagueLogo(category),
-    teams: inferTeams(`${generated.title} ${caption}`),
+    teams: inferTeams(`${generated.title} ${caption}`, category),
     is_hidden: false,
     is_featured: true,
     posted_at: new Date().toISOString(),
