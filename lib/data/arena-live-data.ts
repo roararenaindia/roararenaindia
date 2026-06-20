@@ -157,48 +157,7 @@ export const liveMatches: ArenaMatch[] = [
   },
 ]
 
-export const arenaSocialPosts: ArenaSocialPost[] = [
-  {
-    id: 'ig-knicks-champions',
-    title: 'Knicks Are Champions',
-    type: 'Result',
-    image: '/posts/knicks-champions.png',
-    caption: 'NEW YORK DID IT. The Knicks are champions. A city full of belief. A moment made for the roar.',
-    permalink: 'https://x.com/RoarArenaIndia',
-    timestamp: '2026-06-15T04:00:00.000Z',
-    category: 'NBA Finals 2026',
-  },
-  {
-    id: 'x-germany-curacao-boss-fight',
-    title: 'Boss Fight Energy',
-    type: 'Result',
-    image: '/posts/germany-curacao-boss-fight.png',
-    caption: 'Germany loaded into the World Cup like a final boss. 7-1. No soft launch.',
-    permalink: 'https://x.com/RoarArenaIndia',
-    timestamp: '2026-06-14T20:00:00.000Z',
-    category: 'FIFA World Cup 2026',
-  },
-  {
-    id: 'ig-brazil-morocco-story',
-    title: 'Underdog? Hell Hound.',
-    type: 'Result',
-    image: '/posts/brazil-morocco-one-save.png',
-    caption: 'Morocco had Brazil on the ropes. One last save kept the story from flipping.',
-    permalink: 'https://www.instagram.com/roararenaindia/',
-    timestamp: '2026-06-13T20:00:00.000Z',
-    category: 'FIFA World Cup 2026',
-  },
-  {
-    id: 'ig-fifa-fixtures',
-    title: 'Fixtures Keep Moving',
-    type: 'Fixtures',
-    image: '/posts/fifa-fixtures.png',
-    caption: 'Fixtures, scores, and storylines keep moving. Roar Arena is built to move with them.',
-    permalink: 'https://www.instagram.com/roararenaindia/',
-    timestamp: '2026-06-15T02:00:00.000Z',
-    category: 'FIFA World Cup 2026',
-  },
-]
+export const arenaSocialPosts: ArenaSocialPost[] = []
 
 export const automationStatus = [
   {

@@ -1,4 +1,3 @@
-import { siteConfig } from '@/lib/config/site-data'
 import { resolveLeagueLogo } from '@/lib/domain/league-logos'
 
 type TeamAsset = {
@@ -55,7 +54,7 @@ export function inferLeagueLogo(category: string) {
 export function inferTeams(text = '') {
   const normalized = text.toLowerCase()
   const matched = teamAssets.filter((team) => team.aliases.some((alias) => normalized.includes(alias)))
-  return matched.length ? matched : siteConfig.posts[0].teams
+  return matched
 }
 
 export function titleFromCaption(caption = '', fallback = 'Roar Arena Update') {

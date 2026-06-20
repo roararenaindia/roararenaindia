@@ -16,9 +16,6 @@ const requiredFiles = [
   'supabase/schema.sql',
   'vercel.json',
   '.github/workflows/roar-cron.yml',
-  'public/posts/knicks-champions.png',
-  'public/posts/germany-curacao-boss-fight.png',
-  'public/posts/brazil-morocco-one-save.png',
 ]
 
 const missing = requiredFiles.filter((file) => !fs.existsSync(path.join(root, file)))

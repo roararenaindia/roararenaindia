@@ -23,7 +23,7 @@ import AssetLogo from '@/components/brand/asset-logo'
 import BrandLogo from '@/components/brand/brand-logo'
 import TeamLogo from '@/components/brand/team-logo'
 import PostModal from '@/components/home/post-modal'
-import { usePublicHome } from '@/components/hooks/use-public-home'
+import { usePublicHome, type PublicHomePayload } from '@/components/hooks/use-public-home'
 import type { ArenaMatch } from '@/lib/data/arena-live-data'
 import { siteConfig, type ArenaPost } from '@/lib/config/site-data'
 
@@ -671,7 +671,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
 }
 
 function UpdatesSection({ data, onOpenPost }: { data: ReturnType<typeof usePublicHome>['data']; onOpenPost: (post: ArenaPost) => void }) {
-  const posts = ((data.posts || siteConfig.posts) as PostLike[]).slice(0, 6)
+  const posts = ((data.posts || []) as PostLike[]).slice(0, 6)
 
   return (
     <section id="updates" className="relative bg-background py-14 sm:py-20 lg:py-20">
@@ -681,9 +681,15 @@ function UpdatesSection({ data, onOpenPost }: { data: ReturnType<typeof usePubli
           title="Match updates live now."
           body="Match results, upcoming fixtures, big moments, and sports stories from the Roar Arena feed. Tap any post to read the full caption without leaving the site."
         />
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => <PostCard key={post.id} post={post} onOpen={onOpenPost} />)}
-        </div>
+        {posts.length ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => <PostCard key={post.id} post={post} onOpen={onOpenPost} />)}
+          </div>
+        ) : (
+          <div className="rounded-[1.6rem] border border-border bg-card p-6 text-center shadow-soft-glow">
+            <p className="text-sm font-bold text-muted-foreground">Live posts are syncing. Latest database content will appear here as soon as it is available.</p>
+          </div>
+        )}
       </div>
     </section>
   )
@@ -961,8 +967,8 @@ function FinalSection() {
   )
 }
 
-export default function HomeExperience() {
-  const { data, isLoading } = usePublicHome()
+export default function HomeExperience({ initialData }: { initialData?: PublicHomePayload }) {
+  const { data, isLoading } = usePublicHome(initialData)
   const [selectedMatch, setSelectedMatch] = useState<ArenaMatch | null>(null)
   const [selectedPost, setSelectedPost] = useState<ArenaPost | null>(null)
 

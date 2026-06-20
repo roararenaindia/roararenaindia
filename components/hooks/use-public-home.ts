@@ -16,9 +16,11 @@ type PublicHomePayload = {
 
 const publicHomeRefreshIntervalMs = 5 * 60_000
 
-export function usePublicHome() {
-  const [data, setData] = useState<PublicHomePayload>(() => getHomePayload())
-  const [isLoading, setIsLoading] = useState(true)
+export type { PublicHomePayload }
+
+export function usePublicHome(initialData?: PublicHomePayload) {
+  const [data, setData] = useState<PublicHomePayload>(() => initialData ?? getHomePayload())
+  const [isLoading, setIsLoading] = useState(!initialData)
 
   useEffect(() => {
     let active = true
