@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
   const result = await supabaseSelect(
     'roar_posts',
     'select=*&order=posted_at.desc.nullslast&limit=50',
+    'write',
   )
 
   if (result.error) {

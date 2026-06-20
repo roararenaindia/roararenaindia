@@ -12,7 +12,7 @@ export async function writeSyncLog(input: {
   details?: unknown
 }) {
   try {
-    await supabaseInsert('roar_sync_runs', {
+    const result = await supabaseInsert('roar_sync_runs', {
       source: input.source,
       status: input.status,
       fetched_count: input.fetchedCount || 0,
@@ -21,6 +21,10 @@ export async function writeSyncLog(input: {
       details: input.details || {},
       created_at: new Date().toISOString(),
     })
+
+    if (result.error) {
+      console.warn('Sync log write failed:', result.error)
+    }
   } catch {
     // Sync logs should never break the user-facing sync route.
   }
@@ -30,5 +34,6 @@ export async function getLatestSyncLogs(limit = 20) {
   return supabaseSelect(
     'roar_sync_runs',
     `select=*&order=created_at.desc&limit=${limit}`,
+    'write',
   )
 }

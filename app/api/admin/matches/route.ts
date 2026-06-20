@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
   const result = await supabaseSelect(
     'roar_matches',
     'select=*&order=priority.desc,kickoff_time.asc.nullslast&limit=80',
+    'write',
   )
 
   if (result.error) {

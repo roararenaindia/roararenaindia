@@ -32,10 +32,10 @@ export async function GET(request: NextRequest) {
   }
 
   const payload = await getLiveHomePayload()
-  const queue = await supabaseSelect('roar_generated_posts', 'select=id,status&limit=20')
-  const posts = await supabaseSelect('roar_posts', 'select=id,is_hidden&limit=20')
-  const matches = await supabaseSelect('roar_matches', 'select=id,is_hidden&limit=20')
-  const syncRuns = await supabaseSelect('roar_sync_runs', 'select=id,source,status&limit=5')
+  const queue = await supabaseSelect('roar_generated_posts', 'select=id,status&limit=20', 'write')
+  const posts = await supabaseSelect('roar_posts', 'select=id,is_hidden&limit=20', 'write')
+  const matches = await supabaseSelect('roar_matches', 'select=id,is_hidden&limit=20', 'write')
+  const syncRuns = await supabaseSelect('roar_sync_runs', 'select=id,source,status&limit=5', 'write')
   const storage = await checkInstagramStorageBucket()
   const matchProvider = await checkMatchProvider()
 

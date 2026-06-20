@@ -77,8 +77,8 @@ function safeJson(text: string) {
   }
 }
 
-export async function supabaseSelect<T>(table: string, query: string) {
-  return supabaseRest<T[]>(`${table}?${query}`, { mode: 'read' })
+export async function supabaseSelect<T>(table: string, query: string, mode: SupabaseMode = 'read') {
+  return supabaseRest<T[]>(`${table}?${query}`, { mode })
 }
 
 export async function supabaseUpsert<T>(table: string, records: T[], onConflict: string) {

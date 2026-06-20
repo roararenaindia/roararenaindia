@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
   const selectResult = await supabaseSelect<GeneratedPost>(
     'roar_generated_posts',
     `select=*&id=eq.${encodeURIComponent(id)}&limit=1`,
+    'write',
   )
 
   if (selectResult.error) {

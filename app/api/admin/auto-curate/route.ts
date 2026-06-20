@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
   const matches = await supabaseSelect<MatchRow>(
     'roar_matches',
     'select=id,status,kickoff_time,priority,is_hidden&or=(is_hidden.is.null,is_hidden.eq.false)&limit=80',
+    'write',
   )
 
   if (matches.error) {
@@ -63,6 +64,7 @@ export async function GET(request: NextRequest) {
   const posts = await supabaseSelect<PostRow>(
     'roar_posts',
     'select=id,posted_at,is_hidden&or=(is_hidden.is.null,is_hidden.eq.false)&order=posted_at.desc.nullslast&limit=6',
+    'write',
   )
 
   if (!posts.error) {

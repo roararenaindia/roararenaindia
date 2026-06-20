@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
   const result = await supabaseSelect(
     'roar_generated_posts',
     'select=*&order=created_at.desc&limit=80',
+    'write',
   )
 
   if (result.error) {
