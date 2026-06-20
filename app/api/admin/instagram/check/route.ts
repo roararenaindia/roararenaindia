@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { fetchInstagramAccount, fetchInstagramMedia, instagramApiMode, type InstagramMedia } from '@/lib/services/instagram-api'
 import { hasSupabaseWriteAccess, isSupabaseConfigured } from '@/lib/services/supabase-rest'
 import { checkInstagramStorageBucket } from '@/lib/services/supabase-storage'
 import { getLatestSyncLogs } from '@/lib/services/sync-log'
@@ -9,23 +10,6 @@ function isAuthorized(request: NextRequest) {
   const secret = process.env.CRON_SECRET
   if (!secret) return process.env.NODE_ENV !== 'production'
   return request.headers.get('authorization') === `Bearer ${secret}`
-}
-
-async function readJson(url: string) {
-  const response = await fetch(url, { cache: 'no-store' })
-  const text = await response.text()
-  const data = text ? JSON.parse(text) : null
-
-  if (!response.ok) {
-    return {
-      ok: false,
-      status: response.status,
-      data,
-      error: data?.error?.message || response.statusText,
-    }
-  }
-
-  return { ok: true, status: response.status, data, error: null }
 }
 
 export async function GET(request: NextRequest) {
@@ -64,6 +48,7 @@ export async function GET(request: NextRequest) {
       configured: Boolean(token && igUserId),
       accountValid: false,
       mediaReadable: false,
+      apiMode: instagramApiMode(),
       username: null as string | null,
       accountType: null as string | null,
       mediaCount: null as number | null,
@@ -81,8 +66,7 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  const accountUrl = `https://graph.facebook.com/v20.0/${igUserId}?fields=id,username,account_type,media_count&access_token=${token}`
-  const account = await readJson(accountUrl)
+  const account = await fetchInstagramAccount(igUserId, token)
 
   if (!account.ok) {
     checks.instagram.error = account.error
@@ -99,12 +83,29 @@ export async function GET(request: NextRequest) {
   checks.instagram.accountType = account.data?.account_type || null
   checks.instagram.mediaCount = typeof account.data?.media_count === 'number' ? account.data.media_count : null
 
-  const fields = 'id,caption,media_type,media_url,permalink,timestamp,thumbnail_url'
-  const mediaUrl = `https://graph.facebook.com/v20.0/${igUserId}/media?fields=${fields}&limit=6&access_token=${token}`
-  const media = await readJson(mediaUrl)
+  try {
+    const media = await fetchInstagramMedia(igUserId, token, 6)
+    checks.instagram.mediaReadable = true
+    checks.instagram.latestMediaCount = media.length
 
-  if (!media.ok) {
-    checks.instagram.error = media.error
+    return NextResponse.json({
+      ok: true,
+      ready: checks.supabase.write && checks.instagram.accountValid && checks.instagram.mediaReadable,
+      checks,
+      sampleMedia: media.slice(0, 3).map((item: InstagramMedia) => ({
+        id: item.id,
+        media_type: item.media_type,
+        permalink: item.permalink,
+        timestamp: item.timestamp,
+      })),
+      nextStep: checks.supabase.write
+        ? storage.ok
+          ? 'Instagram is ready. Run /api/sync/instagram or click Sync IG from admin. Media will be mirrored into Supabase Storage.'
+          : 'Instagram is ready, but Supabase Storage bucket is not ready. Sync still works using Instagram CDN URLs; run Sync IG once to auto-create the bucket.'
+        : 'Instagram is valid, but Supabase write access is missing. Add SUPABASE_SERVICE_ROLE_KEY.',
+    })
+  } catch (error) {
+    checks.instagram.error = error instanceof Error ? error.message : 'Instagram media check failed'
     return NextResponse.json({
       ok: true,
       ready: false,
@@ -112,26 +113,4 @@ export async function GET(request: NextRequest) {
       nextStep: 'Account is valid but media cannot be read. Check Instagram permissions and app access.',
     })
   }
-
-  checks.instagram.mediaReadable = true
-  checks.instagram.latestMediaCount = Array.isArray(media.data?.data) ? media.data.data.length : 0
-
-  return NextResponse.json({
-    ok: true,
-    ready: checks.supabase.write && checks.instagram.accountValid && checks.instagram.mediaReadable,
-    checks,
-    sampleMedia: Array.isArray(media.data?.data)
-      ? media.data.data.slice(0, 3).map((item: { id: string; media_type?: string; permalink?: string; timestamp?: string }) => ({
-          id: item.id,
-          media_type: item.media_type,
-          permalink: item.permalink,
-          timestamp: item.timestamp,
-        }))
-      : [],
-    nextStep: checks.supabase.write
-      ? storage.ok
-        ? 'Instagram is ready. Run /api/sync/instagram or click Sync IG from admin. Media will be mirrored into Supabase Storage.'
-        : 'Instagram is ready, but Supabase Storage bucket is not ready. Sync still works using Instagram CDN URLs; run Sync IG once to auto-create the bucket.'
-      : 'Instagram is valid, but Supabase write access is missing. Add SUPABASE_SERVICE_ROLE_KEY.',
-  })
 }

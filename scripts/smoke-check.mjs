@@ -30,7 +30,7 @@ if (missing.length) {
 
 const vercel = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))
 if (Array.isArray(vercel.crons) && vercel.crons.length > 0) {
-  console.error('vercel.json contains cron jobs. Use /api/cron/roar with an external scheduler for the 2-hour match sync.')
+  console.error('vercel.json contains cron jobs. Use /api/cron/roar with an external scheduler for the 2-hour live sync.')
   process.exit(1)
 }
 if (!fs.existsSync(path.join(root, 'app/api/cron/roar/route.ts'))) {
@@ -90,7 +90,7 @@ for (const section of ['id="updates"', 'id="matches"', 'id="building"', 'id="eve
 
 
 const siteData = fs.readFileSync(path.join(root, 'lib/config/site-data.ts'), 'utf8')
-for (const token of ['futureEvents', 'posts', 'sports', 'mobileStickyCtA']) {
+for (const token of ['futureEvents', 'posts', 'sports', 'mobileStickyCtA', 'facebook']) {
   if (!siteData.includes(token)) {
     console.error(`siteConfig missing ${token}`)
     process.exit(1)

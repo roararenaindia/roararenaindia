@@ -44,8 +44,8 @@ This build connects the website to Supabase without adding fragile client depend
    - `/api/admin/seed` with `Authorization: Bearer YOUR_CRON_SECRET`
 6. Check:
    - `/api/public/home`
-7. Add Instagram credentials only if needed, and add the football-data.org token for match sync.
-8. Use the external 2-hour match scheduler, or manually call:
+7. Add Instagram credentials for automatic post sync, and add the football-data.org token for match sync.
+8. Use the external 2-hour live scheduler, or manually call:
    - `/api/sync/instagram`
    - `/api/sync/matches`
 

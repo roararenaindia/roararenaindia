@@ -1,6 +1,6 @@
 # Roar Arena Automation Setup
 
-This phase focuses on automatic football fixtures/results. Instagram and X automation can stay disabled until the social automation phase.
+This phase runs automatic live updates. The two-hour cron always updates fixtures/results and auto-curation, and it also syncs Instagram/X posts when the matching credentials are configured.
 
 ## Current architecture
 
@@ -12,7 +12,7 @@ football-data.org or API-Football
   -> /api/public/home
   -> Matchday command board
 
-Manual or future social posts
+Instagram/X social posts
   -> Supabase roar_posts
   -> /api/public/home
   -> Latest from Arena
@@ -69,7 +69,7 @@ Admin actions:
 - Pin/hide matches
 - Edit titles, categories, descriptions, and match priority
 
-## Automatic 2-hour match updates
+## Automatic 2-hour live updates
 
 Use GitHub Actions instead of Vercel Cron for the 2-hour schedule.
 
@@ -90,14 +90,14 @@ The workflow defaults to `https://roararenaindia.vercel.app/api/cron/roar`. Add 
 Then run:
 
 ```txt
-GitHub > Actions > Roar Arena 2-hour match sync > Run workflow
+GitHub > Actions > Roar Arena 2-hour live sync > Run workflow
 ```
 
 If the manual workflow succeeds, GitHub will keep calling the deployed endpoint every 2 hours.
 
-## Social automation later
+## Social automation
 
-The routes exist, but credentials are optional for this phase:
+The routes run from `/api/cron/roar` when their credentials exist:
 
 - `/api/sync/instagram`
 - `/api/sync/x`
@@ -105,13 +105,22 @@ The routes exist, but credentials are optional for this phase:
 - `/api/admin/instagram/check`
 - `/api/admin/x/check`
 
-Only add these when the Meta/X developer setup is ready:
+Add Instagram now that the Meta developer setup is ready:
 
 ```txt
-INSTAGRAM_USER_ID=
-INSTAGRAM_ACCESS_TOKEN=
-X_USER_ID=
-X_BEARER_TOKEN=
+INSTAGRAM_API_MODE=instagram_login
+INSTAGRAM_GRAPH_API_VERSION=v20.0
+INSTAGRAM_USER_ID=your_numeric_instagram_user_id
+INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_access_token
+INSTAGRAM_SYNC_LIMIT=18
+INSTAGRAM_STORAGE_BUCKET=roar-instagram
 ```
 
-If these Instagram/X variables are empty in Vercel, social posts will not auto-sync. That is expected for the current phase.
+X remains optional and will be skipped unless these exist:
+
+```txt
+X_USERNAME=RoarArenaIndia
+X_USER_ID=your_x_user_id
+X_BEARER_TOKEN=your_x_bearer_token
+X_SYNC_LIMIT=10
+```

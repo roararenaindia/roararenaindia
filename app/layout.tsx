@@ -5,21 +5,21 @@ import './globals.css'
 import { ThemeProvider } from 'next-themes'
 
 export const metadata: Metadata = {
-  title: 'Roar Arena - Sports fan experiences coming soon',
+  title: 'Roar Arena - Where Fans Come Alive',
   description:
-    'Roar Arena is a sports fan experience startup building live screenings, watch parties, fan meetups, and matchday community events in India.',
+    'Feel the Game. Join the Roar. Roar Arena is building live screenings, watch parties, fan meetups, and matchday community events in India.',
   generator: 'Roar Arena',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://roararenaindia.vercel.app'),
   openGraph: {
-    title: 'Roar Arena - Sports fan experiences coming soon',
+    title: 'Roar Arena - Where Fans Come Alive',
     description:
-      'Live screenings and fan events coming soon. Match updates, results, fixtures, and fan stories live now.',
+      'Feel the Game. Join the Roar. Match updates, results, fixtures, and fan stories live now.',
     images: ['/og/og-image.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Roar Arena - Sports fan experiences coming soon',
-    description: 'Live screenings and fan events coming soon. Match updates live now.',
+    title: 'Roar Arena - Where Fans Come Alive',
+    description: 'Feel the Game. Join the Roar. Match updates live now.',
     images: ['/og/og-image.png'],
   },
   icons: {

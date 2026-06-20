@@ -27,9 +27,19 @@ export async function GET(request: NextRequest) {
 
   const origin = request.nextUrl.origin || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const secret = process.env.CRON_SECRET
-  const includeSocial = request.nextUrl.searchParams.get('includeSocial') === '1'
+  const includeSocialParam = request.nextUrl.searchParams.get('includeSocial')
+  const instagramConfigured = Boolean(process.env.INSTAGRAM_USER_ID && process.env.INSTAGRAM_ACCESS_TOKEN)
+  const xConfigured = Boolean(process.env.X_USER_ID && process.env.X_BEARER_TOKEN)
+  const socialConfigured = instagramConfigured || xConfigured
+  const includeSocial = includeSocialParam === '1' || (includeSocialParam !== '0' && socialConfigured)
+  const socialPaths = includeSocialParam === '1'
+    ? ['/api/sync/instagram', '/api/sync/x']
+    : [
+        ...(instagramConfigured ? ['/api/sync/instagram'] : []),
+        ...(xConfigured ? ['/api/sync/x'] : []),
+      ]
   const paths = includeSocial
-    ? ['/api/sync/instagram', '/api/sync/x', '/api/sync/matches', '/api/admin/auto-curate']
+    ? [...socialPaths, '/api/sync/matches', '/api/admin/auto-curate']
     : ['/api/sync/matches', '/api/admin/auto-curate']
   const results = []
 
@@ -56,7 +66,9 @@ export async function GET(request: NextRequest) {
     mode: results.every((result) => result.ok)
       ? includeSocial ? 'sync_all_with_social_complete' : 'match_sync_and_curation_complete'
       : includeSocial ? 'sync_all_with_social_failed' : 'match_sync_and_curation_failed',
-    note: includeSocial ? 'Social sync was explicitly requested.' : 'Default sync excludes Instagram and X for this phase.',
+    note: includeSocial
+      ? 'Social sync is included because credentials are configured or includeSocial=1 was requested.'
+      : 'Social sync is skipped because Instagram/X credentials are not configured.',
     results,
   })
 }

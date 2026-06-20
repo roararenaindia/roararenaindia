@@ -18,6 +18,7 @@ export type ArenaPost = {
 }
 
 const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/roararenaindia/'
+const facebookUrl = process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://www.facebook.com/RoarArena'
 const xUrl = process.env.NEXT_PUBLIC_X_URL || 'https://x.com/RoarArenaIndia'
 const whatsappUrl = process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R'
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'roararenaindia@gmail.com'
@@ -26,12 +27,14 @@ const contactSubject = encodeURIComponent('Roar Arena collaboration')
 export const siteConfig = {
   brand: {
     name: 'Roar Arena',
-    tagline: 'Where fans come alive.',
+    tagline: 'Where Fans Come Alive.',
+    campaignLine: 'One Game. One Crowd. One Roar.',
     description:
       'Roar Arena is a sports fan experience startup building live screenings, watch parties, fan meetups, and matchday community events in India.',
   },
   links: {
     instagram: instagramUrl,
+    facebook: facebookUrl,
     x: xUrl,
     whatsappChannel: whatsappUrl,
     contact: `mailto:${contactEmail}?subject=${contactSubject}`,
@@ -47,7 +50,7 @@ export const siteConfig = {
   ],
   hero: {
     eyebrow: 'Sports fan experience startup',
-    headline: 'Watch the game.\nFeel the roar.',
+    headline: 'Feel the Game.\nJoin the Roar.',
     subheadline:
       'Roar Arena is building live sports screening events, fan meetups, watch parties, and matchday experiences for real sports fans.',
     support:
@@ -57,7 +60,9 @@ export const siteConfig = {
     secondaryCta: 'Follow Instagram',
     badges: ['Coming soon events', 'Match updates live now', 'Upcoming fixtures', 'Result posts', 'Fan community'],
     ticker: [
-      'Where fans come alive',
+      'Where Fans Come Alive',
+      'Feel the Game. Join the Roar.',
+      'One Game. One Crowd. One Roar.',
       'Live screenings coming soon',
       'Watch parties planned',
       'Fan meetups in progress',
@@ -224,6 +229,7 @@ export const siteConfig = {
     buttons: [
       { label: 'Join Channel', href: whatsappUrl },
       { label: 'Instagram', href: instagramUrl },
+      { label: 'Facebook', href: facebookUrl },
     ],
   },
 } as const

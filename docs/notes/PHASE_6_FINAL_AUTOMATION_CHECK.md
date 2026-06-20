@@ -57,7 +57,7 @@ GET /api/admin/setup
 6. Click **Save key**.
 7. Click **Final Check**.
 8. Click **Seed** if database is empty.
-9. Skip Instagram unless you are working on the later social automation phase.
+9. Run Instagram Check once Instagram credentials are configured.
 10. Click **Check Match API**.
 11. Click **Sync Matches** and **Curate** for this phase.
 12. Click **Sync Matches**.

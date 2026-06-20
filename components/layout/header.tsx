@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, Instagram, Menu, MessageCircle, Send, X } from '@/components/ui/icon-set'
+import { ArrowRight, Facebook, Instagram, Menu, MessageCircle, Send, X } from '@/components/ui/icon-set'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import BrandLogo from '@/components/brand/brand-logo'
@@ -13,6 +13,7 @@ export default function Header() {
   const socialLinks = [
     { label: 'WhatsApp Channel', href: siteConfig.links.whatsappChannel, icon: MessageCircle, primary: true },
     { label: 'Instagram', href: siteConfig.links.instagram, icon: Instagram },
+    { label: 'Facebook', href: siteConfig.links.facebook, icon: Facebook },
     { label: 'X / Twitter', href: siteConfig.links.x, icon: Send },
   ]
 

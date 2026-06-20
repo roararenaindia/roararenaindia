@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { descriptionFromCaption, inferCategory, inferLeagueLogo, inferPostType, inferTeams, titleFromCaption } from '@/lib/domain/content-inference'
+import { fetchInstagramMedia, type InstagramMedia } from '@/lib/services/instagram-api'
 import { mirrorInstagramMedia } from '@/lib/services/supabase-storage'
 import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/services/supabase-rest'
 import { writeSyncLog } from '@/lib/services/sync-log'
@@ -10,30 +11,6 @@ function isAuthorized(request: NextRequest) {
   const secret = process.env.CRON_SECRET
   if (!secret) return process.env.NODE_ENV !== 'production'
   return request.headers.get('authorization') === `Bearer ${secret}`
-}
-
-type InstagramMedia = {
-  id: string
-  caption?: string
-  media_type?: string
-  media_url?: string
-  thumbnail_url?: string
-  permalink?: string
-  timestamp?: string
-  username?: string
-}
-
-async function fetchInstagramMedia(igUserId: string, token: string, limit: number) {
-  const fields = 'id,caption,media_type,media_url,permalink,timestamp,thumbnail_url,username'
-  const url = `https://graph.facebook.com/v20.0/${igUserId}/media?fields=${fields}&limit=${limit}&access_token=${token}`
-  const response = await fetch(url, { cache: 'no-store' })
-  const data = await response.json().catch(() => null)
-
-  if (!response.ok) {
-    throw new Error(data?.error?.message || `Instagram fetch failed: ${response.status}`)
-  }
-
-  return Array.isArray(data?.data) ? (data.data as InstagramMedia[]) : []
 }
 
 async function mapInstagramPost(item: InstagramMedia) {

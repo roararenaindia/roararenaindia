@@ -10,7 +10,7 @@ This zip is prepared for direct Vercel deployment.
 - NBA champions fallback content replacing old Game 5 content
 - FIFA World Cup match engine using football-data.org, with API-Football as an optional fallback
 - Supabase database layer for saving live match updates
-- Optional Instagram/X sync routes for a later automation phase
+- Instagram/X sync routes wired into the live cron when credentials exist
 - WhatsApp Channel and email contact links
 - Admin dashboard
 - Template Studio
@@ -41,22 +41,29 @@ MATCH_SYNC_PAST_DAYS=2
 MATCH_SYNC_FUTURE_DAYS=7
 
 NEXT_PUBLIC_INSTAGRAM_URL=https://www.instagram.com/roararenaindia/
+NEXT_PUBLIC_FACEBOOK_URL=https://www.facebook.com/RoarArena
 NEXT_PUBLIC_X_URL=https://x.com/RoarArenaIndia
 NEXT_PUBLIC_WHATSAPP_CHANNEL_URL=https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R
 NEXT_PUBLIC_CONTACT_EMAIL=roararenaindia@gmail.com
 ```
 
-Optional later; not needed for this match-update phase:
+Instagram posting automation:
 
 ```txt
-INSTAGRAM_USER_ID=
-INSTAGRAM_ACCESS_TOKEN=
+INSTAGRAM_API_MODE=instagram_login
+INSTAGRAM_GRAPH_API_VERSION=v20.0
+INSTAGRAM_USER_ID=your_numeric_instagram_user_id
+INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_access_token
 INSTAGRAM_SYNC_LIMIT=18
 INSTAGRAM_STORAGE_BUCKET=roar-instagram
+```
 
+Optional X automation:
+
+```txt
 X_USERNAME=RoarArenaIndia
-X_USER_ID=
-X_BEARER_TOKEN=
+X_USER_ID=your_x_user_id
+X_BEARER_TOKEN=your_x_bearer_token
 X_SYNC_LIMIT=10
 ```
 
@@ -77,11 +84,11 @@ Required tables:
 - roar_generated_posts
 - roar_sync_runs
 
-## Match cron behavior
+## Live cron behavior
 
-- `/api/cron/roar` runs match sync and auto-curation together
+- `/api/cron/roar` runs configured social sync, match sync, and auto-curation together
 - Call it every 2 hours from an external scheduler
-- Instagram and X sync are optional and not required for this phase
+- Instagram and X are skipped safely until their credentials exist
 
 ## After deploy
 

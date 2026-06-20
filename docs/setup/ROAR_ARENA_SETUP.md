@@ -30,6 +30,7 @@ Keep real values in `.env.local` locally and Vercel Environment Variables in pro
 ```txt
 NEXT_PUBLIC_SITE_URL=https://YOUR_DOMAIN.com
 NEXT_PUBLIC_INSTAGRAM_URL=https://www.instagram.com/roararenaindia/
+NEXT_PUBLIC_FACEBOOK_URL=https://www.facebook.com/RoarArena
 NEXT_PUBLIC_X_URL=https://x.com/RoarArenaIndia
 NEXT_PUBLIC_WHATSAPP_CHANNEL_URL=https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R
 NEXT_PUBLIC_CONTACT_EMAIL=roararenaindia@gmail.com
@@ -56,7 +57,21 @@ MATCH_SYNC_PAST_DAYS=2
 MATCH_SYNC_FUTURE_DAYS=7
 ```
 
-Instagram and X API keys are not required for the current match-update phase.
+Instagram API keys activate automatic post sync inside the two-hour live cron. X remains optional and is skipped unless its credentials are configured.
+
+```txt
+INSTAGRAM_API_MODE=instagram_login
+INSTAGRAM_GRAPH_API_VERSION=v20.0
+INSTAGRAM_USER_ID=your_numeric_instagram_user_id
+INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_access_token
+INSTAGRAM_SYNC_LIMIT=18
+INSTAGRAM_STORAGE_BUCKET=roar-instagram
+
+X_USERNAME=RoarArenaIndia
+X_USER_ID=your_x_user_id
+X_BEARER_TOKEN=your_x_bearer_token
+X_SYNC_LIMIT=10
+```
 
 ## Supabase setup
 
@@ -89,7 +104,7 @@ ROAR_CRON_SECRET=the-same-value-as-CRON_SECRET
 Then run:
 
 ```txt
-GitHub > Actions > Roar Arena 2-hour match sync > Run workflow
+GitHub > Actions > Roar Arena 2-hour live sync > Run workflow
 ```
 
 If the manual run succeeds, GitHub will call the deployed site every 2 hours.
@@ -99,7 +114,7 @@ If the manual run succeeds, GitHub will call the deployed site every 2 hours.
 - `app/page.tsx` loads the public homepage.
 - `components/home/home-experience.tsx` contains the main site sections.
 - `components/hooks/use-public-home.ts` refreshes live homepage data while visitors are active.
-- `app/api/cron/roar/route.ts` runs match sync plus auto-curation.
+- `app/api/cron/roar/route.ts` runs configured social sync, match sync, and auto-curation.
 - `app/api/sync/matches/route.ts` fetches match data and saves it to Supabase.
 - `app/api/public/home/route.ts` serves the homepage live data payload.
 

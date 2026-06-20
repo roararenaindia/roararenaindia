@@ -11,6 +11,7 @@ You post on Instagram
 -> post data is saved into roar_posts
 -> /api/public/home shows it on the homepage
 -> Latest from the arena updates automatically
+-> /api/cron/roar repeats this during the two-hour live sync
 ```
 
 ## What the app needs
@@ -18,6 +19,8 @@ You post on Instagram
 Add these values in local `.env.local` and in Vercel environment variables:
 
 ```txt
+INSTAGRAM_API_MODE=instagram_login
+INSTAGRAM_GRAPH_API_VERSION=v20.0
 INSTAGRAM_USER_ID=your_numeric_instagram_user_id
 INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_access_token
 INSTAGRAM_SYNC_LIMIT=18
@@ -41,7 +44,7 @@ Choose Business or Creator. Meta's Instagram API is for professional accounts.
 1. Open [Meta for Developers](https://developers.facebook.com/).
 2. Create or open a Meta app for Roar Arena.
 3. Add the Instagram product.
-4. Use Instagram API with Instagram Login or Instagram API with Facebook Login.
+4. Use Instagram API with Instagram Login.
 5. Log in as the Roar Arena Instagram account owner.
 6. Grant media/profile permissions.
 7. Get the numeric Instagram user ID.
@@ -54,6 +57,7 @@ INSTAGRAM_ACCESS_TOKEN=
 ```
 
 10. Redeploy the app.
+11. Run the GitHub Action `Roar Arena 2-hour live sync` once to verify the scheduled path.
 
 ## Verify inside Roar Arena
 
@@ -81,10 +85,19 @@ Refresh the Instagram access token before it expires.
 
 If the token expires, Instagram sync will stop until a new token is added.
 
+## Quick token test
+
+For the Instagram Login setup, test the generated token with:
+
+```txt
+https://graph.instagram.com/v20.0/me?fields=user_id,username,account_type&access_token=YOUR_TOKEN
+```
+
+Use the returned `user_id` as `INSTAGRAM_USER_ID`.
+
 ## Useful official docs
 
 - [Instagram API with Instagram Login](https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/)
 - [Instagram media reference](https://developers.facebook.com/docs/instagram-platform/reference/instagram-media/)
 - [Instagram access token reference](https://developers.facebook.com/docs/instagram-platform/reference/access_token/)
 - [Refresh access token](https://developers.facebook.com/docs/instagram-platform/reference/refresh_access_token/)
-

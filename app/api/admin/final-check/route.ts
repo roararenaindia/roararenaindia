@@ -55,6 +55,7 @@ export async function GET(request: NextRequest) {
     },
     socialLinks: {
       instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/roararenaindia/',
+      facebook: process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://www.facebook.com/RoarArena',
       x: process.env.NEXT_PUBLIC_X_URL || 'https://x.com/RoarArenaIndia',
       whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R',
       email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'roararenaindia@gmail.com',
@@ -81,8 +82,8 @@ export async function GET(request: NextRequest) {
       autoCurateRoute: true,
       matchRoute: true,
       matchCronEvery2Hours: true,
+      socialCronEnabledWhenConfigured: true,
       autoCurateAfterMatchSync: true,
-      socialCronDisabledForThisPhase: true,
       templateStudio: true,
       approvalQueue: !queue.error,
       syncLogging: !syncRuns.error,
@@ -110,11 +111,11 @@ export async function GET(request: NextRequest) {
     productionReady: required.every(Boolean),
     checks,
     warnings: [
-      !checks.env.instagramUserId || !checks.env.instagramAccessToken ? 'Instagram automation is intentionally optional for this phase.' : null,
+      !checks.env.instagramUserId || !checks.env.instagramAccessToken ? 'Instagram automation is enabled when Vercel has INSTAGRAM_USER_ID and INSTAGRAM_ACCESS_TOKEN.' : null,
       !checks.supabase.instagramStorageBucket ? 'Instagram storage is optional for this phase.' : null,
       !checks.apiFootball.configured ? 'Match provider is not connected yet. Add FOOTBALL_DATA_TOKEN for the free provider.' : null,
       checks.apiFootball.configured && !checks.apiFootball.fixturesReachable ? `Match provider could not fetch fixtures: ${checks.apiFootball.error}` : null,
-      !checks.env.xUserId || !checks.env.xBearerToken ? 'X automation is intentionally optional for this phase.' : null,
+      !checks.env.xUserId || !checks.env.xBearerToken ? 'X automation will be skipped until X_USER_ID and X_BEARER_TOKEN are added.' : null,
       payload.source?.includes('fallback') ? 'Homepage is still using fallback data until Supabase sync runs.' : null,
     ].filter(Boolean),
   })

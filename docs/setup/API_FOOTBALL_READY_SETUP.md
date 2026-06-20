@@ -62,9 +62,9 @@ Then:
 
 - Match sync now uses one date-range request instead of one request per day.
 - This protects the free 100 requests/day quota.
-- External cron now syncs matches every 2 hours.
-- Auto-curation runs after each match sync.
-- Instagram and X sync are not required for this phase.
+- External live cron now syncs configured social posts and matches every 2 hours.
+- Auto-curation runs after each live sync.
+- Instagram runs when Meta credentials are configured; X is skipped until its credentials exist.
 - Match provider tokens are never hardcoded.
 
 ## Expected result
@@ -76,4 +76,4 @@ The site should automatically keep these sections updated:
 - FIFA fixtures
 - Final results
 - Live match state
-- Latest story cards from fallback or Supabase content
+- Latest story cards from Instagram, fallback, or Supabase content

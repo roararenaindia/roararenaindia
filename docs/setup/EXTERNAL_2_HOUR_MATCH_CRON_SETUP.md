@@ -1,6 +1,6 @@
-# Roar Arena 2-hour match updates
+# Roar Arena 2-hour live updates
 
-This phase only needs automatic football schedule/result updates. Instagram and X sync can stay off until the social automation phase.
+This cron handles automatic football schedule/result updates, homepage curation, and configured social post sync. Instagram runs when `INSTAGRAM_USER_ID` and `INSTAGRAM_ACCESS_TOKEN` exist. X is skipped unless its credentials exist.
 
 Use GitHub Actions as the external scheduler. This keeps the site lightweight, avoids Vercel Cron limits on free/hobby plans, and avoids needing social API keys now.
 
@@ -10,7 +10,7 @@ This repo includes:
 .github/workflows/roar-cron.yml
 ```
 
-It calls the match cron endpoint every 2 hours.
+It calls the live cron endpoint every 2 hours.
 
 ## Endpoint
 
@@ -53,17 +53,17 @@ ROAR_CRON_URL=https://YOUR_DOMAIN.com/api/cron/roar
 Then open:
 
 ```txt
-Actions > Roar Arena 2-hour match sync > Run workflow
+Actions > Roar Arena 2-hour live sync > Run workflow
 ```
 
 If the manual run succeeds, GitHub will call it automatically every 2 hours.
 
 ## What it runs
 
+- Instagram post sync when credentials exist
+- X post sync when credentials exist
 - FIFA schedule and score sync
 - Auto-curation for hero/match board
-- It does not run Instagram sync
-- It does not run X sync
 
 ## Required env vars
 
@@ -72,6 +72,7 @@ These must exist in Vercel Project Settings > Environment Variables for `Product
 ```txt
 CRON_SECRET=your_secret
 NEXT_PUBLIC_SITE_URL=https://roararenaindia.vercel.app
+NEXT_PUBLIC_FACEBOOK_URL=https://www.facebook.com/RoarArena
 MATCH_DATA_PROVIDER=football-data
 FOOTBALL_DATA_TOKEN=your_football_data_org_token
 FOOTBALL_DATA_COMPETITION=WC
@@ -87,16 +88,18 @@ Do not commit real keys to the repo. Add them in Vercel Project Settings > Envir
 
 If `https://roararenaindia.vercel.app/api/public/home` returns `"source":"static-fallback"`, production is missing Supabase read variables. If it returns `401` for admin/cron routes with your local secret, production is missing or using a different `CRON_SECRET`.
 
-## Optional Instagram post automation
+## Instagram post automation
 
-Posts do not auto-sync from Instagram until these are added in Vercel:
+Posts auto-sync from Instagram once these are added in Vercel:
 
 ```txt
+INSTAGRAM_API_MODE=instagram_login
+INSTAGRAM_GRAPH_API_VERSION=v20.0
 INSTAGRAM_USER_ID=your_instagram_business_user_id
 INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_token
 ```
 
-Without these, the site can still show manual/database posts, but it will not fetch new Instagram posts automatically.
+Without these, the cron skips Instagram and the site can still show manual/database posts.
 
 ## Test after deploy
 

@@ -1,4 +1,4 @@
-name: Roar Arena 2-hour match sync
+name: Roar Arena 2-hour live sync
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  sync-matches:
+  sync-live-data:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:

@@ -354,7 +354,7 @@ export default function AdminDashboard() {
           <div className="grid min-w-0 grid-cols-2 gap-3 rounded-[1.5rem] border border-border bg-card p-4 lg:min-w-[280px]">
             <StatusPill active={health?.supabaseRead} label="DB read" />
             <StatusPill active={health?.supabaseWrite} label="DB write" />
-            <StatusPill active={health?.instagramConfigured} label="IG optional" />
+            <StatusPill active={health?.instagramConfigured} label="IG sync" />
             <StatusPill active={health?.apiFootballConfigured} label="Matches" />
             <StatusPill active={health?.xConfigured} label="X optional" />
           </div>
@@ -381,12 +381,12 @@ export default function AdminDashboard() {
           <button onClick={() => runAction('Instagram sync', '/api/sync/instagram')} className="rounded-[1.4rem] border border-border bg-card p-5 text-left opacity-80 transition hover:-translate-y-1 hover:border-primary/45 hover:opacity-100">
             <Camera className="mb-4 h-6 w-6 text-primary" />
             <p className="font-display text-3xl uppercase leading-none">IG Optional</p>
-            <p className="mt-2 text-xs leading-5 text-muted-foreground">Later-phase social automation.</p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">Pull latest Instagram posts into the site feed.</p>
           </button>
           <button onClick={() => runAction('X sync', '/api/sync/x')} className="rounded-[1.4rem] border border-border bg-card p-5 text-left opacity-80 transition hover:-translate-y-1 hover:border-primary/45 hover:opacity-100">
             <Activity className="mb-4 h-6 w-6 text-primary" />
             <p className="font-display text-3xl uppercase leading-none">X Optional</p>
-            <p className="mt-2 text-xs leading-5 text-muted-foreground">Later-phase social automation.</p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">Pull latest X posts when credentials are configured.</p>
           </button>
           <button onClick={() => runAction('Match sync', '/api/sync/matches')} className="rounded-[1.4rem] border border-border bg-card p-5 text-left transition hover:-translate-y-1 hover:border-primary/45">
             <Radio className="mb-4 h-6 w-6 text-primary" />

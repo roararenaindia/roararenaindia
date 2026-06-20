@@ -39,6 +39,7 @@ export const Download = makeIcon(<><path d="M12 3v12" /><path d="m7 10 5 5 5-5" 
 export const ExternalLink = makeIcon(<><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></>)
 export const Eye = makeIcon(<><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></>)
 export const EyeOff = makeIcon(<><path d="M3 3l18 18" /><path d="M10.6 10.6a3 3 0 0 0 4.2 4.2" /><path d="M9.9 4.3A10.5 10.5 0 0 1 12 4c6 0 10 8 10 8a16.3 16.3 0 0 1-3.2 4.2" /><path d="M6.6 6.6A16.4 16.4 0 0 0 2 12s4 8 10 8c1.3 0 2.5-.3 3.6-.8" /></>)
+export const Facebook = makeIcon(<><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3.5L18 10h-4V7a1 1 0 0 1 1-1h3z" /></>)
 export const Flame = makeIcon(<><path d="M8.5 14.5A4.5 4.5 0 0 0 12 22a4.5 4.5 0 0 0 3.5-7.5c-1.2-1.4-1.7-3.2-.9-5.5-2.3 1.1-4.1 2.7-5.3 4.8-.4-2.1.1-4.6 1.5-7.8C6.7 8.6 5.5 12.4 8.5 14.5z" /></>)
 export const ImageDown = makeIcon(<><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /><path d="M12 13v6" /><path d="m9 16 3 3 3-3" /></>)
 export const Instagram = makeIcon(<><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><path d="M17.5 6.5h.01" /></>)

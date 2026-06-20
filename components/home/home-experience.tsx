@@ -9,6 +9,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock3,
+  Facebook,
   Flame,
   MessageCircle,
   Radio,
@@ -774,7 +775,7 @@ function EventsSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Live events coming soon"
-          title="First fan experiences are being built."
+          title={siteConfig.brand.campaignLine}
           body="We are preparing our first Roar Arena fan experiences. Expect live screenings, sports watch parties, fan meetups, and local sports events soon."
         />
 
@@ -892,6 +893,7 @@ function CommunitySection() {
   const links = [
     { label: 'Match updates', body: 'Results and upcoming fixture alerts', href: siteConfig.links.whatsappChannel, icon: CalendarDays },
     { label: 'Fan reactions', body: 'Stories, edits, and matchday energy', href: siteConfig.links.instagram, icon: Flame },
+    { label: 'Facebook crowd', body: 'Roar Arena posts and community updates', href: siteConfig.links.facebook, icon: Facebook },
     { label: 'Event drops', body: 'First screening and watch-party updates', href: siteConfig.links.whatsappChannel, icon: Bell },
     { label: 'Fast takes', body: '@RoarArenaIndia on X', href: siteConfig.links.x, icon: Zap },
   ]

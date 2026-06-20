@@ -29,6 +29,7 @@ export default function Footer() {
               <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary">Connect</h3>
               <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
                 <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">Instagram</a>
+                <a href={siteConfig.links.facebook} target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">Facebook</a>
                 <a href={siteConfig.links.x} target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">X</a>
                 <a href={siteConfig.links.whatsappChannel} target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">WhatsApp Channel</a>
                 <a href={siteConfig.links.contact} className="transition hover:text-primary">Email</a>
