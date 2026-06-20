@@ -49,7 +49,7 @@ export const siteConfig = {
     { label: 'Community', href: '#community' },
   ],
   hero: {
-    eyebrow: 'Sports fan experience startup',
+    eyebrow: 'Matchday Energy Starts Here',
     headline: 'Feel the Game.\nJoin the Roar.',
     subheadline:
       'Roar Arena is building live sports screening events, fan meetups, watch parties, and matchday experiences for real sports fans.',
