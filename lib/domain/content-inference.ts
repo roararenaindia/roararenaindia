@@ -33,16 +33,16 @@ export const teamAssets: TeamAsset[] = [
 
 export function inferCategory(text = '') {
   const normalized = text.toLowerCase()
-  if (/(nba|knicks|spurs|basketball|finals)/i.test(normalized)) return 'NBA Finals 2026'
+  if (/(fifa|world cup|football|soccer|usa|paraguay|mexico|brazil|canada|germany|spain|france|senegal|belgium|argentina|portugal|uruguay)/i.test(normalized)) return 'FIFA World Cup 2026'
+  if (/(nba|knicks|spurs|basketball|nba finals)/i.test(normalized)) return 'NBA Finals 2026'
   if (/(ipl|cricket)/i.test(normalized)) return 'Cricket'
   if (/(f1|formula|grand prix|race)/i.test(normalized)) return 'Formula 1'
-  if (/(fifa|world cup|football|soccer|usa|paraguay|mexico|brazil|canada|germany|spain|france|senegal|belgium|argentina|portugal|uruguay)/i.test(normalized)) return 'FIFA World Cup 2026'
   return 'Roar Arena'
 }
 
 export function inferPostType(text = '') {
   const normalized = text.toLowerCase()
-  if (/(result|full time|final score|defeats|beats|wins|won|draw|[0-9]\s*-\s*[0-9])/i.test(normalized)) return 'Result'
+  if (/(result|full time|final score|defeats|beats|wins|win|won|draw|[0-9]\s*[-–—]\s*[0-9])/i.test(normalized)) return 'Result'
   if (/(fixture|fixtures|today'?s matches|schedule|lineup)/i.test(normalized)) return 'Fixtures'
   if (/(preview|up next|watch|vs|versus)/i.test(normalized)) return 'Preview'
   return 'Announcement'
