@@ -70,7 +70,15 @@ https://YOUR_DOMAIN.com/api/webhooks/instagram
 
 13. Use the same value from `INSTAGRAM_WEBHOOK_VERIFY_TOKEN` as the Meta verify token.
 14. Subscribe the webhook to Instagram media changes.
-15. Run the GitHub Action `Roar Arena live sync` once to verify the scheduled fallback path.
+15. Configure Instagram Business Login with this redirect URL:
+
+```txt
+https://YOUR_DOMAIN.com/api/auth/instagram/callback
+```
+
+16. Run the GitHub Action `Roar Arena live sync` once to verify the scheduled fallback path.
+
+Meta app review can be skipped when this app is only used by the direct developer for their own Instagram business account. Submit app review only if Roar Arena will provide the integration to other clients or needs advanced public access.
 
 ## Verify inside Roar Arena
 

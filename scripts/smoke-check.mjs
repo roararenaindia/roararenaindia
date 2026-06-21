@@ -8,6 +8,7 @@ const requiredFiles = [
   'app/api/sync/matches/route.ts',
   'app/api/admin/matches/check/route.ts',
   'app/api/admin/final-check/route.ts',
+  'app/api/auth/instagram/callback/route.ts',
   'app/api/sync/instagram/route.ts',
   'app/api/webhooks/instagram/route.ts',
   'app/api/sync/x/route.ts',
@@ -76,6 +77,14 @@ const webhookRoute = fs.readFileSync(path.join(root, 'app/api/webhooks/instagram
 for (const token of ['INSTAGRAM_WEBHOOK_VERIFY_TOKEN', 'META_APP_SECRET', 'x-hub-signature-256', '/api/sync/instagram', '/api/admin/auto-curate']) {
   if (!webhookRoute.includes(token)) {
     console.error(`Instagram webhook route missing required behavior: ${token}`)
+    process.exit(1)
+  }
+}
+
+const instagramCallbackRoute = fs.readFileSync(path.join(root, 'app/api/auth/instagram/callback/route.ts'), 'utf8')
+for (const token of ['Instagram Business Login Callback Ready', 'no-store', '/admin']) {
+  if (!instagramCallbackRoute.includes(token)) {
+    console.error(`Instagram business-login callback route missing required behavior: ${token}`)
     process.exit(1)
   }
 }
