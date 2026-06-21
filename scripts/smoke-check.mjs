@@ -58,7 +58,7 @@ if (nextConfig.includes('ignoreBuildErrors')) {
 }
 
 const workflow = fs.readFileSync(path.join(root, '.github/workflows/roar-cron.yml'), 'utf8')
-for (const token of ["cron: '*/10 * * * *'", "cron: '*/15 * * * *'", "cron: '0 */2 * * *'", '/api/sync/instagram', '/api/sync/matches', 'Authorization: Bearer ${ROAR_CRON_SECRET}']) {
+for (const token of ["cron: '3,13,23,33,43,53 * * * *'", "cron: '7,22,37,52 * * * *'", "cron: '17 */2 * * *'", '/api/sync/instagram', '/api/sync/matches', 'Authorization: Bearer ${ROAR_CRON_SECRET}']) {
   if (!workflow.includes(token)) {
     console.error(`GitHub Actions cron missing required live-sync token: ${token}`)
     process.exit(1)
