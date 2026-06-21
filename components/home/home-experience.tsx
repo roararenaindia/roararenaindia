@@ -921,6 +921,7 @@ function CommunitySection() {
     { label: 'Facebook crowd', body: 'Roar Arena posts and community updates', href: siteConfig.links.facebook, icon: Facebook },
     { label: 'Event drops', body: 'First screening and watch-party updates', href: siteConfig.links.whatsappCommunity, icon: Bell },
     { label: 'Fast takes', body: '@RoarArenaIndia on X', href: siteConfig.links.x, icon: Zap },
+    { label: 'WhatsApp channel', body: 'Channel alerts and matchday updates', href: 'https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R', icon: MessageCircle },
   ]
 
   return (
@@ -933,14 +934,6 @@ function CommunitySection() {
               <p className="text-xs font-black uppercase tracking-[0.22em] text-primary">Community</p>
               <h2 className="mt-3 font-display text-[clamp(2.2rem,5.8vw,4.8rem)] uppercase leading-[0.98] text-foreground">Not just fans. A whole arena.</h2>
               <p className="mt-5 text-base leading-7 text-muted-foreground">Roar Arena is starting with a community of fans who want better match nights, sharper updates, and real sports energy.</p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <a href={siteConfig.links.whatsappCommunity} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow sm:w-auto">
-                  <MessageCircle className="h-4 w-4" /> Join WhatsApp Community
-                </a>
-                <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-foreground sm:w-auto">
-                  <Instagram className="h-4 w-4" /> Follow Instagram
-                </a>
-              </div>
             </div>
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
               {links.map((link) => (
