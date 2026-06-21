@@ -41,6 +41,8 @@ MATCH_DATA_PROVIDER=football-data
 FOOTBALL_DATA_TOKEN=your-football-data-org-token
 FOOTBALL_DATA_COMPETITION=WC
 FOOTBALL_DATA_SEASON=2026
+MATCH_SYNC_PAST_DAYS=7
+MATCH_SYNC_FUTURE_DAYS=7
 
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-publishable-or-anon-key
@@ -53,17 +55,19 @@ Optional fallback provider:
 API_FOOTBALL_KEY=your-api-football-key
 API_FOOTBALL_LEAGUE_ID=1
 API_FOOTBALL_SEASON=2026
-MATCH_SYNC_PAST_DAYS=2
+MATCH_SYNC_PAST_DAYS=7
 MATCH_SYNC_FUTURE_DAYS=7
 ```
 
-Instagram API keys activate automatic post sync inside the two-hour live cron. X remains optional and is skipped unless its credentials are configured.
+Instagram API keys activate automatic post sync. The webhook gives near-instant updates, and the 10-minute GitHub fallback poll catches delayed webhook events. X remains optional and is skipped unless its credentials are configured.
 
 ```txt
 INSTAGRAM_API_MODE=instagram_login
 INSTAGRAM_GRAPH_API_VERSION=v20.0
 INSTAGRAM_USER_ID=your_numeric_instagram_user_id
 INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_access_token
+INSTAGRAM_WEBHOOK_VERIFY_TOKEN=your_long_random_webhook_verify_token
+META_APP_SECRET=your_meta_app_secret
 INSTAGRAM_SYNC_LIMIT=18
 INSTAGRAM_STORAGE_BUCKET=roar-instagram
 
@@ -90,7 +94,7 @@ Required tables:
 - `roar_generated_posts`
 - `roar_sync_runs`
 
-## Automatic 2-hour updates
+## Automatic updates
 
 This project uses GitHub Actions as the external scheduler, so it does not depend on Vercel Hobby cron limits.
 
@@ -104,10 +108,10 @@ ROAR_CRON_SECRET=the-same-value-as-CRON_SECRET
 Then run:
 
 ```txt
-GitHub > Actions > Roar Arena 2-hour live sync > Run workflow
+GitHub > Actions > Roar Arena live sync > Run workflow
 ```
 
-If the manual run succeeds, GitHub will call the deployed site every 2 hours.
+If the manual run succeeds, GitHub will call Instagram fallback polling every 10 minutes, match result sync every 15 minutes, and the full live sync every 2 hours.
 
 ## Main public files
 
@@ -115,6 +119,7 @@ If the manual run succeeds, GitHub will call the deployed site every 2 hours.
 - `components/home/home-experience.tsx` contains the main site sections.
 - `components/hooks/use-public-home.ts` refreshes live homepage data while visitors are active.
 - `app/api/cron/roar/route.ts` runs configured social sync, match sync, and auto-curation.
+- `app/api/webhooks/instagram/route.ts` receives verified Meta Instagram webhook events and triggers immediate sync.
 - `app/api/sync/matches/route.ts` fetches match data and saves it to Supabase.
 - `app/api/public/home/route.ts` serves the homepage live data payload.
 

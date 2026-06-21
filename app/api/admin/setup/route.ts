@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       'Click Check Match API',
       'Click Sync Matches',
       'Click Curate',
-      'Set external scheduler to call /api/cron/roar every 2 hours',
+      'Set GitHub Actions to sync Instagram every 10 minutes, matches every 15 minutes, and /api/cron/roar every 2 hours',
       'Open /studio and generate a post',
       'Save Queue',
       'Approve and Publish from /admin',

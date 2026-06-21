@@ -19,7 +19,7 @@ function isoDateOffset(days: number) {
 }
 
 async function checkMatchProvider() {
-  const pastDays = Number(process.env.MATCH_SYNC_PAST_DAYS || 2)
+  const pastDays = Number(process.env.MATCH_SYNC_PAST_DAYS || 7)
   const futureDays = Number(process.env.MATCH_SYNC_FUTURE_DAYS || 7)
   const from = isoDateOffset(-pastDays)
   const to = isoDateOffset(futureDays)
@@ -47,6 +47,8 @@ export async function GET(request: NextRequest) {
       supabaseServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
       instagramUserId: Boolean(process.env.INSTAGRAM_USER_ID),
       instagramAccessToken: Boolean(process.env.INSTAGRAM_ACCESS_TOKEN),
+      instagramWebhookVerifyToken: Boolean(process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN),
+      metaAppSecret: Boolean(process.env.META_APP_SECRET),
       footballDataToken: Boolean(process.env.FOOTBALL_DATA_TOKEN),
       apiFootballKey: Boolean(process.env.API_FOOTBALL_KEY),
       xUserId: Boolean(process.env.X_USER_ID),
@@ -78,6 +80,7 @@ export async function GET(request: NextRequest) {
     },
     automation: {
       instagramRoute: true,
+      instagramWebhookRoute: true,
       xRoute: true,
       autoCurateRoute: true,
       matchRoute: true,
@@ -100,6 +103,10 @@ export async function GET(request: NextRequest) {
     checks.supabase.matchesTable,
     checks.supabase.generatedPostsTable,
     checks.supabase.syncRunsTable,
+    checks.env.instagramUserId,
+    checks.env.instagramAccessToken,
+    checks.env.instagramWebhookVerifyToken,
+    checks.env.metaAppSecret,
     checks.publicHome.heroReady,
     checks.apiFootball.configured,
     checks.apiFootball.statusReachable,
@@ -112,6 +119,7 @@ export async function GET(request: NextRequest) {
     checks,
     warnings: [
       !checks.env.instagramUserId || !checks.env.instagramAccessToken ? 'Instagram automation is enabled when Vercel has INSTAGRAM_USER_ID and INSTAGRAM_ACCESS_TOKEN.' : null,
+      !checks.env.instagramWebhookVerifyToken || !checks.env.metaAppSecret ? 'Near-instant Instagram updates require INSTAGRAM_WEBHOOK_VERIFY_TOKEN and META_APP_SECRET.' : null,
       !checks.supabase.instagramStorageBucket ? 'Instagram storage is optional for this phase.' : null,
       !checks.apiFootball.configured ? 'Match provider is not connected yet. Add FOOTBALL_DATA_TOKEN for the free provider.' : null,
       checks.apiFootball.configured && !checks.apiFootball.fixturesReachable ? `Match provider could not fetch fixtures: ${checks.apiFootball.error}` : null,

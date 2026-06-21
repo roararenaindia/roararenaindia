@@ -1,6 +1,6 @@
 # Roar Arena Automation Setup
 
-This phase runs automatic live updates. The two-hour cron always updates fixtures/results and auto-curation, and it also syncs Instagram/X posts when the matching credentials are configured.
+This phase runs automatic live updates. GitHub Actions updates Instagram every 10 minutes as a fallback, updates fixtures/results every 15 minutes, and keeps the two-hour full cron as a broad health sync.
 
 ## Current architecture
 
@@ -13,6 +13,8 @@ football-data.org or API-Football
   -> Matchday command board
 
 Instagram/X social posts
+  -> /api/webhooks/instagram for near-instant Instagram events
+  -> /api/sync/instagram fallback polling
   -> Supabase roar_posts
   -> /api/public/home
   -> Latest from Arena
@@ -35,6 +37,8 @@ MATCH_DATA_PROVIDER=football-data
 FOOTBALL_DATA_TOKEN=your-football-data-org-token
 FOOTBALL_DATA_COMPETITION=WC
 FOOTBALL_DATA_SEASON=2026
+MATCH_SYNC_PAST_DAYS=7
+MATCH_SYNC_FUTURE_DAYS=7
 ```
 
 Never expose `SUPABASE_SERVICE_ROLE_KEY` in frontend code.
@@ -45,7 +49,7 @@ Never expose `SUPABASE_SERVICE_ROLE_KEY` in frontend code.
 API_FOOTBALL_KEY=your-api-football-key
 API_FOOTBALL_LEAGUE_ID=1
 API_FOOTBALL_SEASON=2026
-MATCH_SYNC_PAST_DAYS=2
+MATCH_SYNC_PAST_DAYS=7
 MATCH_SYNC_FUTURE_DAYS=7
 ```
 
@@ -69,9 +73,9 @@ Admin actions:
 - Pin/hide matches
 - Edit titles, categories, descriptions, and match priority
 
-## Automatic 2-hour live updates
+## Automatic live updates
 
-Use GitHub Actions instead of Vercel Cron for the 2-hour schedule.
+Use GitHub Actions instead of Vercel Cron for the live schedules.
 
 The workflow file is:
 
@@ -85,15 +89,15 @@ After deployment, add GitHub repository secrets:
 ROAR_CRON_SECRET=the-same-value-as-CRON_SECRET
 ```
 
-The workflow defaults to `https://roararenaindia.vercel.app/api/cron/roar`. Add `ROAR_CRON_URL` only if the production domain changes.
+The workflow defaults to `https://roararenaindia.vercel.app/api/cron/roar`. Add `ROAR_CRON_URL` only if the production domain changes. Add `ROAR_BASE_URL` only if you want split jobs to target a different base domain.
 
 Then run:
 
 ```txt
-GitHub > Actions > Roar Arena 2-hour live sync > Run workflow
+GitHub > Actions > Roar Arena live sync > Run workflow
 ```
 
-If the manual workflow succeeds, GitHub will keep calling the deployed endpoint every 2 hours.
+If the manual workflow succeeds, GitHub will call Instagram fallback polling every 10 minutes, match sync every 15 minutes, and the full cron every 2 hours.
 
 ## Social automation
 
@@ -112,6 +116,8 @@ INSTAGRAM_API_MODE=instagram_login
 INSTAGRAM_GRAPH_API_VERSION=v20.0
 INSTAGRAM_USER_ID=your_numeric_instagram_user_id
 INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_access_token
+INSTAGRAM_WEBHOOK_VERIFY_TOKEN=your_long_random_webhook_verify_token
+META_APP_SECRET=your_meta_app_secret
 INSTAGRAM_SYNC_LIMIT=18
 INSTAGRAM_STORAGE_BUCKET=roar-instagram
 ```

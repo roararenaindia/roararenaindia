@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
     supabaseRead: isSupabaseConfigured('read'),
     supabaseWrite: hasSupabaseWriteAccess(),
     instagramConfigured: Boolean(process.env.INSTAGRAM_USER_ID && process.env.INSTAGRAM_ACCESS_TOKEN),
+    instagramWebhookConfigured: Boolean(process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN && process.env.META_APP_SECRET),
     xConfigured: Boolean(process.env.X_USER_ID && process.env.X_BEARER_TOKEN),
     apiFootballConfigured: hasAnyMatchProvider(),
     mode: isSupabaseConfigured('read') ? 'supabase-ready' : 'static-fallback',

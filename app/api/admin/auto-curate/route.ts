@@ -31,8 +31,8 @@ function scoreMatch(match: MatchRow) {
   const status = match.status.toLowerCase()
 
   if (['live', '1h', '2h', 'ht', 'et', 'p'].includes(status)) return 10000 + (match.priority || 0)
+  if (['final', 'ft', 'aet', 'pen', 'finished'].includes(status) && diffHours >= -72) return 9500 + diffHours + (match.priority || 0)
   if (['upcoming', 'ns', 'tbd', 'scheduled'].includes(status) && diffHours >= -1 && diffHours <= 96) return 9000 - Math.abs(diffHours) + (match.priority || 0)
-  if (['final', 'ft', 'aet', 'pen', 'finished'].includes(status) && diffHours >= -36) return 8000 + diffHours + (match.priority || 0)
   if (diffHours > 0) return 5000 - Math.min(diffHours, 500) + (match.priority || 0)
   return 1000 + (match.priority || 0)
 }

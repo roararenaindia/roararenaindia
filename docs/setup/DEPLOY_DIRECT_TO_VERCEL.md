@@ -16,7 +16,7 @@ This zip is prepared for direct Vercel deployment.
 - Template Studio
 - Approval Queue
 - Final launch checker
-- External 2-hour match cron endpoint
+- External live update endpoints
 
 ## Must add in Vercel Environment Variables
 
@@ -37,7 +37,7 @@ FOOTBALL_DATA_SEASON=2026
 API_FOOTBALL_KEY=your-api-football-key
 API_FOOTBALL_LEAGUE_ID=1
 API_FOOTBALL_SEASON=2026
-MATCH_SYNC_PAST_DAYS=2
+MATCH_SYNC_PAST_DAYS=7
 MATCH_SYNC_FUTURE_DAYS=7
 
 NEXT_PUBLIC_INSTAGRAM_URL=https://www.instagram.com/roararenaindia/
@@ -87,7 +87,7 @@ Required tables:
 ## Live cron behavior
 
 - `/api/cron/roar` runs configured social sync, match sync, and auto-curation together
-- Call it every 2 hours from an external scheduler
+- Call split live sync jobs from GitHub Actions: Instagram every 10 minutes, matches every 15 minutes, full cron every 2 hours
 - Instagram and X are skipped safely until their credentials exist
 
 ## After deploy
@@ -133,8 +133,8 @@ After deployment, open `/admin` and run:
 2. Match API Check
 3. Sync Matches
 4. Auto Curate
-5. Set the external scheduler to call `/api/cron/roar` every 2 hours
+5. Set GitHub Actions to call Instagram every 10 minutes, matches every 15 minutes, and `/api/cron/roar` every 2 hours
 
-## Important: 2-hour match updates
+## Important: live match updates
 
-This project does not rely on Vercel Cron for this phase. Use `docs/setup/EXTERNAL_2_HOUR_MATCH_CRON_SETUP.md` and call `/api/cron/roar` every 2 hours from an external scheduler with `Authorization: Bearer CRON_SECRET`.
+This project does not rely on Vercel Cron for this phase. Use `docs/setup/EXTERNAL_2_HOUR_MATCH_CRON_SETUP.md` and run the GitHub Actions scheduler with `Authorization: Bearer CRON_SECRET`.

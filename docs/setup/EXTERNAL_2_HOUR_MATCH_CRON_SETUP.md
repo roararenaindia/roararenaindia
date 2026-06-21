@@ -1,6 +1,6 @@
-# Roar Arena 2-hour live updates
+# Roar Arena live updates
 
-This cron handles automatic football schedule/result updates, homepage curation, and configured social post sync. Instagram runs when `INSTAGRAM_USER_ID` and `INSTAGRAM_ACCESS_TOKEN` exist. X is skipped unless its credentials exist.
+This workflow handles automatic football schedule/result updates, homepage curation, and configured social post sync. Instagram runs when `INSTAGRAM_USER_ID` and `INSTAGRAM_ACCESS_TOKEN` exist. X is skipped unless its credentials exist.
 
 Use GitHub Actions as the external scheduler. This keeps the site lightweight, avoids Vercel Cron limits on free/hobby plans, and avoids needing social API keys now.
 
@@ -10,11 +10,15 @@ This repo includes:
 .github/workflows/roar-cron.yml
 ```
 
-It calls the live cron endpoint every 2 hours.
+It runs three schedules:
+
+- Instagram fallback polling every 10 minutes.
+- Match fixtures/results sync every 15 minutes.
+- Full `/api/cron/roar` health sync every 2 hours.
 
 ## Endpoint
 
-The workflow calls this endpoint by default:
+The full sync calls this endpoint by default:
 
 ```txt
 https://roararenaindia.vercel.app/api/cron/roar
@@ -23,6 +27,7 @@ https://roararenaindia.vercel.app/api/cron/roar
 It sends `CRON_SECRET` as an authorization header, so the secret is not placed in the URL.
 
 If the production domain changes later, add `ROAR_CRON_URL` in GitHub Actions secrets to override the default.
+For split 10-minute and 15-minute jobs, the workflow derives the base URL from `ROAR_CRON_URL`. You can also set `ROAR_BASE_URL=https://YOUR_DOMAIN.com`.
 
 ## GitHub Actions secrets
 
@@ -53,10 +58,10 @@ ROAR_CRON_URL=https://YOUR_DOMAIN.com/api/cron/roar
 Then open:
 
 ```txt
-Actions > Roar Arena 2-hour live sync > Run workflow
+Actions > Roar Arena live sync > Run workflow
 ```
 
-If the manual run succeeds, GitHub will call it automatically every 2 hours.
+If the manual run succeeds, GitHub will call the deployed site on the 10-minute, 15-minute, and 2-hour schedules.
 
 ## What it runs
 
@@ -77,6 +82,8 @@ MATCH_DATA_PROVIDER=football-data
 FOOTBALL_DATA_TOKEN=your_football_data_org_token
 FOOTBALL_DATA_COMPETITION=WC
 FOOTBALL_DATA_SEASON=2026
+MATCH_SYNC_PAST_DAYS=7
+MATCH_SYNC_FUTURE_DAYS=7
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_publishable_or_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_secret_or_service_role_key
@@ -97,9 +104,11 @@ INSTAGRAM_API_MODE=instagram_login
 INSTAGRAM_GRAPH_API_VERSION=v20.0
 INSTAGRAM_USER_ID=your_instagram_business_user_id
 INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_token
+INSTAGRAM_WEBHOOK_VERIFY_TOKEN=your_long_random_webhook_verify_token
+META_APP_SECRET=your_meta_app_secret
 ```
 
-Without these, the cron skips Instagram and the site can still show manual/database posts.
+Without the access token/user ID, scheduled Instagram sync is skipped. Without webhook env vars, near-instant webhook delivery is disabled but 10-minute fallback polling still works once the token is valid.
 
 ## Test after deploy
 

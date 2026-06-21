@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchMatchRecordsRange, hasAnyMatchProvider } from '@/lib/services/match-data-provider'
+import { getLiveHomePayload } from '@/lib/services/live-home'
 import { hasSupabaseWriteAccess, supabaseUpsert } from '@/lib/services/supabase-rest'
 import { writeSyncLog } from '@/lib/services/sync-log'
 
@@ -18,6 +19,51 @@ function isoDateOffset(days: number) {
   return date.toISOString().slice(0, 10)
 }
 
+function summarizeResultValidation(records: Awaited<ReturnType<typeof fetchMatchRecordsRange>>['records']) {
+  const finals = records
+    .filter((record) => record.status === 'final')
+    .sort((a, b) => Date.parse(b.kickoff_time) - Date.parse(a.kickoff_time))
+  const finalsWithScores = finals.filter(
+    (record) => typeof record.home_score === 'number' && typeof record.away_score === 'number',
+  )
+  const finalsWithWinner = finals.filter((record) => Boolean(record.winner))
+
+  return {
+    finalCount: finals.length,
+    finalWithScoresCount: finalsWithScores.length,
+    finalWithWinnerCount: finalsWithWinner.length,
+    missingScoreCount: finals.length - finalsWithScores.length,
+    missingWinnerCount: finals.length - finalsWithWinner.length,
+    latestFinals: finals.slice(0, 5).map((record) => ({
+      providerMatchId: record.provider_match_id,
+      homeTeam: record.home_team,
+      awayTeam: record.away_team,
+      homeScore: record.home_score,
+      awayScore: record.away_score,
+      winner: record.winner,
+      kickoffTime: record.kickoff_time,
+    })),
+  }
+}
+
+async function validateHomepageResults(latestFinals: ReturnType<typeof summarizeResultValidation>['latestFinals']) {
+  const payload = await getLiveHomePayload()
+  const visibleMatches = Array.isArray(payload.matches) ? payload.matches : []
+  const visibleIds = new Set(visibleMatches.map((match) => match.id))
+  const latestFinalIds = latestFinals.map((match) => match.providerMatchId)
+  const missingLatestFinalIds = latestFinalIds.filter((id) => !visibleIds.has(id))
+
+  return {
+    publicSource: payload.source,
+    publicDatabase: payload.database,
+    publicMatchCount: visibleMatches.length,
+    publicFinalCount: visibleMatches.filter((match) => match.status === 'final').length,
+    latestFinalsChecked: latestFinalIds.length,
+    latestFinalsVisible: latestFinalIds.length - missingLatestFinalIds.length,
+    missingLatestFinalIds,
+  }
+}
+
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ ok: false, error: 'Unauthorized cron request' }, { status: 401 })
@@ -31,13 +77,14 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  const pastDays = Number(process.env.MATCH_SYNC_PAST_DAYS || 2)
+  const pastDays = Number(process.env.MATCH_SYNC_PAST_DAYS || 7)
   const futureDays = Number(process.env.MATCH_SYNC_FUTURE_DAYS || 7)
   const from = isoDateOffset(-pastDays)
   const to = isoDateOffset(futureDays)
 
   try {
     const { records, fetched, provider, providerLabel, quota, query } = await fetchMatchRecordsRange(from, to)
+    const resultValidation = summarizeResultValidation(records)
 
     if (!hasSupabaseWriteAccess()) {
       return NextResponse.json({
@@ -48,6 +95,7 @@ export async function GET(request: NextRequest) {
         from,
         to,
         fetched,
+        resultValidation,
         quota,
         query,
         error: 'Supabase write access is missing, so fetched matches cannot be saved to the homepage.',
@@ -62,13 +110,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ ok: false, mode: 'supabase_error', error: upsertResult.error }, { status: 500 })
     }
 
+    const homepageValidation = await validateHomepageResults(resultValidation.latestFinals)
+
     await writeSyncLog({
       source: 'matches',
       status: 'success',
       fetchedCount: fetched,
       savedCount: upsertResult.data?.length || records.length,
       message: 'Match sync complete',
-      details: { from, to, provider, providerLabel, query, quota },
+      details: { from, to, provider, providerLabel, query, quota, resultValidation, homepageValidation },
     })
 
     return NextResponse.json({
@@ -80,6 +130,8 @@ export async function GET(request: NextRequest) {
       to,
       fetched,
       upserted: upsertResult.data?.length || records.length,
+      resultValidation,
+      homepageValidation,
       quota,
       query,
       nextStep: records.length

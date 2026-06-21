@@ -1,7 +1,9 @@
-name: Roar Arena 2-hour live sync
+name: Roar Arena live sync
 
 on:
   schedule:
+    - cron: '*/10 * * * *'
+    - cron: '*/15 * * * *'
     - cron: '0 */2 * * *'
   workflow_dispatch:
 
@@ -12,12 +14,16 @@ jobs:
     steps:
       - name: Call Roar Arena cron endpoint
         env:
+          ROAR_BASE_URL: ${{ secrets.ROAR_BASE_URL }}
           ROAR_CRON_URL: ${{ secrets.ROAR_CRON_URL }}
           ROAR_CRON_SECRET: ${{ secrets.ROAR_CRON_SECRET }}
         run: |
           set -euo pipefail
 
           ROAR_CRON_URL="${ROAR_CRON_URL:-https://roararenaindia.vercel.app/api/cron/roar}"
+          ROAR_BASE_URL="${ROAR_BASE_URL:-${ROAR_CRON_URL%/api/cron/roar}}"
+          ROAR_BASE_URL="${ROAR_BASE_URL%/}"
+          SCHEDULE="${{ github.event.schedule || 'manual' }}"
 
           if [ -z "${ROAR_CRON_URL}" ]; then
             echo "::error::Missing GitHub secret ROAR_CRON_URL"
@@ -29,12 +35,16 @@ jobs:
             exit 1
           fi
 
-          response="$(curl --fail --silent --show-error --retry 2 --retry-delay 5 --max-time 60 \
-            --header "Authorization: Bearer ${ROAR_CRON_SECRET}" \
-            "${ROAR_CRON_URL}")"
+          call_endpoint() {
+            path="$1"
+            url="${ROAR_BASE_URL}${path}"
+            response="$(curl --fail --silent --show-error --retry 2 --retry-delay 5 --max-time 60 \
+              --header "Authorization: Bearer ${ROAR_CRON_SECRET}" \
+              "${url}")"
 
-          node - "$response" <<'NODE'
+            node - "$response" "$path" <<'NODE'
           const payload = JSON.parse(process.argv[2])
+          const path = process.argv[3]
 
           if (!payload.ok) {
             console.error(JSON.stringify(payload, null, 2))
@@ -42,11 +52,34 @@ jobs:
           }
 
           const summary = {
+            path,
             ok: payload.ok,
             mode: payload.mode,
             checkedAt: payload.checkedAt,
+            fetched: payload.fetched,
+            upserted: payload.upserted,
+            resultValidation: payload.resultValidation,
+            homepageValidation: payload.homepageValidation,
             results: payload.results,
           }
 
           console.log(JSON.stringify(summary, null, 2))
           NODE
+          }
+
+          case "${SCHEDULE}" in
+            "*/10 * * * *")
+              call_endpoint "/api/sync/instagram"
+              call_endpoint "/api/admin/auto-curate"
+              ;;
+            "*/15 * * * *")
+              call_endpoint "/api/sync/matches"
+              call_endpoint "/api/admin/auto-curate"
+              ;;
+            "0 */2 * * *")
+              call_endpoint "/api/cron/roar"
+              ;;
+            *)
+              call_endpoint "/api/cron/roar"
+              ;;
+          esac

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { callInternalSync } from '@/lib/services/internal-sync'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -10,32 +11,9 @@ function isAuthorized(request: NextRequest) {
   return authHeader === `Bearer ${secret}`
 }
 
-async function callInternal(origin: string, path: string, secret?: string) {
-  try {
-    const response = await fetch(`${origin}${path}`, {
-      cache: 'no-store',
-      headers: secret ? { Authorization: `Bearer ${secret}` } : {},
-    })
-    const data = await response.json().catch(() => ({}))
-    return {
-      path,
-      ok: response.ok && data?.ok !== false,
-      status: response.status,
-      mode: data?.mode || null,
-      message: data?.message || data?.error || null,
-      fetched: typeof data?.fetched === 'number' ? data.fetched : null,
-      providerLabel: data?.providerLabel || null,
-    }
-  } catch (error) {
-    return {
-      path,
-      ok: false,
-      status: 0,
-      message: error instanceof Error ? error.message : 'Internal sync call failed',
-      fetched: null,
-      providerLabel: null,
-    }
-  }
+async function callInternalSummary(origin: string, path: string, secret?: string) {
+  const { data: _data, ...summary } = await callInternalSync(origin, path, secret)
+  return summary
 }
 
 function optionalSocialJobs() {
@@ -66,7 +44,7 @@ export async function GET(request: NextRequest) {
   const results = []
   for (const job of optionalSocialJobs()) {
     if (job.configured) {
-      results.push(await callInternal(origin, job.path, secret))
+      results.push(await callInternalSummary(origin, job.path, secret))
     } else {
       results.push({
         path: job.path,
@@ -80,11 +58,11 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const matchResult = await callInternal(origin, '/api/sync/matches', secret)
+  const matchResult = await callInternalSummary(origin, '/api/sync/matches', secret)
   results.push(matchResult)
 
   if (matchResult.ok) {
-    results.push(await callInternal(origin, '/api/admin/auto-curate', secret))
+    results.push(await callInternalSummary(origin, '/api/admin/auto-curate', secret))
   } else {
     results.push({
       path: '/api/admin/auto-curate',
@@ -100,7 +78,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     ok: results.every((item) => item.ok),
     mode: 'external_cron_2_hour_live_sync',
-    schedule: 'Use this endpoint from an external scheduler every 2 hours to update social posts, fixtures, results, and homepage curation.',
+    schedule: 'Use this endpoint as the two-hour full sync. GitHub Actions also runs Instagram fallback polling every 10 minutes and match result sync every 15 minutes.',
     results,
     checkedAt: new Date().toISOString(),
   })

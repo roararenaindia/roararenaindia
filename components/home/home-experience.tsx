@@ -99,6 +99,11 @@ function scoreText(match: ArenaMatch) {
   return `${match.homeScore ?? '-'}:${match.awayScore ?? '-'}`
 }
 
+function matchTimeValue(match: ArenaMatch) {
+  const parsed = match.kickoffIso ? Date.parse(match.kickoffIso) : Number.NaN
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
 function winnerText(match: ArenaMatch) {
   if (match.status !== 'final') return match.dateLabel
   if (match.winner === 'home') return `${match.home.name} won`
@@ -458,7 +463,7 @@ function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof
 }
 
 function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicHome>['data']; onOpenMatch: (match: ArenaMatch) => void }) {
-  const [filter, setFilter] = useState<FilterKey>('upcoming')
+  const [filter, setFilter] = useState<FilterKey>('all')
   const matches = useMemo(
     () => (data.matches || []).filter((match) => !match.isHidden),
     [data.matches],
@@ -475,12 +480,25 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
   )
 
   const visible = useMemo(() => {
-    const rank = (m: ArenaMatch) => (m.status === 'upcoming' ? 0 : m.status === 'final' ? 1 : 2)
-    const ordered = [...matches].sort((a, b) => rank(a) - rank(b) || b.priority - a.priority)
+    const rank = (m: ArenaMatch) => (m.status === 'live' ? 0 : m.status === 'final' ? 1 : m.status === 'upcoming' ? 2 : 3)
+    const ordered = [...matches].sort((a, b) => {
+      const statusRank = rank(a) - rank(b)
+      if (statusRank) return statusRank
+      if (a.status === 'final' && b.status === 'final') return matchTimeValue(b) - matchTimeValue(a) || b.priority - a.priority
+      if (a.status === 'upcoming' && b.status === 'upcoming') return matchTimeValue(a) - matchTimeValue(b) || b.priority - a.priority
+      return b.priority - a.priority
+    })
     return filter === 'all' ? ordered : ordered.filter((m) => m.status === filter)
   }, [matches, filter])
-  const spotlightMatch = matches.find((match) => match.status === 'live') || matches.find((match) => match.status === 'upcoming') || matches[0]
-  const latestResult = matches.find((match) => match.status === 'final')
+  const latestResult = useMemo(
+    () => matches.filter((match) => match.status === 'final').sort((a, b) => matchTimeValue(b) - matchTimeValue(a) || b.priority - a.priority)[0],
+    [matches],
+  )
+  const nextUpcoming = useMemo(
+    () => matches.filter((match) => match.status === 'upcoming').sort((a, b) => matchTimeValue(a) - matchTimeValue(b) || b.priority - a.priority)[0],
+    [matches],
+  )
+  const spotlightMatch = matches.find((match) => match.status === 'live') || latestResult || nextUpcoming || matches[0]
   const activeFilterLabel = LIVE_FILTERS.find((tab) => tab.key === filter)?.label || 'All'
   const boardStats = [
     { label: 'Live', value: counts.live, icon: Activity, helper: 'Now' },

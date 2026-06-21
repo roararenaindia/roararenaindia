@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Unauthorized request' }, { status: 401 })
   }
 
-  const pastDays = Number(process.env.MATCH_SYNC_PAST_DAYS || 2)
+  const pastDays = Number(process.env.MATCH_SYNC_PAST_DAYS || 7)
   const futureDays = Number(process.env.MATCH_SYNC_FUTURE_DAYS || 7)
   const from = isoDateOffset(-pastDays)
   const to = isoDateOffset(futureDays)

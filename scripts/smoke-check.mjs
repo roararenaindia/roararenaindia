@@ -9,6 +9,7 @@ const requiredFiles = [
   'app/api/admin/matches/check/route.ts',
   'app/api/admin/final-check/route.ts',
   'app/api/sync/instagram/route.ts',
+  'app/api/webhooks/instagram/route.ts',
   'app/api/sync/x/route.ts',
   'app/api/sync/all/route.ts',
   'components/home/home-experience.tsx',
@@ -27,7 +28,7 @@ if (missing.length) {
 
 const vercel = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))
 if (Array.isArray(vercel.crons) && vercel.crons.length > 0) {
-  console.error('vercel.json contains cron jobs. Use /api/cron/roar with an external scheduler for the 2-hour live sync.')
+  console.error('vercel.json contains cron jobs. Use GitHub Actions as the external live-sync scheduler.')
   process.exit(1)
 }
 if (!fs.existsSync(path.join(root, 'app/api/cron/roar/route.ts'))) {
@@ -56,8 +57,39 @@ if (nextConfig.includes('ignoreBuildErrors')) {
 }
 
 const workflow = fs.readFileSync(path.join(root, '.github/workflows/roar-cron.yml'), 'utf8')
-if (!workflow.includes("cron: '0 */2 * * *'") || !workflow.includes('Authorization: Bearer ${ROAR_CRON_SECRET}')) {
-  console.error('GitHub Actions cron must call /api/cron/roar every 2 hours using the Authorization header.')
+for (const token of ["cron: '*/10 * * * *'", "cron: '*/15 * * * *'", "cron: '0 */2 * * *'", '/api/sync/instagram', '/api/sync/matches', 'Authorization: Bearer ${ROAR_CRON_SECRET}']) {
+  if (!workflow.includes(token)) {
+    console.error(`GitHub Actions cron missing required live-sync token: ${token}`)
+    process.exit(1)
+  }
+}
+
+const envExample = fs.readFileSync(path.join(root, '.env.example'), 'utf8')
+for (const token of ['INSTAGRAM_WEBHOOK_VERIFY_TOKEN=', 'META_APP_SECRET=', 'MATCH_SYNC_PAST_DAYS=7']) {
+  if (!envExample.includes(token)) {
+    console.error(`.env.example missing required automation token: ${token}`)
+    process.exit(1)
+  }
+}
+
+const webhookRoute = fs.readFileSync(path.join(root, 'app/api/webhooks/instagram/route.ts'), 'utf8')
+for (const token of ['INSTAGRAM_WEBHOOK_VERIFY_TOKEN', 'META_APP_SECRET', 'x-hub-signature-256', '/api/sync/instagram', '/api/admin/auto-curate']) {
+  if (!webhookRoute.includes(token)) {
+    console.error(`Instagram webhook route missing required behavior: ${token}`)
+    process.exit(1)
+  }
+}
+
+const matchSyncRoute = fs.readFileSync(path.join(root, 'app/api/sync/matches/route.ts'), 'utf8')
+for (const token of ['resultValidation', 'homepageValidation', 'MATCH_SYNC_PAST_DAYS || 7']) {
+  if (!matchSyncRoute.includes(token)) {
+    console.error(`Match sync route missing result visibility guard: ${token}`)
+    process.exit(1)
+  }
+}
+
+if (!workflow.includes('Authorization: Bearer ${ROAR_CRON_SECRET}')) {
+  console.error('GitHub Actions cron must call sync endpoints using the Authorization header.')
   process.exit(1)
 }
 
@@ -181,5 +213,5 @@ console.log('No production-unsafe admin/cron auth fallback found.')
 console.log('All checked public asset references exist.')
 console.log('siteConfig contains required public sections.')
 console.log('Roar Arena smoke check passed.')
-console.log('Vercel Cron disabled for Hobby-safe deployment. Use /api/cron/roar every 2 hours from an external scheduler.')
+console.log('Vercel Cron disabled for Hobby-safe deployment. GitHub Actions runs Instagram every 10 minutes, matches every 15 minutes, and /api/cron/roar every 2 hours.')
 console.log('Note: live match-provider checks should be run from the deployed app when local network access is restricted.')

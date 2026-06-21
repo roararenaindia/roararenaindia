@@ -92,8 +92,8 @@ function matchRecencyScore(match: ArenaMatch) {
   const featuredBoost = match.isFeatured ? 2500 : 0
 
   if (match.status === 'live') return 12000 + featuredBoost + match.priority
+  if (match.status === 'final' && diffHours >= -72) return 11000 + featuredBoost + match.priority + diffHours
   if (match.status === 'upcoming') return 9500 + featuredBoost + match.priority - Math.max(0, diffHours / 8)
-  if (match.status === 'final' && diffHours >= -36) return 8500 + featuredBoost + match.priority + diffHours
   if (match.status === 'final') return 5000 + featuredBoost + match.priority
   return featuredBoost + match.priority
 }
@@ -158,6 +158,7 @@ function mapMatch(row: DbMatch): ArenaMatch {
     statusLabel: row.status_label || (status === 'final' ? 'Full time' : status === 'live' ? 'Live' : 'Upcoming'),
     dateLabel: dateLabelFromIso(row.kickoff_time),
     timeLabel: status === 'final' ? 'Final' : timeLabelFromIso(row.kickoff_time),
+    kickoffIso: row.kickoff_time || undefined,
     venue: row.venue || 'TBA',
     home: { name: row.home_team, short: row.home_short || undefined, logo: row.home_logo || '/logos/logo-icon-dark-transparent.png' },
     away: { name: row.away_team, short: row.away_short || undefined, logo: row.away_logo || '/logos/logo-icon-dark-transparent.png' },

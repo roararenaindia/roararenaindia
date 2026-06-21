@@ -6,12 +6,14 @@ This app can show your Instagram posts inside the website feed, but it cannot us
 
 ```txt
 You post on Instagram
+-> Meta sends a webhook to /api/webhooks/instagram
 -> /api/sync/instagram fetches recent media
 -> media is copied into Supabase Storage when possible
 -> post data is saved into roar_posts
+-> /api/admin/auto-curate features the latest posts
 -> /api/public/home shows it on the homepage
 -> Latest from the arena updates automatically
--> /api/cron/roar repeats this during the two-hour live sync
+-> GitHub Actions fallback polling repeats this every 10 minutes
 ```
 
 ## What the app needs
@@ -23,6 +25,8 @@ INSTAGRAM_API_MODE=instagram_login
 INSTAGRAM_GRAPH_API_VERSION=v20.0
 INSTAGRAM_USER_ID=your_numeric_instagram_user_id
 INSTAGRAM_ACCESS_TOKEN=your_long_lived_instagram_access_token
+INSTAGRAM_WEBHOOK_VERIFY_TOKEN=your_long_random_webhook_verify_token
+META_APP_SECRET=your_meta_app_secret
 INSTAGRAM_SYNC_LIMIT=18
 INSTAGRAM_STORAGE_BUCKET=roar-instagram
 ```
@@ -56,8 +60,17 @@ INSTAGRAM_USER_ID=
 INSTAGRAM_ACCESS_TOKEN=
 ```
 
-10. Redeploy the app.
-11. Run the GitHub Action `Roar Arena 2-hour live sync` once to verify the scheduled path.
+10. Add `INSTAGRAM_WEBHOOK_VERIFY_TOKEN` and `META_APP_SECRET` in Vercel.
+11. Redeploy the app.
+12. Configure the Meta webhook callback URL:
+
+```txt
+https://YOUR_DOMAIN.com/api/webhooks/instagram
+```
+
+13. Use the same value from `INSTAGRAM_WEBHOOK_VERIFY_TOKEN` as the Meta verify token.
+14. Subscribe the webhook to Instagram media changes.
+15. Run the GitHub Action `Roar Arena live sync` once to verify the scheduled fallback path.
 
 ## Verify inside Roar Arena
 
@@ -74,6 +87,12 @@ Then run:
 - Final Check
 
 If Instagram Check says `Account valid` and `Media readable`, the connection is working.
+
+After webhook setup, post once on Instagram and verify:
+
+- `/api/admin/sync-logs` records an Instagram webhook/sync run.
+- `/api/public/home` shows the new post.
+- If the webhook is delayed, the 10-minute GitHub fallback poll still catches it.
 
 ## Token expiry
 

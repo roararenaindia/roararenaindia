@@ -30,7 +30,7 @@ FOOTBALL_DATA_SEASON=2026
 API_FOOTBALL_KEY=your_api_key_here
 API_FOOTBALL_LEAGUE_ID=1
 API_FOOTBALL_SEASON=2026
-MATCH_SYNC_PAST_DAYS=2
+MATCH_SYNC_PAST_DAYS=7
 MATCH_SYNC_FUTURE_DAYS=7
 ```
 
@@ -62,7 +62,7 @@ Then:
 
 - Match sync now uses one date-range request instead of one request per day.
 - This protects the free 100 requests/day quota.
-- External live cron now syncs configured social posts and matches every 2 hours.
+- External live automation now syncs Instagram fallback polling every 10 minutes, matches every 15 minutes, and the full cron every 2 hours.
 - Auto-curation runs after each live sync.
 - Instagram runs when Meta credentials are configured; X is skipped until its credentials exist.
 - Match provider tokens are never hardcoded.
