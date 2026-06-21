@@ -464,7 +464,7 @@ function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof
 }
 
 function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicHome>['data']; onOpenMatch: (match: ArenaMatch) => void }) {
-  const [filter, setFilter] = useState<FilterKey>('all')
+  const [filter, setFilter] = useState<FilterKey>('upcoming')
   const matches = useMemo(
     () => (data.matches || []).filter((match) => !match.isHidden),
     [data.matches],
