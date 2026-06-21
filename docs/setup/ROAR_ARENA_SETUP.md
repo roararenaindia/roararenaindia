@@ -32,7 +32,7 @@ NEXT_PUBLIC_SITE_URL=https://YOUR_DOMAIN.com
 NEXT_PUBLIC_INSTAGRAM_URL=https://www.instagram.com/roararenaindia/
 NEXT_PUBLIC_FACEBOOK_URL=https://www.facebook.com/RoarArena
 NEXT_PUBLIC_X_URL=https://x.com/RoarArenaIndia
-NEXT_PUBLIC_WHATSAPP_CHANNEL_URL=https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R
+NEXT_PUBLIC_WHATSAPP_COMMUNITY_URL=https://chat.whatsapp.com/JG52Kavaw0MGDOGfO0EzUT?s=sw&p=a&ilr=1
 NEXT_PUBLIC_CONTACT_EMAIL=roararenaindia@gmail.com
 
 CRON_SECRET=your-long-random-secret

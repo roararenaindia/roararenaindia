@@ -11,7 +11,7 @@ This zip is prepared for direct Vercel deployment.
 - FIFA World Cup match engine using football-data.org, with API-Football as an optional fallback
 - Supabase database layer for saving live match updates
 - Instagram/X sync routes wired into the live cron when credentials exist
-- WhatsApp Channel and email contact links
+- WhatsApp Community and email contact links
 - Admin dashboard
 - Template Studio
 - Approval Queue
@@ -43,7 +43,7 @@ MATCH_SYNC_FUTURE_DAYS=7
 NEXT_PUBLIC_INSTAGRAM_URL=https://www.instagram.com/roararenaindia/
 NEXT_PUBLIC_FACEBOOK_URL=https://www.facebook.com/RoarArena
 NEXT_PUBLIC_X_URL=https://x.com/RoarArenaIndia
-NEXT_PUBLIC_WHATSAPP_CHANNEL_URL=https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R
+NEXT_PUBLIC_WHATSAPP_COMMUNITY_URL=https://chat.whatsapp.com/JG52Kavaw0MGDOGfO0EzUT?s=sw&p=a&ilr=1
 NEXT_PUBLIC_CONTACT_EMAIL=roararenaindia@gmail.com
 ```
 

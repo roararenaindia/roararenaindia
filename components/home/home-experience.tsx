@@ -11,6 +11,7 @@ import {
   Clock3,
   Facebook,
   Flame,
+  Instagram,
   MessageCircle,
   Radio,
   Sparkles,
@@ -420,11 +421,11 @@ function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof
             </motion.p>
 
             <motion.div variants={reveal} className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a href={siteConfig.links.whatsappChannel} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow sm:w-auto">
+              <a href={siteConfig.links.whatsappCommunity} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow sm:w-auto">
                 <MessageCircle className="h-4 w-4" /> {siteConfig.hero.primaryCta}
               </a>
               <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-foreground backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary/50 sm:w-auto">
-                <Flame className="h-4 w-4" /> {siteConfig.hero.secondaryCta}
+                <Instagram className="h-4 w-4" /> {siteConfig.hero.secondaryCta}
               </a>
             </motion.div>
 
@@ -900,11 +901,11 @@ function EventsSection() {
           </div>
           <div className="rounded-[1.5rem] border border-border bg-card/86 p-5 shadow-soft-glow">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary">Stay close</p>
-            <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">Follow the channel now. First screening drops, local meetups, and watch-party calls will land there before anywhere else.</p>
+            <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">Join the community now. First screening drops, local meetups, and watch-party calls will land there before anywhere else.</p>
           </div>
         </div>
         <div className="mt-8 text-center">
-          <a href={siteConfig.links.whatsappChannel} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow">
+          <a href={siteConfig.links.whatsappCommunity} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow">
             <Bell className="h-4 w-4" /> Get event updates
           </a>
         </div>
@@ -915,10 +916,10 @@ function EventsSection() {
 
 function CommunitySection() {
   const links = [
-    { label: 'Match updates', body: 'Results and upcoming fixture alerts', href: siteConfig.links.whatsappChannel, icon: CalendarDays },
-    { label: 'Fan reactions', body: 'Stories, edits, and matchday energy', href: siteConfig.links.instagram, icon: Flame },
+    { label: 'Match updates', body: 'Results and upcoming fixture alerts', href: siteConfig.links.whatsappCommunity, icon: CalendarDays },
+    { label: 'Fan reactions', body: 'Stories, edits, and matchday energy', href: siteConfig.links.instagram, icon: Instagram },
     { label: 'Facebook crowd', body: 'Roar Arena posts and community updates', href: siteConfig.links.facebook, icon: Facebook },
-    { label: 'Event drops', body: 'First screening and watch-party updates', href: siteConfig.links.whatsappChannel, icon: Bell },
+    { label: 'Event drops', body: 'First screening and watch-party updates', href: siteConfig.links.whatsappCommunity, icon: Bell },
     { label: 'Fast takes', body: '@RoarArenaIndia on X', href: siteConfig.links.x, icon: Zap },
   ]
 
@@ -933,11 +934,11 @@ function CommunitySection() {
               <h2 className="mt-3 font-display text-[clamp(2.2rem,5.8vw,4.8rem)] uppercase leading-[0.98] text-foreground">Not just fans. A whole arena.</h2>
               <p className="mt-5 text-base leading-7 text-muted-foreground">Roar Arena is starting with a community of fans who want better match nights, sharper updates, and real sports energy.</p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <a href={siteConfig.links.whatsappChannel} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow sm:w-auto">
-                  <MessageCircle className="h-4 w-4" /> Join WhatsApp Channel
+                <a href={siteConfig.links.whatsappCommunity} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow sm:w-auto">
+                  <MessageCircle className="h-4 w-4" /> Join WhatsApp Community
                 </a>
                 <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-foreground sm:w-auto">
-                  <Flame className="h-4 w-4" /> Follow Instagram
+                  <Instagram className="h-4 w-4" /> Follow Instagram
                 </a>
               </div>
             </div>
@@ -973,11 +974,11 @@ function FinalSection() {
           Join Roar Arena now and be part of the community before our first live screenings and fan events go live.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <a href={siteConfig.links.whatsappChannel} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow">
-            <Bell className="h-4 w-4" /> Join the channel
+          <a href={siteConfig.links.whatsappCommunity} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow">
+            <MessageCircle className="h-4 w-4" /> Join the community
           </a>
           <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-surface px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-foreground transition hover:-translate-y-0.5 hover:border-primary/50">
-            <CheckCircle2 className="h-4 w-4" /> Follow Instagram
+            <Instagram className="h-4 w-4" /> Follow Instagram
           </a>
         </div>
       </div>

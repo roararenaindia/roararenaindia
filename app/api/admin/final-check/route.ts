@@ -59,7 +59,9 @@ export async function GET(request: NextRequest) {
       instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/roararenaindia/',
       facebook: process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://www.facebook.com/RoarArena',
       x: process.env.NEXT_PUBLIC_X_URL || 'https://x.com/RoarArenaIndia',
-      whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R',
+      whatsapp:
+        process.env.NEXT_PUBLIC_WHATSAPP_COMMUNITY_URL ||
+        'https://chat.whatsapp.com/JG52Kavaw0MGDOGfO0EzUT?s=sw&p=a&ilr=1',
       email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'roararenaindia@gmail.com',
     },
     supabase: {

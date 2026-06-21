@@ -11,7 +11,7 @@ import { siteConfig } from '@/lib/config/site-data'
 export default function Header() {
   const [open, setOpen] = useState(false)
   const socialLinks = [
-    { label: 'WhatsApp Channel', href: siteConfig.links.whatsappChannel, icon: MessageCircle, primary: true },
+    { label: 'WhatsApp Community', href: siteConfig.links.whatsappCommunity, icon: MessageCircle, primary: true },
     { label: 'Instagram', href: siteConfig.links.instagram, icon: Instagram },
     { label: 'Facebook', href: siteConfig.links.facebook, icon: Facebook },
     { label: 'X / Twitter', href: siteConfig.links.x, icon: Send },
@@ -60,12 +60,12 @@ export default function Header() {
         <div className="hidden items-center gap-3 lg:flex">
           <ThemeToggle />
           <a
-            href={siteConfig.links.whatsappChannel}
+            href={siteConfig.links.whatsappCommunity}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full bg-primary px-5 py-2.5 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow"
           >
-            Join Channel
+            Join Community
           </a>
         </div>
 

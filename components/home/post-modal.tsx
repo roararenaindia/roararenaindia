@@ -135,7 +135,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                   Open Instagram <ExternalLink className="h-4 w-4" />
                 </a>
                 <a
-                  href={siteConfig.links.whatsappChannel}
+                  href={siteConfig.links.whatsappCommunity}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface px-5 py-3 text-sm font-black uppercase tracking-[0.11em] text-foreground transition hover:border-primary/50"

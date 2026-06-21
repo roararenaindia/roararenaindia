@@ -20,7 +20,9 @@ export type ArenaPost = {
 const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/roararenaindia/'
 const facebookUrl = process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://www.facebook.com/RoarArena'
 const xUrl = process.env.NEXT_PUBLIC_X_URL || 'https://x.com/RoarArenaIndia'
-const whatsappUrl = process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029Vb8bGxc7oQhX9QvoPG1R'
+const whatsappUrl =
+  process.env.NEXT_PUBLIC_WHATSAPP_COMMUNITY_URL ||
+  'https://chat.whatsapp.com/JG52Kavaw0MGDOGfO0EzUT?s=sw&p=a&ilr=1'
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'roararenaindia@gmail.com'
 const contactSubject = encodeURIComponent('Roar Arena collaboration')
 
@@ -36,6 +38,7 @@ export const siteConfig = {
     instagram: instagramUrl,
     facebook: facebookUrl,
     x: xUrl,
+    whatsappCommunity: whatsappUrl,
     whatsappChannel: whatsappUrl,
     contact: `mailto:${contactEmail}?subject=${contactSubject}`,
     contactEmail,
@@ -56,7 +59,7 @@ export const siteConfig = {
     support:
       'Until our first events go live, follow us for match updates, results, upcoming fixtures, and the stories that make sports feel alive.',
     trustLine: 'Live screenings and fan events coming soon. Match updates live now.',
-    primaryCta: 'Join Channel',
+    primaryCta: 'Join Community',
     secondaryCta: 'Follow Instagram',
     badges: ['Coming soon events', 'Match updates live now', 'Upcoming fixtures', 'Result posts', 'Fan community'],
     ticker: [
@@ -71,7 +74,7 @@ export const siteConfig = {
       'Community watch picks',
       'Instagram feed',
       'X updates',
-      'WhatsApp channel',
+      'WhatsApp community',
     ],
   },
   posts: [] as ArenaPost[],
@@ -160,7 +163,7 @@ export const siteConfig = {
   },
   mobileStickyCtA: {
     buttons: [
-      { label: 'Join Channel', href: whatsappUrl },
+      { label: 'Join Community', href: whatsappUrl },
       { label: 'Instagram', href: instagramUrl },
       { label: 'Facebook', href: facebookUrl },
     ],

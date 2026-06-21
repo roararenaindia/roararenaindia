@@ -31,7 +31,7 @@ export default function Footer() {
                 <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">Instagram</a>
                 <a href={siteConfig.links.facebook} target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">Facebook</a>
                 <a href={siteConfig.links.x} target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">X</a>
-                <a href={siteConfig.links.whatsappChannel} target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">WhatsApp Channel</a>
+                <a href={siteConfig.links.whatsappCommunity} target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">WhatsApp Community</a>
                 <a href={siteConfig.links.contact} className="transition hover:text-primary">Email</a>
               </div>
             </div>
