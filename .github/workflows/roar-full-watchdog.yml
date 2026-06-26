@@ -1,0 +1,57 @@
+name: Roar Arena full sync watchdog
+
+on:
+  schedule:
+    - cron: '47 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call full Roar Arena sync
+        env:
+          ROAR_CRON_URL: ${{ secrets.ROAR_CRON_URL }}
+          ROAR_CRON_SECRET: ${{ secrets.ROAR_CRON_SECRET }}
+        run: |
+          set -euo pipefail
+
+          ROAR_CRON_URL="${ROAR_CRON_URL:-https://roararenaindia.vercel.app/api/cron/roar}"
+
+          if [ -z "${ROAR_CRON_SECRET}" ]; then
+            echo "::error::Missing GitHub secret ROAR_CRON_SECRET"
+            exit 1
+          fi
+
+          response="$(curl --fail --silent --show-error --retry 2 --retry-delay 5 --max-time 60 \
+            --header "Authorization: Bearer ${ROAR_CRON_SECRET}" \
+            "${ROAR_CRON_URL}")"
+
+          node - "$response" <<'NODE'
+          const payload = JSON.parse(process.argv[2])
+
+          if (!payload.ok) {
+            console.error(JSON.stringify(payload, null, 2))
+            process.exit(1)
+          }
+
+          const summary = {
+            ok: payload.ok,
+            mode: payload.mode,
+            checkedAt: payload.checkedAt,
+            results: payload.results?.map((item) => ({
+              path: item.path,
+              ok: item.ok,
+              mode: item.mode,
+              fetched: item.fetched,
+              status: item.status,
+              providerLabel: item.providerLabel,
+            })),
+          }
+
+          console.log(JSON.stringify(summary, null, 2))
+          NODE
