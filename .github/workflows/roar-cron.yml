@@ -7,10 +7,13 @@ on:
     - cron: '17 */2 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   sync-live-data:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     steps:
       - name: Call Roar Arena cron endpoint
         env:
