@@ -22,6 +22,7 @@ export type MatchProviderRecord = {
   venue?: string | null
   winner?: 'home' | 'away' | 'draw' | null
   priority: number
+  is_hidden?: boolean
   updated_at: string
 }
 
@@ -159,8 +160,19 @@ function teamKey(name: string) {
   return name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim()
 }
 
+function cleanTeamName(value?: string | null) {
+  const normalized = value?.trim()
+  if (!normalized) return null
+
+  const key = teamKey(normalized)
+  if (['home team', 'away team', 'tbd', 'to be determined'].includes(key)) return null
+
+  return normalized
+}
+
 function shortCodeForTeam(name: string, fallback?: string | null) {
-  if (fallback) return fallback.toUpperCase()
+  const cleanFallback = cleanTeamName(fallback)
+  if (cleanFallback) return cleanFallback.toUpperCase()
   return fifaTeamCodes[teamKey(name)] || name.split(/\s+/).map((word) => word[0]).join('').slice(0, 3).toUpperCase()
 }
 
@@ -211,18 +223,21 @@ function footballDataScore(match: FootballDataMatch, side: 'home' | 'away') {
 function mapApiFootballFixture(match: ApiFootballFixture): MatchProviderRecord {
   const league = match.league.name || 'FIFA World Cup 2026'
   const status = normalizeApiFootballStatus(match.fixture.status.short, match.fixture.status.long)
+  const homeName = cleanTeamName(match.teams.home.name)
+  const awayName = cleanTeamName(match.teams.away.name)
+  const hasKnownTeams = Boolean(homeName && awayName)
 
   return {
     provider_match_id: `api-football:${match.fixture.id}`,
     sport: 'football',
     league,
     league_logo: match.league.logo || inferLeagueLogo(league),
-    home_team: match.teams.home.name,
-    away_team: match.teams.away.name,
-    home_short: shortCodeForTeam(match.teams.home.name),
-    away_short: shortCodeForTeam(match.teams.away.name),
-    home_logo: resolveTeamLogo(match.teams.home.name) || match.teams.home.logo,
-    away_logo: resolveTeamLogo(match.teams.away.name) || match.teams.away.logo,
+    home_team: homeName || 'TBD',
+    away_team: awayName || 'TBD',
+    home_short: homeName ? shortCodeForTeam(homeName) : null,
+    away_short: awayName ? shortCodeForTeam(awayName) : null,
+    home_logo: homeName ? resolveTeamLogo(homeName) || match.teams.home.logo : null,
+    away_logo: awayName ? resolveTeamLogo(awayName) || match.teams.away.logo : null,
     home_score: match.goals.home,
     away_score: match.goals.away,
     status,
@@ -231,14 +246,16 @@ function mapApiFootballFixture(match: ApiFootballFixture): MatchProviderRecord {
     venue: [match.fixture.venue?.name, match.fixture.venue?.city].filter(Boolean).join(', ') || null,
     winner: apiFootballWinner(match),
     priority: priorityForStatus(status),
+    is_hidden: !hasKnownTeams,
     updated_at: new Date().toISOString(),
   }
 }
 
 function mapFootballDataMatch(match: FootballDataMatch): MatchProviderRecord {
   const league = match.competition?.name || 'FIFA World Cup'
-  const homeName = match.homeTeam.name || match.homeTeam.shortName || 'Home Team'
-  const awayName = match.awayTeam.name || match.awayTeam.shortName || 'Away Team'
+  const homeName = cleanTeamName(match.homeTeam.name) || cleanTeamName(match.homeTeam.shortName)
+  const awayName = cleanTeamName(match.awayTeam.name) || cleanTeamName(match.awayTeam.shortName)
+  const hasKnownTeams = Boolean(homeName && awayName)
   const status = normalizeFootballDataStatus(match.status)
 
   return {
@@ -246,12 +263,12 @@ function mapFootballDataMatch(match: FootballDataMatch): MatchProviderRecord {
     sport: 'football',
     league,
     league_logo: match.competition?.emblem || inferLeagueLogo(league),
-    home_team: homeName,
-    away_team: awayName,
-    home_short: shortCodeForTeam(homeName, match.homeTeam.tla),
-    away_short: shortCodeForTeam(awayName, match.awayTeam.tla),
-    home_logo: resolveTeamLogo(homeName) || match.homeTeam.crest,
-    away_logo: resolveTeamLogo(awayName) || match.awayTeam.crest,
+    home_team: homeName || 'TBD',
+    away_team: awayName || 'TBD',
+    home_short: homeName ? shortCodeForTeam(homeName, match.homeTeam.tla) : null,
+    away_short: awayName ? shortCodeForTeam(awayName, match.awayTeam.tla) : null,
+    home_logo: homeName ? resolveTeamLogo(homeName) || match.homeTeam.crest : null,
+    away_logo: awayName ? resolveTeamLogo(awayName) || match.awayTeam.crest : null,
     home_score: footballDataScore(match, 'home'),
     away_score: footballDataScore(match, 'away'),
     status,
@@ -260,6 +277,7 @@ function mapFootballDataMatch(match: FootballDataMatch): MatchProviderRecord {
     venue: [match.stage, match.group].filter(Boolean).join(' - ') || league,
     winner: footballDataWinner(match),
     priority: priorityForStatus(status),
+    is_hidden: !hasKnownTeams,
     updated_at: new Date().toISOString(),
   }
 }

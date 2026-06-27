@@ -83,6 +83,21 @@ function normalizeStatus(status: string): ArenaMatch['status'] {
   return 'upcoming'
 }
 
+function normalizedTeamValue(value?: string | null) {
+  return (value || '').trim().toLowerCase()
+}
+
+function isPlaceholderTeam(value?: string | null) {
+  return ['home team', 'away team', 'tbd', 'to be determined', ''].includes(normalizedTeamValue(value))
+}
+
+function isDisplayableMatch(match: ArenaMatch) {
+  if (match.isHidden) return false
+  if (isPlaceholderTeam(match.home.name) || isPlaceholderTeam(match.away.name)) return false
+  if (normalizedTeamValue(match.home.short) === 'ht' || normalizedTeamValue(match.away.short) === 'at') return false
+  return true
+}
+
 
 function matchRecencyScore(match: ArenaMatch) {
   const now = Date.now()
@@ -203,7 +218,7 @@ export async function getLiveHomePayload() {
   )
 
   const posts = postsResult.data?.map(mapPost).filter(Boolean) || []
-  const allMatches = matchesResult.data?.map(mapMatch).filter(Boolean) || []
+  const allMatches = matchesResult.data?.map(mapMatch).filter(isDisplayableMatch) || []
   const matches = pickHomeMatches(allMatches)
   const heroMatch = pickHeroMatch(matches, fallback.heroMatch)
 

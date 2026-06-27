@@ -1,5 +1,6 @@
 .codex-dev*
 .codex-screens/
+.codex-tmp*/
 .next/
 node_modules/
 tsconfig.tsbuildinfo
