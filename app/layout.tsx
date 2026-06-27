@@ -3,24 +3,58 @@ import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import './globals.css'
 import { ThemeProvider } from 'next-themes'
+import { absoluteUrl, seoConfig } from '@/lib/config/seo'
 
 export const metadata: Metadata = {
-  title: 'Roar Arena - Where Fans Come Alive',
-  description:
-    'Feel the Game. Join the Roar. Roar Arena is building live screenings, watch parties, fan meetups, and matchday community events in India.',
+  title: {
+    default: seoConfig.title,
+    template: `%s | ${seoConfig.siteName}`,
+  },
+  description: seoConfig.description,
+  applicationName: seoConfig.siteName,
+  authors: [{ name: seoConfig.siteName, url: seoConfig.siteUrl }],
+  creator: seoConfig.siteName,
+  publisher: seoConfig.siteName,
   generator: 'Roar Arena',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://roararenaindia.vercel.app'),
+  metadataBase: new URL(seoConfig.siteUrl),
+  alternates: {
+    canonical: '/',
+  },
+  keywords: [...seoConfig.keywords],
+  category: 'sports',
+  manifest: '/manifest.webmanifest',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
   openGraph: {
-    title: 'Roar Arena - Where Fans Come Alive',
-    description:
-      'Feel the Game. Join the Roar. Match updates, results, fixtures, and fan stories live now.',
-    images: ['/og/og-image.png'],
+    title: seoConfig.title,
+    description: seoConfig.description,
+    url: '/',
+    siteName: seoConfig.siteName,
+    type: 'website',
+    locale: 'en_IN',
+    images: [
+      {
+        url: seoConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: 'Roar Arena sports fan community and matchday updates',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Roar Arena - Where Fans Come Alive',
-    description: 'Feel the Game. Join the Roar. Match updates live now.',
-    images: ['/og/og-image.png'],
+    title: seoConfig.title,
+    description: seoConfig.shortDescription,
+    images: [absoluteUrl(seoConfig.ogImage)],
   },
   icons: {
     icon: [
@@ -28,6 +62,11 @@ export const metadata: Metadata = {
       { url: '/logos/favicon-light-32.png', media: '(prefers-color-scheme: light)' },
     ],
     apple: '/logos/apple-icon-dark.png',
+  },
+  formatDetection: {
+    telephone: false,
+    address: false,
+    email: false,
   },
 }
 

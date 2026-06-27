@@ -13,8 +13,12 @@ const requiredFiles = [
   'app/api/webhooks/instagram/route.ts',
   'app/api/sync/x/route.ts',
   'app/api/sync/all/route.ts',
+  'app/manifest.ts',
+  'app/robots.ts',
+  'app/sitemap.ts',
   'components/home/home-experience.tsx',
   'components/admin/admin-dashboard.tsx',
+  'lib/config/seo.ts',
   'supabase/schema.sql',
   'vercel.json',
   '.github/workflows/roar-cron.yml',
@@ -114,6 +118,48 @@ const page = fs.readFileSync(path.join(root, 'app/page.tsx'), 'utf8')
 for (const component of ['HomeExperience', 'Header', 'Footer', 'MobileStickyCtA']) {
   if (!page.includes(component)) {
     console.error(`Page missing ${component}`)
+    process.exit(1)
+  }
+}
+if (!page.includes('application/ld+json')) {
+  console.error('Homepage missing JSON-LD structured data.')
+  process.exit(1)
+}
+
+const layout = fs.readFileSync(path.join(root, 'app/layout.tsx'), 'utf8')
+for (const token of ['alternates', 'canonical', 'openGraph', 'twitter', 'manifest', 'seoConfig.description']) {
+  if (!layout.includes(token)) {
+    console.error(`Root metadata missing SEO token: ${token}`)
+    process.exit(1)
+  }
+}
+
+const robotsRoute = fs.readFileSync(path.join(root, 'app/robots.ts'), 'utf8')
+for (const token of ['/admin', '/studio', '/api/', '/sitemap.xml']) {
+  if (!robotsRoute.includes(token)) {
+    console.error(`robots.txt route missing crawl directive token: ${token}`)
+    process.exit(1)
+  }
+}
+
+const sitemapRoute = fs.readFileSync(path.join(root, 'app/sitemap.ts'), 'utf8')
+if (!sitemapRoute.includes('priority: 1') || !sitemapRoute.includes("changeFrequency: 'hourly'")) {
+  console.error('sitemap route missing homepage priority/freshness metadata.')
+  process.exit(1)
+}
+
+const manifestRoute = fs.readFileSync(path.join(root, 'app/manifest.ts'), 'utf8')
+for (const token of ['standalone', 'logo-icon-dark-512.png', 'logo-icon-light-512.png']) {
+  if (!manifestRoute.includes(token)) {
+    console.error(`manifest route missing PWA/SEO token: ${token}`)
+    process.exit(1)
+  }
+}
+
+for (const route of ['app/admin/page.tsx', 'app/studio/page.tsx']) {
+  const content = fs.readFileSync(path.join(root, route), 'utf8')
+  if (!content.includes('index: false') || !content.includes('follow: false')) {
+    console.error(`${route} must stay noindex,nofollow.`)
     process.exit(1)
   }
 }

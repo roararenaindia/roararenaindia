@@ -159,7 +159,7 @@ export const siteConfig = {
   footer: {
     disclaimer:
       'Roar Arena is an independent sports fan experience startup. We are not affiliated with any league, team, tournament, or broadcaster unless officially stated.',
-    copyright: '© 2026 Roar Arena. All rights reserved.',
+    copyright: 'Copyright 2026 Roar Arena. All rights reserved.',
   },
   mobileStickyCtA: {
     buttons: [
