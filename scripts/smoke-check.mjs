@@ -16,6 +16,7 @@ const requiredFiles = [
   'app/manifest.ts',
   'app/robots.ts',
   'app/sitemap.ts',
+  'components/analytics/google-analytics.tsx',
   'components/home/home-experience.tsx',
   'components/admin/admin-dashboard.tsx',
   'lib/config/seo.ts',
@@ -70,7 +71,13 @@ for (const token of ["cron: '3,13,23,33,43,53 * * * *'", "cron: '7,22,37,52 * * 
 }
 
 const envExample = fs.readFileSync(path.join(root, '.env.example'), 'utf8')
-for (const token of ['INSTAGRAM_WEBHOOK_VERIFY_TOKEN=', 'META_APP_SECRET=', 'MATCH_SYNC_PAST_DAYS=7']) {
+for (const token of [
+  'INSTAGRAM_WEBHOOK_VERIFY_TOKEN=',
+  'META_APP_SECRET=',
+  'MATCH_SYNC_PAST_DAYS=7',
+  'NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=',
+  'NEXT_PUBLIC_GA_MEASUREMENT_ID=',
+]) {
   if (!envExample.includes(token)) {
     console.error(`.env.example missing required automation token: ${token}`)
     process.exit(1)
@@ -127,9 +134,27 @@ if (!page.includes('application/ld+json')) {
 }
 
 const layout = fs.readFileSync(path.join(root, 'app/layout.tsx'), 'utf8')
-for (const token of ['alternates', 'canonical', 'openGraph', 'twitter', 'manifest', 'seoConfig.description']) {
+for (const token of [
+  'alternates',
+  'canonical',
+  'openGraph',
+  'twitter',
+  'manifest',
+  'seoConfig.description',
+  'NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION',
+  'verification',
+  'GoogleAnalytics',
+]) {
   if (!layout.includes(token)) {
     console.error(`Root metadata missing SEO token: ${token}`)
+    process.exit(1)
+  }
+}
+
+const googleAnalytics = fs.readFileSync(path.join(root, 'components/analytics/google-analytics.tsx'), 'utf8')
+for (const token of ['NEXT_PUBLIC_GA_MEASUREMENT_ID', 'googletagmanager.com/gtag/js', "process.env.NODE_ENV !== 'production'", '^G-[A-Z0-9]+$']) {
+  if (!googleAnalytics.includes(token)) {
+    console.error(`Google Analytics component missing required token: ${token}`)
     process.exit(1)
   }
 }

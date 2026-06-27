@@ -2,8 +2,11 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import './globals.css'
+import GoogleAnalytics from '@/components/analytics/google-analytics'
 import { ThemeProvider } from 'next-themes'
 import { absoluteUrl, seoConfig } from '@/lib/config/seo'
+
+const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim()
 
 export const metadata: Metadata = {
   title: {
@@ -68,6 +71,13 @@ export const metadata: Metadata = {
     address: false,
     email: false,
   },
+  ...(googleSiteVerification
+    ? {
+        verification: {
+          google: googleSiteVerification,
+        },
+      }
+    : {}),
 }
 
 export const viewport: Viewport = {
@@ -84,6 +94,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <body className="min-h-screen bg-background text-foreground antialiased">
         <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem={false} storageKey="roar-arena-theme">
           {children}
+          <GoogleAnalytics />
           {process.env.NODE_ENV === 'production' && <Analytics />}
         </ThemeProvider>
       </body>
