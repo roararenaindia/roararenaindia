@@ -20,6 +20,7 @@ const requiredFiles = [
   'components/home/home-experience.tsx',
   'components/admin/admin-dashboard.tsx',
   'lib/config/seo.ts',
+  'lib/services/match-self-heal.ts',
   'supabase/schema.sql',
   'vercel.json',
   '.github/workflows/roar-cron.yml',
@@ -33,8 +34,12 @@ if (missing.length) {
 }
 
 const vercel = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))
-if (Array.isArray(vercel.crons) && vercel.crons.length > 0) {
-  console.error('vercel.json contains cron jobs. Use GitHub Actions as the external live-sync scheduler.')
+if (!Array.isArray(vercel.crons) || vercel.crons.length !== 1) {
+  console.error('vercel.json must contain exactly one Hobby-safe daily Vercel Cron backup.')
+  process.exit(1)
+}
+if (vercel.crons[0]?.path !== '/api/cron/roar' || vercel.crons[0]?.schedule !== '0 0 * * *') {
+  console.error('Vercel Cron backup must call /api/cron/roar once daily for Hobby-safe deployment.')
   process.exit(1)
 }
 if (!fs.existsSync(path.join(root, 'app/api/cron/roar/route.ts'))) {
@@ -77,6 +82,8 @@ for (const token of [
   'MATCH_SYNC_PAST_DAYS=7',
   'NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=',
   'NEXT_PUBLIC_GA_MEASUREMENT_ID=',
+  'MATCH_SELF_HEAL_ENABLED=true',
+  'MATCH_SELF_HEAL_STALE_MINUTES=20',
 ]) {
   if (!envExample.includes(token)) {
     console.error(`.env.example missing required automation token: ${token}`)
@@ -104,6 +111,37 @@ const matchSyncRoute = fs.readFileSync(path.join(root, 'app/api/sync/matches/rou
 for (const token of ['resultValidation', 'homepageValidation', 'MATCH_SYNC_PAST_DAYS || 7']) {
   if (!matchSyncRoute.includes(token)) {
     console.error(`Match sync route missing result visibility guard: ${token}`)
+    process.exit(1)
+  }
+}
+
+const publicHomeRoute = fs.readFileSync(path.join(root, 'app/api/public/home/route.ts'), 'utf8')
+for (const token of ['ensureFreshMatchScores', 'public-home-api', 'Cache-Control']) {
+  if (!publicHomeRoute.includes(token)) {
+    console.error(`Public home route missing self-healing score freshness token: ${token}`)
+    process.exit(1)
+  }
+}
+
+const pageRoute = fs.readFileSync(path.join(root, 'app/page.tsx'), 'utf8')
+for (const token of ['ensureFreshMatchScores', 'homepage-server-render']) {
+  if (!pageRoute.includes(token)) {
+    console.error(`Homepage route missing self-healing score freshness token: ${token}`)
+    process.exit(1)
+  }
+}
+
+const matchSelfHeal = fs.readFileSync(path.join(root, 'lib/services/match-self-heal.ts'), 'utf8')
+for (const token of [
+  'MATCH_SELF_HEAL_STALE_MINUTES',
+  'source=eq.matches',
+  'status=eq.success',
+  'fetchMatchRecordsRange',
+  'supabaseUpsert',
+  'Self-heal match sync complete',
+]) {
+  if (!matchSelfHeal.includes(token)) {
+    console.error(`Match self-heal service missing required token: ${token}`)
     process.exit(1)
   }
 }
@@ -293,5 +331,6 @@ console.log('No production-unsafe admin/cron auth fallback found.')
 console.log('All checked public asset references exist.')
 console.log('siteConfig contains required public sections.')
 console.log('Roar Arena smoke check passed.')
-console.log('Vercel Cron disabled for Hobby-safe deployment. GitHub Actions runs Instagram every 10 minutes, matches every 15 minutes, and /api/cron/roar every 2 hours.')
+console.log('Vercel Cron daily backup is Hobby-safe. GitHub Actions still runs Instagram every 10 minutes, matches every 15 minutes, and /api/cron/roar every 2 hours.')
+console.log('Public home has self-healing match score freshness when scheduled sync is stale.')
 console.log('Note: live match-provider checks should be run from the deployed app when local network access is restricted.')
