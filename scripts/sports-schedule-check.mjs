@@ -50,6 +50,7 @@ requireToken('lib/services/tennis-data-provider.ts', 'TENNIS_DATA_PROVIDER', 'Te
 requireToken('lib/services/tennis-data-provider.ts', 'espn-tennis:', 'Tennis provider must persist ESPN competition IDs with a stable namespace.')
 requireToken('lib/services/tennis-data-provider.ts', 'get_fixtures', 'Tennis provider must keep API-Tennis fixtures as a fallback.')
 requireToken('lib/services/tennis-data-provider.ts', 'Wimbledon', 'Tennis provider must default to Wimbledon filtering.')
+requireToken('lib/services/tennis-data-provider.ts', 'return hasScoreDetail ? won : null', 'ESPN tennis score mapping must preserve 0-set scores instead of blanking them.')
 requireToken('app/api/cron/roar/route.ts', '/api/sync/tennis', 'Full cron must include tennis sync.')
 requireToken('components/home/home-experience.tsx', 'LeagueFilterKey', 'Home match board must expose a league filter.')
 requireToken('components/home/home-experience.tsx', 'leagueTone', 'Home match board must style FIFA and Wimbledon as first-class sports.')

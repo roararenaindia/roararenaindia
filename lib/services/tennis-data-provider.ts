@@ -307,7 +307,8 @@ function espnSetsWon(target: EspnCompetitor, opponent: EspnCompetitor) {
     return count
   }, 0)
 
-  return won || null
+  const hasScoreDetail = targetSets.length > 0 || opponentSets.length > 0
+  return hasScoreDetail ? won : null
 }
 
 function mapApiTennisFixture(match: ApiTennisFixture): MatchProviderRecord | null {
