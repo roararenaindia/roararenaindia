@@ -33,7 +33,10 @@ API_FOOTBALL_SEASON=2026
 MATCH_SYNC_PAST_DAYS=7
 MATCH_SYNC_FUTURE_DAYS=7
 
-# Optional tennis/Wimbledon sync via API-Tennis
+# Optional tennis/Wimbledon sync
+TENNIS_DATA_PROVIDER=espn
+TENNIS_ESPN_EVENT_ID=188-2026
+# Optional fallback only: set TENNIS_DATA_PROVIDER=api-tennis with a private API-Tennis key
 TENNIS_API_KEY=your_api_tennis_key_here
 TENNIS_TOURNAMENT_NAME_FILTER=Wimbledon
 TENNIS_TOURNAMENT_KEY=
@@ -74,7 +77,7 @@ Then:
 - Auto-curation runs after each live sync.
 - Instagram runs when Meta credentials are configured; X is skipped until its credentials exist.
 - Match provider tokens are never hardcoded.
-- Wimbledon tennis sync is wired but optional. Without `TENNIS_API_KEY`, `/api/sync/tennis` safely reports `not_configured`; with the key added, GitHub Actions and `/api/cron/roar` can save Wimbledon fixtures into the same match board as FIFA.
+- Wimbledon tennis sync defaults to the free keyless ESPN Wimbledon tournament feed. API-Tennis remains an optional fallback when `TENNIS_DATA_PROVIDER=api-tennis` and `TENNIS_API_KEY` are set.
 
 ## Expected result
 

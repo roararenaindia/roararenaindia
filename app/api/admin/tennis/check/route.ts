@@ -34,7 +34,9 @@ export async function GET(request: NextRequest) {
 
   const checks = {
     env: {
+      tennisDataProvider: process.env.TENNIS_DATA_PROVIDER || 'espn',
       tennisApiKey: Boolean(process.env.TENNIS_API_KEY || process.env.API_TENNIS_KEY),
+      tennisEspnEventId: process.env.TENNIS_ESPN_EVENT_ID || '188-2026',
       tennisTournamentKey: Boolean(process.env.TENNIS_TOURNAMENT_KEY),
       tennisTournamentNameFilter: process.env.TENNIS_TOURNAMENT_NAME_FILTER || 'Wimbledon',
       tennisTimezone: process.env.TENNIS_TIMEZONE || 'UTC',
@@ -51,7 +53,7 @@ export async function GET(request: NextRequest) {
       ok: true,
       ready: false,
       checks,
-      nextStep: 'Add TENNIS_API_KEY in Vercel environment variables to enable Wimbledon match data.',
+      nextStep: 'Use TENNIS_DATA_PROVIDER=espn for the free Wimbledon provider, or add TENNIS_API_KEY and set TENNIS_DATA_PROVIDER=api-tennis.',
     })
   }
 
@@ -62,7 +64,7 @@ export async function GET(request: NextRequest) {
     nextStep: !provider.fixturesReachable
       ? `Tennis provider could not fetch fixtures: ${provider.error}`
       : checks.supabase.write
-        ? 'Tennis provider is ready. Run /api/sync/tennis, then Curate.'
+        ? `${provider.providerLabel} is ready. Run /api/sync/tennis, then Curate.`
         : `${provider.providerLabel} is valid, but Supabase write access is missing. Add SUPABASE_SERVICE_ROLE_KEY to save tennis matches.`,
     note: provider.sampleCount === 0 ? 'The provider works, but this date range/filter returned zero tennis fixtures. Check TENNIS_TOURNAMENT_NAME_FILTER or TENNIS_TOURNAMENT_KEY.' : null,
   })

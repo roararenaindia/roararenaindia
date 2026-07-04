@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       ok: true,
       mode: 'not_configured',
-      message: 'Tennis sync route is ready. Add TENNIS_API_KEY to enable Wimbledon fixtures/results sync.',
+      message: 'Tennis sync route is ready. Use TENNIS_DATA_PROVIDER=espn for free Wimbledon fixtures/results, or add TENNIS_API_KEY with TENNIS_DATA_PROVIDER=api-tennis.',
     })
   }
 
