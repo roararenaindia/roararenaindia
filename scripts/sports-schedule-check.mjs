@@ -56,6 +56,7 @@ requireToken('components/home/home-experience.tsx', 'LeagueFilterKey', 'Home mat
 requireToken('components/home/home-experience.tsx', 'leagueTone', 'Home match board must style FIFA and Wimbledon as first-class sports.')
 requireToken('components/home/home-experience.tsx', "logo: '/assets/leagues/fifa-world-cup-dark.png'", 'Home sport selector must show the FIFA football logo.')
 requireToken('components/home/home-experience.tsx', "logo: '/assets/leagues/wimbledon.svg'", 'Home sport selector must show the Wimbledon tennis logo.')
+requireToken('lib/services/live-home.ts', 'matchFamily', 'Public home must balance match picks by sport family so FIFA rows are not crowded out by Wimbledon.')
 requireToken('.env.example', 'TENNIS_DATA_PROVIDER=espn', '.env.example must document the free ESPN Wimbledon provider.')
 requireToken('.env.example', 'TENNIS_API_KEY=', '.env.example must document the private tennis API key.')
 

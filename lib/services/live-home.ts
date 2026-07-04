@@ -127,6 +127,14 @@ function kickoffTime(match: ArenaMatch) {
   return Number.isFinite(parsed) ? parsed : 0
 }
 
+function matchFamily(match: ArenaMatch) {
+  const sport = match.sport.toLowerCase()
+  const league = match.league.toLowerCase()
+  if (sport === 'tennis' || league.includes('wimbledon')) return 'wimbledon'
+  if (sport === 'football' || league.includes('fifa') || league.includes('world cup')) return 'fifa'
+  return 'other'
+}
+
 function pickHomeMatches(matches: ArenaMatch[]) {
   const visible = matches.filter((match) => !match.isHidden)
   const selected = new Map<string, ArenaMatch>()
@@ -135,6 +143,13 @@ function pickHomeMatches(matches: ArenaMatch[]) {
     selected.set(match.id, match)
   }
 
+  const addSorted = (pool: ArenaMatch[], sorter: (a: ArenaMatch, b: ArenaMatch) => number, limit: number) => {
+    pool.sort(sorter).slice(0, limit).forEach(add)
+  }
+
+  const upcomingSort = (a: ArenaMatch, b: ArenaMatch) => kickoffTime(a) - kickoffTime(b) || b.priority - a.priority
+  const finalSort = (a: ArenaMatch, b: ArenaMatch) => kickoffTime(b) - kickoffTime(a) || b.priority - a.priority
+
   visible.filter((match) => match.isFeatured).forEach(add)
 
   visible
@@ -142,17 +157,17 @@ function pickHomeMatches(matches: ArenaMatch[]) {
     .sort((a, b) => b.priority - a.priority || kickoffTime(a) - kickoffTime(b))
     .forEach(add)
 
-  visible
-    .filter((match) => match.status === 'upcoming')
-    .sort((a, b) => kickoffTime(a) - kickoffTime(b) || b.priority - a.priority)
-    .slice(0, 12)
-    .forEach(add)
+  for (const family of ['fifa', 'wimbledon'] as const) {
+    addSorted(visible.filter((match) => match.status === 'upcoming' && matchFamily(match) === family), upcomingSort, 12)
+  }
+  addSorted(visible.filter((match) => match.status === 'upcoming' && matchFamily(match) === 'other'), upcomingSort, 8)
+  addSorted(visible.filter((match) => match.status === 'upcoming'), upcomingSort, 12)
 
-  visible
-    .filter((match) => match.status === 'final')
-    .sort((a, b) => kickoffTime(b) - kickoffTime(a) || b.priority - a.priority)
-    .slice(0, 8)
-    .forEach(add)
+  for (const family of ['fifa', 'wimbledon'] as const) {
+    addSorted(visible.filter((match) => match.status === 'final' && matchFamily(match) === family), finalSort, 6)
+  }
+  addSorted(visible.filter((match) => match.status === 'final' && matchFamily(match) === 'other'), finalSort, 4)
+  addSorted(visible.filter((match) => match.status === 'final'), finalSort, 8)
 
   return Array.from(selected.values())
 }
