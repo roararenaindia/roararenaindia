@@ -68,6 +68,7 @@ If the manual run succeeds, GitHub will call the deployed site on the 10-minute,
 - Instagram post sync when credentials exist
 - X post sync when credentials exist
 - FIFA schedule and score sync
+- Optional Wimbledon tennis schedule/result sync when `TENNIS_API_KEY` is configured
 - Auto-curation for hero/match board
 
 ## Required env vars
@@ -84,10 +85,18 @@ FOOTBALL_DATA_COMPETITION=WC
 FOOTBALL_DATA_SEASON=2026
 MATCH_SYNC_PAST_DAYS=7
 MATCH_SYNC_FUTURE_DAYS=7
+TENNIS_API_KEY=your_api_tennis_key_here
+TENNIS_TOURNAMENT_NAME_FILTER=Wimbledon
+TENNIS_TOURNAMENT_KEY=
+TENNIS_TIMEZONE=UTC
+TENNIS_SYNC_PAST_DAYS=2
+TENNIS_SYNC_FUTURE_DAYS=10
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_publishable_or_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_secret_or_service_role_key
 ```
+
+`TENNIS_API_KEY` is optional. When it is absent, the tennis sync route returns `not_configured` and the football/social cron continues normally.
 
 `API_FOOTBALL_KEY` is optional. The free default provider is `FOOTBALL_DATA_TOKEN` from football-data.org.
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkMatchProviderRange } from '@/lib/services/match-data-provider'
+import { checkTennisProviderRange } from '@/lib/services/tennis-data-provider'
 import { getLiveHomePayload } from '@/lib/services/live-home'
 import { hasSupabaseWriteAccess, isSupabaseConfigured, supabaseSelect } from '@/lib/services/supabase-rest'
 import { checkInstagramStorageBucket } from '@/lib/services/supabase-storage'
@@ -26,6 +27,14 @@ async function checkMatchProvider() {
   return checkMatchProviderRange(from, to)
 }
 
+async function checkTennisProvider() {
+  const pastDays = Number(process.env.TENNIS_SYNC_PAST_DAYS || 2)
+  const futureDays = Number(process.env.TENNIS_SYNC_FUTURE_DAYS || 10)
+  const from = isoDateOffset(-pastDays)
+  const to = isoDateOffset(futureDays)
+  return checkTennisProviderRange(from, to)
+}
+
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ ok: false, error: 'Unauthorized request' }, { status: 401 })
@@ -38,6 +47,7 @@ export async function GET(request: NextRequest) {
   const syncRuns = await supabaseSelect('roar_sync_runs', 'select=id,source,status&limit=5', 'write')
   const storage = await checkInstagramStorageBucket()
   const matchProvider = await checkMatchProvider()
+  const tennisProvider = await checkTennisProvider()
 
   const checks = {
     env: {
@@ -51,6 +61,7 @@ export async function GET(request: NextRequest) {
       metaAppSecret: Boolean(process.env.META_APP_SECRET),
       footballDataToken: Boolean(process.env.FOOTBALL_DATA_TOKEN),
       apiFootballKey: Boolean(process.env.API_FOOTBALL_KEY),
+      tennisApiKey: Boolean(process.env.TENNIS_API_KEY || process.env.API_TENNIS_KEY),
       xUserId: Boolean(process.env.X_USER_ID),
       xBearerToken: Boolean(process.env.X_BEARER_TOKEN),
       contactEmail: Boolean(process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'roararenaindia@gmail.com'),
@@ -74,6 +85,7 @@ export async function GET(request: NextRequest) {
       instagramStorageBucket: storage.ok,
     },
     apiFootball: matchProvider,
+    apiTennis: tennisProvider,
     publicHome: {
       source: payload.source,
       posts: payload.posts?.length || 0,
@@ -86,6 +98,7 @@ export async function GET(request: NextRequest) {
       xRoute: true,
       autoCurateRoute: true,
       matchRoute: true,
+      tennisRoute: true,
       matchCronEvery2Hours: true,
       socialCronEnabledWhenConfigured: true,
       autoCurateAfterMatchSync: true,
@@ -125,6 +138,8 @@ export async function GET(request: NextRequest) {
       !checks.supabase.instagramStorageBucket ? 'Instagram storage is optional for this phase.' : null,
       !checks.apiFootball.configured ? 'Match provider is not connected yet. Add FOOTBALL_DATA_TOKEN for the free provider.' : null,
       checks.apiFootball.configured && !checks.apiFootball.fixturesReachable ? `Match provider could not fetch fixtures: ${checks.apiFootball.error}` : null,
+      !checks.apiTennis.configured ? 'Wimbledon sync is ready but inactive until TENNIS_API_KEY is added.' : null,
+      checks.apiTennis.configured && !checks.apiTennis.fixturesReachable ? `Tennis provider could not fetch fixtures: ${checks.apiTennis.error}` : null,
       !checks.env.xUserId || !checks.env.xBearerToken ? 'X automation will be skipped until X_USER_ID and X_BEARER_TOKEN are added.' : null,
       payload.source?.includes('fallback') ? 'Homepage is still using fallback data until Supabase sync runs.' : null,
     ].filter(Boolean),

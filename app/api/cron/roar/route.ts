@@ -61,7 +61,12 @@ export async function GET(request: NextRequest) {
   const matchResult = await callInternalSummary(origin, '/api/sync/matches', secret)
   results.push(matchResult)
 
-  if (matchResult.ok) {
+  const tennisResult = await callInternalSummary(origin, '/api/sync/tennis', secret)
+  results.push(tennisResult)
+
+  const tennisHasDataPath = tennisResult.ok && tennisResult.mode !== 'not_configured'
+
+  if (matchResult.ok || tennisHasDataPath) {
     results.push(await callInternalSummary(origin, '/api/admin/auto-curate', secret))
   } else {
     results.push({
@@ -69,7 +74,7 @@ export async function GET(request: NextRequest) {
       ok: false,
       status: 0,
       mode: 'skipped',
-      message: 'Auto-curation skipped because match sync did not complete.',
+      message: 'Auto-curation skipped because sports sync did not complete.',
       fetched: null,
       providerLabel: null,
     })

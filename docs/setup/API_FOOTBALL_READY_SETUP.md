@@ -32,6 +32,14 @@ API_FOOTBALL_LEAGUE_ID=1
 API_FOOTBALL_SEASON=2026
 MATCH_SYNC_PAST_DAYS=7
 MATCH_SYNC_FUTURE_DAYS=7
+
+# Optional tennis/Wimbledon sync via API-Tennis
+TENNIS_API_KEY=your_api_tennis_key_here
+TENNIS_TOURNAMENT_NAME_FILTER=Wimbledon
+TENNIS_TOURNAMENT_KEY=
+TENNIS_TIMEZONE=UTC
+TENNIS_SYNC_PAST_DAYS=2
+TENNIS_SYNC_FUTURE_DAYS=10
 ```
 
 Supabase is required for automatic updates because the sync route saves fixtures and results into `roar_matches`. Without it, the site still works with fallback data, but live schedule/results are not persisted.
@@ -66,6 +74,7 @@ Then:
 - Auto-curation runs after each live sync.
 - Instagram runs when Meta credentials are configured; X is skipped until its credentials exist.
 - Match provider tokens are never hardcoded.
+- Wimbledon tennis sync is wired but optional. Without `TENNIS_API_KEY`, `/api/sync/tennis` safely reports `not_configured`; with the key added, GitHub Actions and `/api/cron/roar` can save Wimbledon fixtures into the same match board as FIFA.
 
 ## Expected result
 

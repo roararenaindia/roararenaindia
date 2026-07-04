@@ -6,7 +6,7 @@ export type ArenaTeam = {
 
 export type ArenaMatch = {
   id: string
-  sport: 'football' | 'basketball' | 'cricket' | 'formula-1' | 'multi-sport'
+  sport: 'football' | 'basketball' | 'cricket' | 'formula-1' | 'tennis' | 'multi-sport'
   league: string
   leagueLogo: string
   leagueLogoLight?: string

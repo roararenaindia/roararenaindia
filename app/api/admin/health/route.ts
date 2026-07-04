@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hasAnyMatchProvider } from '@/lib/services/match-data-provider'
 import { hasSupabaseWriteAccess, isSupabaseConfigured } from '@/lib/services/supabase-rest'
+import { hasTennisProvider } from '@/lib/services/tennis-data-provider'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,6 +25,7 @@ export async function GET(request: NextRequest) {
     instagramWebhookConfigured: Boolean(process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN && process.env.META_APP_SECRET),
     xConfigured: Boolean(process.env.X_USER_ID && process.env.X_BEARER_TOKEN),
     apiFootballConfigured: hasAnyMatchProvider(),
+    tennisConfigured: hasTennisProvider(),
     mode: isSupabaseConfigured('read') ? 'supabase-ready' : 'static-fallback',
   })
 }

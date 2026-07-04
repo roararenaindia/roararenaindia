@@ -1,6 +1,6 @@
 import { supabaseInsert, supabaseSelect } from '@/lib/services/supabase-rest'
 
-export type SyncSource = 'instagram' | 'x' | 'matches' | 'curation' | 'system'
+export type SyncSource = 'instagram' | 'x' | 'matches' | 'tennis' | 'curation' | 'system'
 export type SyncStatus = 'success' | 'warning' | 'error'
 
 export async function writeSyncLog(input: {

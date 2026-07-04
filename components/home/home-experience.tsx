@@ -64,12 +64,19 @@ function toModalPost(post: PostLike): ArenaPost {
 }
 
 type FilterKey = 'all' | 'live' | 'upcoming' | 'final'
+type LeagueFilterKey = 'all' | 'fifa' | 'wimbledon'
 
 const LIVE_FILTERS: { key: FilterKey; label: string }[] = [
   { key: 'upcoming', label: 'Upcoming' },
   { key: 'final', label: 'Results' },
   { key: 'live', label: 'Live' },
   { key: 'all', label: 'All' },
+]
+
+const LEAGUE_FILTERS: { key: LeagueFilterKey; label: string }[] = [
+  { key: 'all', label: 'All sports' },
+  { key: 'fifa', label: 'FIFA' },
+  { key: 'wimbledon', label: 'Wimbledon' },
 ]
 
 type LogoFrame = 'default' | 'clear' | 'dark-chip' | 'light-chip' | undefined
@@ -111,6 +118,13 @@ function winnerText(match: ArenaMatch) {
   if (match.winner === 'away') return `${match.away.name} won`
   if (match.winner === 'draw') return 'Draw'
   return 'Final result'
+}
+
+function leagueFamily(match: ArenaMatch): Exclude<LeagueFilterKey, 'all'> | 'other' {
+  const league = match.league.toLowerCase()
+  if (match.sport === 'tennis' || league.includes('wimbledon')) return 'wimbledon'
+  if (league.includes('fifa') || league.includes('world cup')) return 'fifa'
+  return 'other'
 }
 
 function SectionHeader({ eyebrow, title, body }: { eyebrow: string; title: string; body: string }) {
@@ -465,24 +479,37 @@ function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof
 
 function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicHome>['data']; onOpenMatch: (match: ArenaMatch) => void }) {
   const [filter, setFilter] = useState<FilterKey>('upcoming')
+  const [leagueFilter, setLeagueFilter] = useState<LeagueFilterKey>('all')
   const matches = useMemo(
     () => (data.matches || []).filter((match) => !match.isHidden),
     [data.matches],
   )
-
-  const counts = useMemo(
+  const leagueMatches = useMemo(
+    () => (leagueFilter === 'all' ? matches : matches.filter((match) => leagueFamily(match) === leagueFilter)),
+    [matches, leagueFilter],
+  )
+  const leagueCounts = useMemo(
     () => ({
       all: matches.length,
-      live: matches.filter((m) => m.status === 'live').length,
-      upcoming: matches.filter((m) => m.status === 'upcoming').length,
-      final: matches.filter((m) => m.status === 'final').length,
+      fifa: matches.filter((match) => leagueFamily(match) === 'fifa').length,
+      wimbledon: matches.filter((match) => leagueFamily(match) === 'wimbledon').length,
     }),
     [matches],
   )
 
+  const counts = useMemo(
+    () => ({
+      all: leagueMatches.length,
+      live: leagueMatches.filter((m) => m.status === 'live').length,
+      upcoming: leagueMatches.filter((m) => m.status === 'upcoming').length,
+      final: leagueMatches.filter((m) => m.status === 'final').length,
+    }),
+    [leagueMatches],
+  )
+
   const visible = useMemo(() => {
     const rank = (m: ArenaMatch) => (m.status === 'live' ? 0 : m.status === 'final' ? 1 : m.status === 'upcoming' ? 2 : 3)
-    const ordered = [...matches].sort((a, b) => {
+    const ordered = [...leagueMatches].sort((a, b) => {
       const statusRank = rank(a) - rank(b)
       if (statusRank) return statusRank
       if (a.status === 'final' && b.status === 'final') return matchTimeValue(b) - matchTimeValue(a) || b.priority - a.priority
@@ -490,17 +517,18 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
       return b.priority - a.priority
     })
     return filter === 'all' ? ordered : ordered.filter((m) => m.status === filter)
-  }, [matches, filter])
+  }, [leagueMatches, filter])
   const latestResult = useMemo(
-    () => matches.filter((match) => match.status === 'final').sort((a, b) => matchTimeValue(b) - matchTimeValue(a) || b.priority - a.priority)[0],
-    [matches],
+    () => leagueMatches.filter((match) => match.status === 'final').sort((a, b) => matchTimeValue(b) - matchTimeValue(a) || b.priority - a.priority)[0],
+    [leagueMatches],
   )
   const nextUpcoming = useMemo(
-    () => matches.filter((match) => match.status === 'upcoming').sort((a, b) => matchTimeValue(a) - matchTimeValue(b) || b.priority - a.priority)[0],
-    [matches],
+    () => leagueMatches.filter((match) => match.status === 'upcoming').sort((a, b) => matchTimeValue(a) - matchTimeValue(b) || b.priority - a.priority)[0],
+    [leagueMatches],
   )
-  const spotlightMatch = matches.find((match) => match.status === 'live') || latestResult || nextUpcoming || matches[0]
+  const spotlightMatch = leagueMatches.find((match) => match.status === 'live') || latestResult || nextUpcoming || leagueMatches[0] || (leagueFilter === 'all' ? matches[0] : undefined)
   const activeFilterLabel = LIVE_FILTERS.find((tab) => tab.key === filter)?.label || 'All'
+  const activeLeagueLabel = LEAGUE_FILTERS.find((tab) => tab.key === leagueFilter)?.label || 'All sports'
   const boardStats = [
     { label: 'Live', value: counts.live, icon: Activity, helper: 'Now' },
     { label: 'Upcoming', value: counts.upcoming, icon: Zap, helper: 'Next' },
@@ -537,7 +565,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
                   <Radio className="h-3.5 w-3.5" /> Auto-updating board
                 </span>
                 <span className="rounded-full border border-border bg-surface px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">
-                  Showing {activeFilterLabel}
+                  {activeLeagueLabel} / {activeFilterLabel}
                 </span>
               </div>
               {spotlightMatch ? (
@@ -638,6 +666,28 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
           </motion.div>
         ) : null}
 
+        <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
+          {LEAGUE_FILTERS.map((tab) => {
+            const active = leagueFilter === tab.key
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setLeagueFilter(tab.key)}
+                aria-pressed={active}
+                className={`relative inline-flex items-center gap-2 overflow-hidden rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.14em] transition-colors ${
+                  active ? 'border-primary/50 bg-primary text-primary-foreground shadow-soft-glow' : 'border-border bg-card text-muted-foreground hover:border-primary/35 hover:text-foreground'
+                }`}
+              >
+                {tab.label}
+                <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${active ? 'bg-black/20 text-primary-foreground' : 'bg-surface text-muted-foreground'}`}>
+                  {leagueCounts[tab.key]}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+
         <div className="mb-8 flex flex-wrap items-center justify-center gap-2">
           {LIVE_FILTERS.map((tab) => {
             const active = filter === tab.key
@@ -679,7 +729,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
                 exit={{ opacity: 0 }}
                 className="col-span-full rounded-2xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground"
               >
-                No {filter === 'all' ? '' : filter} matches right now. Run the match sync to populate this board.
+                No {leagueFilter === 'all' ? '' : `${activeLeagueLabel} `}{filter === 'all' ? '' : filter} matches right now. Run the sports sync to populate this board.
               </motion.div>
             )}
           </AnimatePresence>

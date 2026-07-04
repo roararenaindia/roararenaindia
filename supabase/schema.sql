@@ -99,6 +99,9 @@ on public.roar_matches (is_hidden, priority desc, kickoff_time asc);
 create index if not exists roar_matches_status_idx
 on public.roar_matches (status);
 
+create index if not exists roar_matches_sport_status_time_idx
+on public.roar_matches (sport, status, kickoff_time);
+
 create or replace function public.set_updated_at()
 returns trigger as $$
 begin

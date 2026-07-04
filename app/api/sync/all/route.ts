@@ -38,8 +38,8 @@ export async function GET(request: NextRequest) {
         ...(xConfigured ? ['/api/sync/x'] : []),
       ]
   const paths = includeSocial
-    ? [...socialPaths, '/api/sync/matches', '/api/admin/auto-curate']
-    : ['/api/sync/matches', '/api/admin/auto-curate']
+    ? [...socialPaths, '/api/sync/matches', '/api/sync/tennis', '/api/admin/auto-curate']
+    : ['/api/sync/matches', '/api/sync/tennis', '/api/admin/auto-curate']
   const results = []
 
   for (const path of paths) {

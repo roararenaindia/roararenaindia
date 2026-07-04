@@ -27,6 +27,7 @@ type Health = {
   supabaseWrite?: boolean
   instagramConfigured?: boolean
   apiFootballConfigured?: boolean
+  tennisConfigured?: boolean
   xConfigured?: boolean
   mode?: string
 }
@@ -149,6 +150,7 @@ export default function AdminDashboard() {
   const [instagramCheck, setInstagramCheck] = useState<CheckResult | null>(null)
   const [xCheck, setXCheck] = useState<CheckResult | null>(null)
   const [matchCheck, setMatchCheck] = useState<CheckResult | null>(null)
+  const [tennisCheck, setTennisCheck] = useState<CheckResult | null>(null)
   const [finalCheck, setFinalCheck] = useState<CheckResult | null>(null)
 
   useEffect(() => {
@@ -204,14 +206,15 @@ export default function AdminDashboard() {
     }
   }
 
-  async function runCheck(kind: 'instagram' | 'x' | 'matches' | 'final') {
+  async function runCheck(kind: 'instagram' | 'x' | 'matches' | 'tennis' | 'final') {
     setLoading(true)
     try {
-      const path = kind === 'instagram' ? '/api/admin/instagram/check' : kind === 'x' ? '/api/admin/x/check' : kind === 'matches' ? '/api/admin/matches/check' : '/api/admin/final-check'
+      const path = kind === 'instagram' ? '/api/admin/instagram/check' : kind === 'x' ? '/api/admin/x/check' : kind === 'matches' ? '/api/admin/matches/check' : kind === 'tennis' ? '/api/admin/tennis/check' : '/api/admin/final-check'
       const data = await api(path)
       if (kind === 'instagram') setInstagramCheck(data)
       if (kind === 'x') setXCheck(data)
       if (kind === 'matches') setMatchCheck(data)
+      if (kind === 'tennis') setTennisCheck(data)
       if (kind === 'final') setFinalCheck(data)
       notify('success', `${kind} check complete`)
     } catch (error) {
@@ -298,10 +301,11 @@ export default function AdminDashboard() {
     }
   }
 
-  const final = finalCheck as { productionReady?: boolean; checks?: { env?: Record<string, boolean>; supabase?: Record<string, boolean>; publicHome?: Record<string, unknown>; apiFootball?: Record<string, unknown>; socialLinks?: Record<string, unknown> }; warnings?: string[] } | null
+  const final = finalCheck as { productionReady?: boolean; checks?: { env?: Record<string, boolean>; supabase?: Record<string, boolean>; publicHome?: Record<string, unknown>; apiFootball?: Record<string, unknown>; apiTennis?: Record<string, unknown>; socialLinks?: Record<string, unknown> }; warnings?: string[] } | null
   const instagram = instagramCheck as { ready?: boolean; checks?: { instagram?: Record<string, unknown>; supabase?: Record<string, boolean>; env?: Record<string, boolean> }; nextStep?: string } | null
   const x = xCheck as { ready?: boolean; checks?: { x?: Record<string, unknown>; supabase?: Record<string, boolean>; env?: Record<string, boolean> }; nextStep?: string } | null
   const matchApi = matchCheck as { ready?: boolean; checks?: { provider?: Record<string, unknown>; supabase?: Record<string, boolean>; env?: Record<string, boolean> }; nextStep?: string } | null
+  const tennisApi = tennisCheck as { ready?: boolean; checks?: { provider?: Record<string, unknown>; supabase?: Record<string, boolean>; env?: Record<string, boolean | string> }; nextStep?: string; note?: string } | null
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -356,6 +360,7 @@ export default function AdminDashboard() {
             <StatusPill active={health?.supabaseWrite} label="DB write" />
             <StatusPill active={health?.instagramConfigured} label="IG sync" />
             <StatusPill active={health?.apiFootballConfigured} label="Matches" />
+            <StatusPill active={health?.tennisConfigured} label="Tennis" />
             <StatusPill active={health?.xConfigured} label="X optional" />
           </div>
         </div>
@@ -372,7 +377,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-7">
+        <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8">
           <button onClick={() => runAction('Seed content', '/api/admin/seed')} className="rounded-[1.4rem] border border-border bg-card p-5 text-left transition hover:-translate-y-1 hover:border-primary/45">
             <Database className="mb-4 h-6 w-6 text-primary" />
             <p className="font-display text-3xl uppercase leading-none">Seed</p>
@@ -392,6 +397,11 @@ export default function AdminDashboard() {
             <Radio className="mb-4 h-6 w-6 text-primary" />
             <p className="font-display text-3xl uppercase leading-none">Sync Matches</p>
             <p className="mt-2 text-xs leading-5 text-muted-foreground">Fetch fixtures and scores.</p>
+          </button>
+          <button onClick={() => runAction('Tennis sync', '/api/sync/tennis')} className="rounded-[1.4rem] border border-border bg-card p-5 text-left transition hover:-translate-y-1 hover:border-primary/45">
+            <Activity className="mb-4 h-6 w-6 text-primary" />
+            <p className="font-display text-3xl uppercase leading-none">Sync Tennis</p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">Fetch Wimbledon fixtures and results.</p>
           </button>
           <button onClick={() => runAction('Auto curate', '/api/admin/auto-curate')} className="rounded-[1.4rem] border border-border bg-card p-5 text-left transition hover:-translate-y-1 hover:border-primary/45">
             <Star className="mb-4 h-6 w-6 text-primary" />
@@ -420,7 +430,7 @@ export default function AdminDashboard() {
         </div>
 
         {activeTab === 'setup' && (
-          <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-5 lg:grid-cols-2 2xl:grid-cols-5">
             <section className="rounded-[1.7rem] border border-border bg-card p-5">
               <div className="mb-5 flex items-center justify-between gap-3">
                 <div>
@@ -444,6 +454,33 @@ export default function AdminDashboard() {
                 <p className="font-mono text-[11px] text-primary">INSTAGRAM_ACCESS_TOKEN</p>
                 <p className="mt-2">Use a long-lived token and refresh it before expiry.</p>
               </div>
+            </section>
+
+            <section className="rounded-[1.7rem] border border-border bg-card p-5">
+              <div className="mb-5 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">Tennis</p>
+                  <h2 className="mt-1 font-display text-3xl uppercase leading-none">Wimbledon</h2>
+                </div>
+                <button onClick={() => runCheck('tennis')} className="rounded-2xl bg-primary px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground">Check</button>
+              </div>
+              <div className="grid gap-3">
+                <CheckLine ok={Boolean(tennisApi?.checks?.env?.tennisApiKey)} label="Tennis API key set" />
+                <CheckLine ok={Boolean(tennisApi?.checks?.provider?.fixturesReachable)} label="Provider reachable" />
+                <CheckLine ok={Boolean(tennisApi?.checks?.supabase?.write)} label="Can save to Supabase" />
+              </div>
+              {tennisApi?.checks?.provider ? (
+                <p className="mt-4 text-xs leading-5 text-muted-foreground">
+                  Fixtures found: {String(tennisApi.checks.provider.sampleCount ?? 0)}. Filter: {String(tennisApi.checks.env?.tennisTournamentNameFilter || 'Wimbledon')}.
+                </p>
+              ) : null}
+              {tennisApi?.checks?.provider?.error ? (
+                <p className="mt-3 rounded-2xl border border-red-500/25 bg-red-500/10 p-3 text-xs leading-5 text-red-200">
+                  API issue: {String(tennisApi.checks.provider.error)}
+                </p>
+              ) : null}
+              {tennisApi?.nextStep && <p className="mt-3 text-xs leading-5 text-muted-foreground">{tennisApi.nextStep}</p>}
+              {tennisApi?.note && <p className="mt-3 text-xs leading-5 text-muted-foreground">{tennisApi.note}</p>}
             </section>
 
             <section className="rounded-[1.7rem] border border-border bg-card p-5">
@@ -507,6 +544,7 @@ export default function AdminDashboard() {
                 <CheckLine ok={Boolean(final?.checks?.supabase?.generatedPostsTable)} label="Queue table" />
                 <CheckLine ok={Boolean(final?.checks?.publicHome?.heroReady)} label="Hero data ready" />
                 <CheckLine ok={Boolean(final?.checks?.apiFootball?.fixturesReachable)} label="Match provider working" />
+                <CheckLine ok={Boolean(final?.checks?.apiTennis?.fixturesReachable)} label="Tennis provider working" />
                 <CheckLine ok={Boolean(final?.checks?.env?.contactEmail)} label="Contact email ready" />
               </div>
               {final?.checks?.apiFootball ? (

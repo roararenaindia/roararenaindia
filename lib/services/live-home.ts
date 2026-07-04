@@ -48,6 +48,9 @@ type DbMatch = {
   is_hidden?: boolean | null
 }
 
+const matchSelect = 'select=id,provider_match_id,sport,league,league_logo,home_team,away_team,home_short,away_short,home_logo,away_logo,home_score,away_score,status,status_label,kickoff_time,venue,winner,priority,is_featured,is_hidden'
+const visibleMatchFilter = 'or=(is_hidden.is.null,is_hidden.eq.false)'
+
 function dateLabelFromIso(value?: string | null) {
   if (!value) return 'TBA'
   return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value))
@@ -186,6 +189,31 @@ function mapMatch(row: DbMatch): ArenaMatch {
   }
 }
 
+async function fetchHomeMatchRows() {
+  const windows = [
+    [matchSelect, visibleMatchFilter, 'is_featured=eq.true', 'order=priority.desc,kickoff_time.asc.nullslast', 'limit=16'],
+    [matchSelect, visibleMatchFilter, 'status=eq.live', 'order=priority.desc,kickoff_time.asc.nullslast', 'limit=24'],
+    [matchSelect, visibleMatchFilter, 'status=eq.upcoming', 'order=kickoff_time.asc.nullslast', 'limit=48'],
+    [matchSelect, visibleMatchFilter, 'status=eq.final', 'order=kickoff_time.desc.nullslast', 'limit=48'],
+  ]
+
+  const results = await Promise.all(
+    windows.map((query) => supabaseSelect<DbMatch>('roar_matches', query.join('&'))),
+  )
+
+  const rows = new Map<string, DbMatch>()
+  for (const result of results) {
+    for (const row of result.data || []) {
+      rows.set(row.provider_match_id || row.id, row)
+    }
+  }
+
+  return {
+    data: Array.from(rows.values()),
+    errors: results.map((result) => result.error).filter(Boolean),
+  }
+}
+
 export async function getLiveHomePayload() {
   const fallback = getHomePayload()
 
@@ -207,15 +235,7 @@ export async function getLiveHomePayload() {
     ].join('&'),
   )
 
-  const matchesResult = await supabaseSelect<DbMatch>(
-    'roar_matches',
-    [
-      'select=id,provider_match_id,sport,league,league_logo,home_team,away_team,home_short,away_short,home_logo,away_logo,home_score,away_score,status,status_label,kickoff_time,venue,winner,priority,is_featured,is_hidden',
-      'or=(is_hidden.is.null,is_hidden.eq.false)',
-      'order=kickoff_time.asc.nullslast',
-      'limit=80',
-    ].join('&'),
-  )
+  const matchesResult = await fetchHomeMatchRows()
 
   const posts = postsResult.data?.map(mapPost).filter(Boolean) || []
   const allMatches = matchesResult.data?.map(mapMatch).filter(isDisplayableMatch) || []
@@ -226,7 +246,7 @@ export async function getLiveHomePayload() {
     generatedAt: new Date().toISOString(),
     source: posts.length || matches.length ? 'supabase-live' : 'supabase-empty-fallback',
     database: 'connected',
-    errors: [postsResult.error, matchesResult.error].filter(Boolean),
+    errors: [postsResult.error, ...matchesResult.errors].filter(Boolean),
     heroMatch,
     matches: matches.length ? matches : fallback.matches,
     posts: posts.length ? posts : fallback.posts,

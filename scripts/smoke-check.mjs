@@ -6,7 +6,9 @@ const requiredFiles = [
   'app/page.tsx',
   'app/api/public/home/route.ts',
   'app/api/sync/matches/route.ts',
+  'app/api/sync/tennis/route.ts',
   'app/api/admin/matches/check/route.ts',
+  'app/api/admin/tennis/check/route.ts',
   'app/api/admin/final-check/route.ts',
   'app/api/auth/instagram/callback/route.ts',
   'app/api/sync/instagram/route.ts',
@@ -21,6 +23,7 @@ const requiredFiles = [
   'components/admin/admin-dashboard.tsx',
   'lib/config/seo.ts',
   'lib/services/match-self-heal.ts',
+  'lib/services/tennis-data-provider.ts',
   'supabase/schema.sql',
   'vercel.json',
   '.github/workflows/roar-cron.yml',
@@ -68,7 +71,7 @@ if (nextConfig.includes('ignoreBuildErrors')) {
 }
 
 const workflow = fs.readFileSync(path.join(root, '.github/workflows/roar-cron.yml'), 'utf8')
-for (const token of ["cron: '3,13,23,33,43,53 * * * *'", "cron: '7,22,37,52 * * * *'", "cron: '17 */2 * * *'", '/api/sync/instagram', '/api/sync/matches', 'Authorization: Bearer ${ROAR_CRON_SECRET}']) {
+for (const token of ["cron: '3,13,23,33,43,53 * * * *'", "cron: '7,22,37,52 * * * *'", "cron: '17 */2 * * *'", '/api/sync/instagram', '/api/sync/matches', '/api/sync/tennis', 'Authorization: Bearer ${ROAR_CRON_SECRET}']) {
   if (!workflow.includes(token)) {
     console.error(`GitHub Actions cron missing required live-sync token: ${token}`)
     process.exit(1)
@@ -84,6 +87,8 @@ for (const token of [
   'NEXT_PUBLIC_GA_MEASUREMENT_ID=',
   'MATCH_SELF_HEAL_ENABLED=true',
   'MATCH_SELF_HEAL_STALE_MINUTES=20',
+  'TENNIS_API_KEY=',
+  'TENNIS_TOURNAMENT_NAME_FILTER=Wimbledon',
 ]) {
   if (!envExample.includes(token)) {
     console.error(`.env.example missing required automation token: ${token}`)
@@ -142,6 +147,14 @@ for (const token of [
 ]) {
   if (!matchSelfHeal.includes(token)) {
     console.error(`Match self-heal service missing required token: ${token}`)
+    process.exit(1)
+  }
+}
+
+const sportsScheduleCheck = fs.readFileSync(path.join(root, 'scripts/sports-schedule-check.mjs'), 'utf8')
+for (const token of ['fetchHomeMatchRows', 'TENNIS_API_KEY=', 'app/api/sync/tennis/route.ts']) {
+  if (!sportsScheduleCheck.includes(token)) {
+    console.error(`Sports schedule check missing guard token: ${token}`)
     process.exit(1)
   }
 }

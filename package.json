@@ -8,6 +8,7 @@
     "build": "node scripts/vercel-build.mjs",
     "start": "next start",
     "lint": "echo \"Lint check skipped: v0 project has no ESLint config in this package.\"",
+    "test:sports": "node scripts/sports-schedule-check.mjs",
     "typecheck": "tsc --noEmit",
     "build:raw": "NEXT_TELEMETRY_DISABLED=1 next build",
     "smoke": "node scripts/smoke-check.mjs"
