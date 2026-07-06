@@ -71,7 +71,16 @@ export default function AssetLogo({
             src={src || ''}
             alt={alt}
             className={`asset-logo-dark relative z-10 h-full w-full object-contain drop-shadow-[0_1px_1px_rgba(0,0,0,0.78)] drop-shadow-[0_10px_18px_rgba(0,0,0,0.28)] ${imgClassName}`}
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', boxSizing: 'border-box', padding: 'inherit', transform: 'none' }}
+            style={{
+              position: 'absolute',
+              inset: variant === 'minimal' ? 0 : '10%',
+              width: variant === 'minimal' ? '100%' : '80%',
+              height: variant === 'minimal' ? '100%' : '80%',
+              maxWidth: '100%',
+              maxHeight: '100%',
+              objectFit: 'contain',
+              transform: 'none',
+            }}
             loading={loading}
             decoding="async"
             onError={() => setBroken(true)}
@@ -82,7 +91,16 @@ export default function AssetLogo({
               alt=""
               aria-hidden="true"
               className={`asset-logo-light relative z-10 h-full w-full object-contain drop-shadow-[0_1px_1px_rgba(255,255,255,0.74)] drop-shadow-[0_12px_20px_rgba(17,24,39,0.22)] ${imgClassName}`}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', boxSizing: 'border-box', padding: 'inherit', transform: 'none' }}
+              style={{
+                position: 'absolute',
+                inset: variant === 'minimal' ? 0 : '10%',
+                width: variant === 'minimal' ? '100%' : '80%',
+                height: variant === 'minimal' ? '100%' : '80%',
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
+                transform: 'none',
+              }}
               loading={loading}
               decoding="async"
               onError={() => setLightBroken(true)}
