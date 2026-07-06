@@ -28,6 +28,7 @@ import PostModal from '@/components/home/post-modal'
 import { usePublicHome, type PublicHomePayload } from '@/components/hooks/use-public-home'
 import type { ArenaMatch } from '@/lib/data/arena-live-data'
 import { siteConfig, type ArenaPost } from '@/lib/config/site-data'
+import { resolveLeagueLogoFrame, resolveLeagueLogoLight } from '@/lib/domain/league-logos'
 
 const reveal = {
   hidden: { opacity: 0, y: 22 },
@@ -544,6 +545,10 @@ function CompactMatchCard({ match, onOpen }: { match: ArenaMatch; onOpen: (match
 }
 
 function PostCard({ post, onOpen }: { post: PostLike; onOpen: (post: ArenaPost) => void }) {
+  const postLogo = post.logo || '/logos/logo-icon-dark-transparent.png'
+  const postLogoLight = resolveLeagueLogoLight(post.category, postLogo)
+  const postLogoFrame = resolveLeagueLogoFrame(post.category, postLogo)
+
   return (
     <button
       type="button"
@@ -554,7 +559,15 @@ function PostCard({ post, onOpen }: { post: PostLike; onOpen: (post: ArenaPost) 
         <img src={post.image} alt={post.title} className="h-full w-full object-contain transition duration-700" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
         <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/15 bg-black/60 px-3 py-1.5 backdrop-blur-xl">
-          <AssetLogo src={post.logo || '/logos/logo-icon-dark-transparent.png'} alt={`${post.category} logo`} variant="minimal" className="h-7 w-7 border-0 bg-transparent p-0" imgClassName="drop-shadow-none" />
+          <AssetLogo
+            src={postLogo}
+            lightSrc={postLogoLight}
+            lightFrame={postLogoFrame}
+            alt={`${post.category} logo`}
+            variant="minimal"
+            className="h-7 w-7 border-0 bg-transparent p-0"
+            imgClassName="drop-shadow-none"
+          />
           <span className="text-[10px] font-black uppercase tracking-[0.16em] text-white">{post.type}</span>
         </div>
       </div>
