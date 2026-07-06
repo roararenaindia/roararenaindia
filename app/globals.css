@@ -5,59 +5,97 @@
 :root,
 [data-theme='dark'] {
   color-scheme: dark;
-  --background: #050505;
+  --background: #060606;
   --foreground: #ffffff;
-  --surface: #0a0a0a;
-  --surface-elevated: #111111;
-  --card: #181818;
+  --surface: #0d0c0b;
+  --surface-elevated: #151311;
+  --card: #181614;
   --card-foreground: #ffffff;
-  --muted: #a7a7a7;
-  --muted-foreground: #a7a7a7;
-  --border: rgba(255, 255, 255, 0.12);
-  --primary: #ff4b1f;
+  --muted: #b0aca7;
+  --muted-foreground: #aaa49d;
+  --border: rgba(255, 255, 255, 0.13);
+  --primary: #ff5428;
   --primary-foreground: #ffffff;
-  --glow: rgba(255, 75, 31, 0.35);
-  --soft-glow: rgba(255, 75, 31, 0.12);
-  --hero-gradient: radial-gradient(circle at 72% 35%, rgba(255, 75, 31, 0.22), transparent 32%), linear-gradient(135deg, #050505 0%, #0a0a0a 48%, #111111 100%);
-  --section-gradient: linear-gradient(180deg, rgba(255, 75, 31, 0.05), rgba(255, 255, 255, 0.02), transparent);
-  --popover: #111111;
+  --glow: rgba(255, 84, 40, 0.34);
+  --soft-glow: rgba(255, 84, 40, 0.11);
+  --hero-gradient: radial-gradient(circle at 72% 35%, rgba(255, 84, 40, 0.21), transparent 32%), linear-gradient(135deg, #060606 0%, #0d0c0b 48%, #151311 100%);
+  --hero-wash: radial-gradient(circle at 18% 18%, rgba(255, 84, 40, 0.22), transparent 28%), radial-gradient(circle at 85% 20%, rgba(255, 84, 40, 0.12), transparent 32%), linear-gradient(130deg, transparent 0%, transparent 46%, rgba(255, 84, 40, 0.10) 46.2%, transparent 46.7%, transparent 100%);
+  --section-gradient: linear-gradient(180deg, rgba(255, 84, 40, 0.055), rgba(255, 255, 255, 0.02), transparent);
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --shine-line: rgba(255, 255, 255, 0.08);
+  --sport-wimbledon-accent: #62d695;
+  --sport-wimbledon-text: #93e7b5;
+  --sport-wimbledon-soft: rgba(98, 214, 149, 0.12);
+  --sport-wimbledon-border: rgba(98, 214, 149, 0.36);
+  --sport-wimbledon-border-strong: rgba(98, 214, 149, 0.58);
+  --sport-wimbledon-hover: rgba(98, 214, 149, 0.46);
+  --sport-wimbledon-shadow: rgba(98, 214, 149, 0.13);
+  --sport-wimbledon-panel: linear-gradient(135deg, rgba(98, 214, 149, 0.13), transparent 40%, rgba(255, 84, 40, 0.075));
+  --sport-fifa-accent: #67a9ff;
+  --sport-fifa-text: #9dcaff;
+  --sport-fifa-soft: rgba(103, 169, 255, 0.12);
+  --sport-fifa-border: rgba(103, 169, 255, 0.36);
+  --sport-fifa-border-strong: rgba(103, 169, 255, 0.58);
+  --sport-fifa-hover: rgba(103, 169, 255, 0.46);
+  --sport-fifa-shadow: rgba(103, 169, 255, 0.13);
+  --sport-fifa-panel: linear-gradient(135deg, rgba(103, 169, 255, 0.12), transparent 42%, rgba(255, 84, 40, 0.075));
+  --popover: #151311;
   --popover-foreground: #ffffff;
-  --secondary: #111111;
+  --secondary: #151311;
   --secondary-foreground: #ffffff;
-  --accent: #ff4b1f;
+  --accent: #ff5428;
   --accent-foreground: #ffffff;
-  --destructive: #ff4b1f;
+  --destructive: #ff5428;
   --input: rgba(255, 255, 255, 0.08);
-  --ring: #ff4b1f;
+  --ring: #ff5428;
   --radius: 0.75rem;
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --background: #fffaf4;
-  --foreground: #14100d;
-  --surface: #fff1e3;
-  --surface-elevated: #ffe7d2;
-  --card: #fffefd;
-  --card-foreground: #14100d;
-  --muted: #6b5b4f;
-  --muted-foreground: #5b4b40;
-  --border: rgba(61, 43, 31, 0.18);
-  --primary: #e93f16;
+  --background: #fbfbfa;
+  --foreground: #161412;
+  --surface: #f2eee7;
+  --surface-elevated: #e9e3d8;
+  --card: #ffffff;
+  --card-foreground: #161412;
+  --muted: #6b6258;
+  --muted-foreground: #62584f;
+  --border: rgba(39, 34, 29, 0.15);
+  --primary: #e64a1d;
   --primary-foreground: #ffffff;
-  --glow: rgba(233, 63, 22, 0.26);
-  --soft-glow: rgba(119, 67, 36, 0.14);
-  --hero-gradient: radial-gradient(circle at 72% 35%, rgba(233, 63, 22, 0.18), transparent 33%), linear-gradient(135deg, #fffaf4 0%, #ffffff 48%, #ffe7d2 100%);
-  --section-gradient: linear-gradient(180deg, rgba(233, 63, 22, 0.09), rgba(77, 48, 31, 0.04), transparent);
+  --glow: rgba(230, 74, 29, 0.23);
+  --soft-glow: rgba(59, 45, 32, 0.10);
+  --hero-gradient: radial-gradient(circle at 72% 35%, rgba(230, 74, 29, 0.11), transparent 33%), linear-gradient(135deg, #fbfbfa 0%, #ffffff 48%, #f0ede7 100%);
+  --hero-wash: radial-gradient(circle at 18% 18%, rgba(230, 74, 29, 0.09), transparent 28%), radial-gradient(circle at 85% 20%, rgba(230, 74, 29, 0.06), transparent 32%), linear-gradient(130deg, transparent 0%, transparent 46%, rgba(230, 74, 29, 0.055) 46.2%, transparent 46.7%, transparent 100%);
+  --section-gradient: linear-gradient(180deg, rgba(230, 74, 29, 0.06), rgba(39, 34, 29, 0.035), transparent);
+  --grid-line: rgba(39, 34, 29, 0.065);
+  --shine-line: rgba(230, 74, 29, 0.10);
+  --sport-wimbledon-accent: #2f7b55;
+  --sport-wimbledon-text: #286a48;
+  --sport-wimbledon-soft: rgba(47, 123, 85, 0.10);
+  --sport-wimbledon-border: rgba(47, 123, 85, 0.25);
+  --sport-wimbledon-border-strong: rgba(47, 123, 85, 0.42);
+  --sport-wimbledon-hover: rgba(47, 123, 85, 0.35);
+  --sport-wimbledon-shadow: rgba(47, 123, 85, 0.10);
+  --sport-wimbledon-panel: linear-gradient(135deg, rgba(47, 123, 85, 0.10), transparent 42%, rgba(230, 74, 29, 0.055));
+  --sport-fifa-accent: #b57918;
+  --sport-fifa-text: #7c540d;
+  --sport-fifa-soft: rgba(181, 121, 24, 0.12);
+  --sport-fifa-border: rgba(140, 91, 14, 0.25);
+  --sport-fifa-border-strong: rgba(140, 91, 14, 0.42);
+  --sport-fifa-hover: rgba(140, 91, 14, 0.35);
+  --sport-fifa-shadow: rgba(140, 91, 14, 0.10);
+  --sport-fifa-panel: linear-gradient(135deg, rgba(181, 121, 24, 0.12), transparent 42%, rgba(230, 74, 29, 0.045));
   --popover: #ffffff;
-  --popover-foreground: #11100e;
-  --secondary: #f4eadf;
-  --secondary-foreground: #11100e;
-  --accent: #f0441a;
+  --popover-foreground: #161412;
+  --secondary: #f2eee7;
+  --secondary-foreground: #161412;
+  --accent: #e64a1d;
   --accent-foreground: #ffffff;
-  --destructive: #e93f16;
-  --input: rgba(61, 43, 31, 0.10);
-  --ring: #e93f16;
+  --destructive: #e64a1d;
+  --input: rgba(39, 34, 29, 0.10);
+  --ring: #e64a1d;
 }
 
 @keyframes marquee {
@@ -152,18 +190,71 @@
   .bg-card\/90 { background-color: color-mix(in srgb, var(--card) 90%, transparent); }
   .bg-card\/92 { background-color: color-mix(in srgb, var(--card) 92%, transparent); }
   .bg-primary { background-color: var(--primary); }
+  .bg-primary\/10 { background-color: color-mix(in srgb, var(--primary) 10%, transparent); }
+  .bg-primary\/12 { background-color: color-mix(in srgb, var(--primary) 12%, transparent); }
+  .bg-primary\/20 { background-color: color-mix(in srgb, var(--primary) 20%, transparent); }
+  .bg-primary\/80 { background-color: color-mix(in srgb, var(--primary) 80%, transparent); }
   .text-foreground { color: var(--foreground); }
   .text-card-foreground { color: var(--card-foreground); }
   .text-muted { color: var(--muted); }
   .text-muted-foreground { color: var(--muted-foreground); }
   .text-primary { color: var(--primary); }
+  .text-primary\/90 { color: color-mix(in srgb, var(--primary) 90%, transparent); }
   .text-primary-foreground { color: var(--primary-foreground); }
   .border-border { border-color: var(--border); }
   .border-primary { border-color: var(--primary); }
+  .border-primary\/20 { border-color: color-mix(in srgb, var(--primary) 20%, transparent); }
+  .border-primary\/25 { border-color: color-mix(in srgb, var(--primary) 25%, transparent); }
+  .border-primary\/30 { border-color: color-mix(in srgb, var(--primary) 30%, transparent); }
+  .border-primary\/35 { border-color: color-mix(in srgb, var(--primary) 35%, transparent); }
+  .border-primary\/40 { border-color: color-mix(in srgb, var(--primary) 40%, transparent); }
+  .border-primary\/45 { border-color: color-mix(in srgb, var(--primary) 45%, transparent); }
+  .border-primary\/50 { border-color: color-mix(in srgb, var(--primary) 50%, transparent); }
+  .border-primary\/55 { border-color: color-mix(in srgb, var(--primary) 55%, transparent); }
+  .hover\:border-primary\/30:hover { border-color: color-mix(in srgb, var(--primary) 30%, transparent); }
+  .hover\:border-primary\/35:hover { border-color: color-mix(in srgb, var(--primary) 35%, transparent); }
+  .hover\:border-primary\/40:hover { border-color: color-mix(in srgb, var(--primary) 40%, transparent); }
+  .hover\:border-primary\/45:hover { border-color: color-mix(in srgb, var(--primary) 45%, transparent); }
+  .hover\:border-primary\/50:hover { border-color: color-mix(in srgb, var(--primary) 50%, transparent); }
   .shadow-glow { box-shadow: 0 0 38px var(--glow); }
   .shadow-soft-glow { box-shadow: 0 18px 70px var(--soft-glow); }
   .hero-gradient { background: var(--hero-gradient); }
+  .arena-hero-wash { background: var(--hero-wash); }
   .section-gradient { background: var(--section-gradient); }
+  .arena-grid-soft {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  }
+  .arena-diagonal-shine {
+    background: linear-gradient(115deg, transparent 0%, transparent 48%, var(--shine-line) 48.2%, transparent 49%, transparent 100%);
+  }
+  .sport-wimbledon-border { border-color: var(--sport-wimbledon-border); }
+  .sport-wimbledon-border-strong { border-color: var(--sport-wimbledon-border-strong); }
+  .sport-wimbledon-bg-soft { background-color: var(--sport-wimbledon-soft); }
+  .sport-wimbledon-text { color: var(--sport-wimbledon-text); }
+  .sport-wimbledon-icon {
+    border-color: var(--sport-wimbledon-border);
+    background-color: var(--sport-wimbledon-soft);
+    color: var(--sport-wimbledon-text);
+  }
+  .sport-wimbledon-stripe { background-color: var(--sport-wimbledon-accent); }
+  .sport-wimbledon-panel { background: var(--sport-wimbledon-panel); }
+  .sport-wimbledon-shadow { box-shadow: 0 18px 60px var(--sport-wimbledon-shadow); }
+  .sport-wimbledon-hover:hover { border-color: var(--sport-wimbledon-hover); }
+  .sport-fifa-border { border-color: var(--sport-fifa-border); }
+  .sport-fifa-border-strong { border-color: var(--sport-fifa-border-strong); }
+  .sport-fifa-bg-soft { background-color: var(--sport-fifa-soft); }
+  .sport-fifa-text { color: var(--sport-fifa-text); }
+  .sport-fifa-icon {
+    border-color: var(--sport-fifa-border);
+    background-color: var(--sport-fifa-soft);
+    color: var(--sport-fifa-text);
+  }
+  .sport-fifa-stripe { background-color: var(--sport-fifa-accent); }
+  .sport-fifa-panel { background: var(--sport-fifa-panel); }
+  .sport-fifa-shadow { box-shadow: 0 18px 60px var(--sport-fifa-shadow); }
+  .sport-fifa-hover:hover { border-color: var(--sport-fifa-hover); }
   .animate-marquee { animation: marquee 38s linear infinite; }
   .animate-marquee-reverse { animation: marqueeReverse 38s linear infinite; }
   .animate-marquee-slow { animation: marquee 54s linear infinite; }

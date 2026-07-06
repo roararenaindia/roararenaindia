@@ -153,24 +153,24 @@ function leagueTone(value: LeagueFilterKey | ArenaMatch) {
   const family = typeof value === 'string' ? value : leagueFamily(value)
   if (family === 'wimbledon') {
     return {
-      border: 'border-emerald-400/45',
-      active: 'border-emerald-400/60 bg-emerald-400/12 text-foreground shadow-[0_18px_60px_rgba(16,185,129,0.14)]',
-      inactive: 'border-border bg-card text-muted-foreground hover:border-emerald-400/40 hover:text-foreground',
-      icon: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
-      stripe: 'bg-emerald-400',
-      text: 'text-emerald-300',
-      panel: 'bg-[linear-gradient(135deg,rgba(16,185,129,0.14),transparent_40%,rgba(255,75,31,0.08))]',
+      border: 'sport-wimbledon-border',
+      active: 'sport-wimbledon-border-strong sport-wimbledon-bg-soft text-foreground sport-wimbledon-shadow',
+      inactive: 'border-border bg-card text-muted-foreground sport-wimbledon-hover hover:text-foreground',
+      icon: 'sport-wimbledon-icon',
+      stripe: 'sport-wimbledon-stripe',
+      text: 'sport-wimbledon-text',
+      panel: 'sport-wimbledon-panel',
     }
   }
   if (family === 'fifa') {
     return {
-      border: 'border-sky-400/45',
-      active: 'border-sky-400/60 bg-sky-400/12 text-foreground shadow-[0_18px_60px_rgba(56,189,248,0.14)]',
-      inactive: 'border-border bg-card text-muted-foreground hover:border-sky-400/40 hover:text-foreground',
-      icon: 'border-sky-400/30 bg-sky-400/10 text-sky-300',
-      stripe: 'bg-sky-400',
-      text: 'text-sky-300',
-      panel: 'bg-[linear-gradient(135deg,rgba(56,189,248,0.13),transparent_42%,rgba(255,75,31,0.08))]',
+      border: 'sport-fifa-border',
+      active: 'sport-fifa-border-strong sport-fifa-bg-soft text-foreground sport-fifa-shadow',
+      inactive: 'border-border bg-card text-muted-foreground sport-fifa-hover hover:text-foreground',
+      icon: 'sport-fifa-icon',
+      stripe: 'sport-fifa-stripe',
+      text: 'sport-fifa-text',
+      panel: 'sport-fifa-panel',
     }
   }
   return {
@@ -334,7 +334,7 @@ function MatchPoster({ match, onOpen }: { match?: ArenaMatch; onOpen: (match: Ar
       aria-label={`Open ${match.home.name} vs ${match.away.name} details`}
     >
       <div className={`absolute inset-0 ${tone.panel}`} />
-      <div className="absolute left-0 top-0 h-full w-full bg-[linear-gradient(115deg,transparent_0%,transparent_48%,rgba(255,255,255,0.08)_48.2%,transparent_49%,transparent_100%)]" />
+      <div className="arena-diagonal-shine absolute left-0 top-0 h-full w-full" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
 
       <div className="relative z-10 flex items-start justify-between gap-4 rounded-[1.45rem] border border-border bg-background/55 p-4 backdrop-blur-xl">
@@ -403,7 +403,7 @@ function CompactMatchCard({ match, onOpen }: { match: ArenaMatch; onOpen: (match
     >
       <span className={`pointer-events-none absolute inset-y-0 left-0 w-1 ${isLive ? 'bg-red-500' : tone.stripe}`} />
       <span className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${tone.panel}`} />
-      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           <LivePill status={match.status} />
@@ -471,8 +471,8 @@ function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof
 
   return (
     <section id="home" className="relative overflow-hidden bg-background py-8 sm:py-10 lg:flex lg:min-h-[calc(100svh-64px)] lg:items-center lg:py-8">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,75,31,0.24),transparent_28%),radial-gradient(circle_at_85%_20%,rgba(255,75,31,0.13),transparent_32%),linear-gradient(130deg,transparent_0%,transparent_46%,rgba(255,75,31,0.10)_46.2%,transparent_46.7%,transparent_100%)]" />
-      <div className="absolute inset-0 opacity-[0.065] [background-image:linear-gradient(rgba(255,255,255,.22)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.22)_1px,transparent_1px)] [background-size:64px_64px]" />
+      <div className="arena-hero-wash absolute inset-0" />
+      <div className="arena-grid-soft absolute inset-0 opacity-[0.72] [background-size:64px_64px]" />
       <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background to-transparent" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -601,7 +601,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
   return (
     <section id="matches" className="relative overflow-hidden bg-surface py-14 sm:py-20 lg:py-20">
       <div className="absolute inset-0 section-gradient" />
-      <div className="absolute inset-0 opacity-[0.07] animate-grid-drift [background-image:linear-gradient(rgba(255,255,255,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.14)_1px,transparent_1px)] [background-size:40px_40px]" />
+      <div className="arena-grid-soft absolute inset-0 opacity-[0.68] animate-grid-drift [background-size:40px_40px]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
