@@ -1,6 +1,7 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import type { ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Activity,
@@ -31,6 +32,50 @@ import { siteConfig, type ArenaPost } from '@/lib/config/site-data'
 const reveal = {
   hidden: { opacity: 0, y: 22 },
   visible: { opacity: 1, y: 0 },
+}
+
+function MarqueeMotionTrack({
+  children,
+  className = '',
+  duration,
+  reverse = false,
+}: {
+  children: ReactNode
+  className?: string
+  duration: number
+  reverse?: boolean
+}) {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [distance, setDistance] = useState(0)
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+
+    const updateDistance = () => setDistance(track.scrollWidth / 2)
+    updateDistance()
+
+    const observer = new ResizeObserver(updateDistance)
+    observer.observe(track)
+    window.addEventListener('resize', updateDistance)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', updateDistance)
+    }
+  }, [])
+
+  return (
+    <motion.div
+      ref={trackRef}
+      className={`roar-marquee-track flex w-max ${className}`}
+      initial={false}
+      animate={distance ? { x: reverse ? [-distance, 0] : [0, -distance] } : { x: 0 }}
+      transition={{ duration, ease: 'linear', repeat: Infinity, repeatType: 'loop' }}
+    >
+      {children}
+    </motion.div>
+  )
 }
 
 type PostLike = {
@@ -64,7 +109,7 @@ function toModalPost(post: PostLike): ArenaPost {
 }
 
 type FilterKey = 'all' | 'live' | 'upcoming' | 'final'
-type LeagueFilterKey = 'all' | 'fifa' | 'wimbledon'
+type LeagueFilterKey = 'all' | 'fifa' | 'wimbledon-men' | 'wimbledon-women'
 
 const LIVE_FILTERS: { key: FilterKey; label: string }[] = [
   { key: 'upcoming', label: 'Upcoming' },
@@ -85,9 +130,16 @@ const LEAGUE_FILTERS = [
     logoFrame: 'clear',
   },
   {
-    key: 'wimbledon',
-    label: 'Wimbledon',
-    eyebrow: 'Tennis',
+    key: 'wimbledon-men',
+    label: 'Wimbledon Men',
+    eyebrow: "Men's singles",
+    icon: Trophy,
+    logo: '/assets/leagues/wimbledon.svg',
+  },
+  {
+    key: 'wimbledon-women',
+    label: 'Wimbledon Women',
+    eyebrow: "Women's singles",
     icon: Sparkles,
     logo: '/assets/leagues/wimbledon.svg',
   },
@@ -142,24 +194,74 @@ function winnerText(match: ArenaMatch) {
   return 'Final result'
 }
 
-function leagueFamily(match: ArenaMatch): Exclude<LeagueFilterKey, 'all'> | 'other' {
+type LeagueFamily = 'fifa' | 'wimbledon' | 'other'
+
+function leagueFamily(match: ArenaMatch): LeagueFamily {
   const league = match.league.toLowerCase()
   if (match.sport === 'tennis' || league.includes('wimbledon')) return 'wimbledon'
   if (league.includes('fifa') || league.includes('world cup')) return 'fifa'
   return 'other'
 }
 
-function leagueTone(value: LeagueFilterKey | ArenaMatch) {
-  const family = typeof value === 'string' ? value : leagueFamily(value)
+function wimbledonDivision(match: ArenaMatch): 'men' | 'women' | 'mixed' {
+  const league = match.league.toLowerCase()
+  if (league.includes('women') || league.includes("women's") || league.includes('wta')) return 'women'
+  if (league.includes('men') || league.includes("men's") || league.includes('atp')) return 'men'
+  return 'mixed'
+}
+
+function wimbledonDivisionTone(value: LeagueFilterKey | ArenaMatch | LeagueFamily) {
+  if (typeof value !== 'string') {
+    if (leagueFamily(value) !== 'wimbledon') return null
+    return wimbledonDivision(value) === 'women' ? 'wimbledon-women' : 'wimbledon-men'
+  }
+
+  if (value === 'wimbledon-men' || value === 'wimbledon-women') return value
+  if (value === 'wimbledon') return 'wimbledon-men'
+  return null
+}
+
+function leagueFilterForMatch(match: ArenaMatch): Exclude<LeagueFilterKey, 'all'> | 'other' {
+  const family = leagueFamily(match)
+  if (family === 'wimbledon') return wimbledonDivision(match) === 'women' ? 'wimbledon-women' : 'wimbledon-men'
+  return family
+}
+
+function matchBelongsToLeagueFilter(match: ArenaMatch, filter: Exclude<LeagueFilterKey, 'all'>) {
+  return leagueFilterForMatch(match) === filter
+}
+
+function toneFamily(value: LeagueFilterKey | ArenaMatch | LeagueFamily): LeagueFamily {
+  if (typeof value !== 'string') return leagueFamily(value)
+  if (value.startsWith('wimbledon')) return 'wimbledon'
+  if (value === 'fifa') return 'fifa'
+  return 'other'
+}
+
+function leagueTone(value: LeagueFilterKey | ArenaMatch | LeagueFamily) {
+  const family = toneFamily(value)
   if (family === 'wimbledon') {
+    const division = wimbledonDivisionTone(value)
+    if (division === 'wimbledon-women') {
+      return {
+        border: 'sport-wimbledon-women-border',
+        active: 'sport-wimbledon-women-border-strong sport-wimbledon-women-bg-soft text-foreground sport-wimbledon-women-shadow',
+        inactive: 'border-border bg-card text-muted-foreground sport-wimbledon-women-hover hover:text-foreground',
+        icon: 'sport-wimbledon-women-icon',
+        stripe: 'sport-wimbledon-women-stripe',
+        text: 'sport-wimbledon-women-text',
+        panel: 'sport-wimbledon-women-panel',
+      }
+    }
+
     return {
-      border: 'sport-wimbledon-border',
-      active: 'sport-wimbledon-border-strong sport-wimbledon-bg-soft text-foreground sport-wimbledon-shadow',
-      inactive: 'border-border bg-card text-muted-foreground sport-wimbledon-hover hover:text-foreground',
-      icon: 'sport-wimbledon-icon',
-      stripe: 'sport-wimbledon-stripe',
-      text: 'sport-wimbledon-text',
-      panel: 'sport-wimbledon-panel',
+      border: 'sport-wimbledon-men-border',
+      active: 'sport-wimbledon-men-border-strong sport-wimbledon-men-bg-soft text-foreground sport-wimbledon-men-shadow',
+      inactive: 'border-border bg-card text-muted-foreground sport-wimbledon-men-hover hover:text-foreground',
+      icon: 'sport-wimbledon-men-icon',
+      stripe: 'sport-wimbledon-men-stripe',
+      text: 'sport-wimbledon-men-text',
+      panel: 'sport-wimbledon-men-panel',
     }
   }
   if (family === 'fifa') {
@@ -212,11 +314,18 @@ function MatchTeam({ match, side, size = 'regular' }: { match: ArenaMatch; side:
   const isWinner = match.winner === side
   const isLoser = match.status === 'final' && match.winner && match.winner !== 'draw' && !isWinner
   const logoSize = size === 'hero' ? 'h-16 w-16 sm:h-24 sm:w-24 lg:h-28 lg:w-28' : 'h-16 w-16 sm:h-24 sm:w-24'
+  const teamLogoSrc = team.logo
 
   return (
     <div className={`min-w-0 text-center transition-opacity duration-300 ${isLoser ? 'opacity-60' : 'opacity-100'}`}>
       <div className="relative inline-block">
-        <TeamLogo src={team.logo} alt={`${team.name} logo`} className={`mx-auto rounded-[1rem] p-2 ${logoSize}`} />
+        <TeamLogo
+          src={teamLogoSrc}
+          alt={`${team.name} logo`}
+          className={`mx-auto rounded-[1rem] p-2 ${logoSize}`}
+          frame={match.sport === 'tennis' ? 'simple' : 'premium'}
+          sourceMode={match.sport === 'tennis' ? 'sourceOnly' : 'auto'}
+        />
         {isWinner ? (
           <span className="absolute -right-1.5 -top-1.5 grid h-6 w-6 place-items-center rounded-full border border-primary/40 bg-primary text-primary-foreground shadow-glow">
             <CheckCircle2 className="h-3.5 w-3.5" />
@@ -266,7 +375,7 @@ function MatchDetailsModal({ match, onClose }: { match: ArenaMatch | null; onClo
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-            className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] border border-border bg-card p-5 shadow-soft-glow sm:p-6"
+            className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[1.25rem] border border-border bg-card p-5 shadow-soft-glow sm:p-6"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-primary/20 blur-3xl sm:h-72 sm:w-72" />
@@ -283,7 +392,7 @@ function MatchDetailsModal({ match, onClose }: { match: ArenaMatch | null; onClo
               </button>
             </div>
 
-            <div className="relative mt-6 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[1.6rem] border border-border bg-background/55 p-3 min-[420px]:gap-3 sm:gap-5 sm:p-5">
+            <div className="relative mt-6 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[1rem] border border-border bg-background/55 p-3 min-[420px]:gap-3 sm:gap-5 sm:p-5">
               <MatchTeam match={match} side="home" size="hero" />
               <MatchScoreBlock match={match} large />
               <MatchTeam match={match} side="away" size="hero" />
@@ -315,7 +424,7 @@ function MatchDetailsModal({ match, onClose }: { match: ArenaMatch | null; onClo
 function MatchPoster({ match, onOpen }: { match?: ArenaMatch; onOpen: (match: ArenaMatch) => void }) {
   if (!match) {
     return (
-      <div className="grid min-h-[360px] place-items-center rounded-[2rem] border border-border bg-card/80 p-8 text-center shadow-soft-glow">
+      <div className="grid min-h-[360px] place-items-center rounded-[1.25rem] border border-border bg-card/80 p-8 text-center shadow-soft-glow">
         <div>
           <BrandLogo variant="icon" className="mx-auto h-16 w-16 opacity-80" />
           <p className="mt-5 text-sm text-muted-foreground">Connect Supabase and the match API to activate the live board.</p>
@@ -330,14 +439,14 @@ function MatchPoster({ match, onOpen }: { match?: ArenaMatch; onOpen: (match: Ar
     <button
       type="button"
       onClick={() => onOpen(match)}
-      className={`group relative block w-full overflow-hidden rounded-[2rem] border bg-card p-4 text-left shadow-soft-glow transition duration-300 hover:-translate-y-1 sm:p-5 ${tone.border}`}
+      className={`group relative block w-full overflow-hidden rounded-[1.25rem] border bg-card p-4 text-left shadow-soft-glow transition duration-300 hover:-translate-y-1 sm:p-5 ${tone.border}`}
       aria-label={`Open ${match.home.name} vs ${match.away.name} details`}
     >
       <div className={`absolute inset-0 ${tone.panel}`} />
       <div className="arena-diagonal-shine absolute left-0 top-0 h-full w-full" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
 
-      <div className="relative z-10 flex items-start justify-between gap-4 rounded-[1.45rem] border border-border bg-background/55 p-4 backdrop-blur-xl">
+      <div className="relative z-10 flex items-start justify-between gap-4 rounded-[1rem] border border-border bg-background/55 p-4 backdrop-blur-xl">
         <div>
           <LivePill status={match.status} />
           <p className={`mt-4 text-xs font-black uppercase tracking-[0.18em] ${tone.text}`}>{match.league}</p>
@@ -356,11 +465,11 @@ function MatchPoster({ match, onOpen }: { match?: ArenaMatch; onOpen: (match: Ar
       </div>
 
       <div className="relative z-10 mt-5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 min-[420px]:gap-3 sm:gap-4">
-        <div className="rounded-[1.4rem] border border-border bg-background/65 p-3 text-center backdrop-blur-xl sm:p-4">
+        <div className="rounded-[1rem] border border-border bg-background/65 p-3 text-center backdrop-blur-xl sm:p-4">
           <MatchTeam match={match} side="home" size="hero" />
         </div>
         <MatchScoreBlock match={match} large />
-        <div className="rounded-[1.4rem] border border-border bg-background/65 p-3 text-center backdrop-blur-xl sm:p-4">
+        <div className="rounded-[1rem] border border-border bg-background/65 p-3 text-center backdrop-blur-xl sm:p-4">
           <MatchTeam match={match} side="away" size="hero" />
         </div>
       </div>
@@ -371,7 +480,7 @@ function MatchPoster({ match, onOpen }: { match?: ArenaMatch; onOpen: (match: Ar
           { label: 'Time', value: match.timeLabel, icon: Clock3 },
           { label: 'Venue', value: match.venue || 'TBA', icon: CalendarDays },
         ].map((item) => (
-          <div key={item.label} className="rounded-2xl border border-border bg-background/60 p-3 backdrop-blur-xl sm:p-4">
+          <div key={item.label} className="rounded-xl border border-border bg-background/60 p-3 backdrop-blur-xl sm:p-4">
             <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-primary"><item.icon className="h-3.5 w-3.5" /> {item.label}</p>
             <p className="mt-2 truncate text-sm font-black text-foreground">{item.value}</p>
           </div>
@@ -398,7 +507,7 @@ function CompactMatchCard({ match, onOpen }: { match: ArenaMatch; onOpen: (match
       whileHover={{ y: -5 }}
       whileTap={{ scale: 0.985 }}
       onClick={() => onOpen(match)}
-      className={`group relative overflow-hidden rounded-[1.35rem] border bg-card p-4 text-left shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-colors duration-300 hover:shadow-soft-glow sm:p-5 ${tone.inactive}`}
+      className={`group relative overflow-hidden rounded-[1rem] border bg-card p-4 text-left shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-colors duration-300 hover:shadow-soft-glow sm:p-5 ${tone.inactive}`}
       aria-label={`Open ${match.home.name} vs ${match.away.name} details`}
     >
       <span className={`pointer-events-none absolute inset-y-0 left-0 w-1 ${isLive ? 'bg-red-500' : tone.stripe}`} />
@@ -439,7 +548,7 @@ function PostCard({ post, onOpen }: { post: PostLike; onOpen: (post: ArenaPost) 
     <button
       type="button"
       onClick={() => onOpen(toModalPost(post))}
-      className="group flex h-full flex-col overflow-hidden rounded-[1.6rem] border border-border bg-card text-left transition duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-soft-glow focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+      className="group flex h-full flex-col overflow-hidden rounded-[1.1rem] border border-border bg-card text-left transition duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-soft-glow focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-square">
         <img src={post.image} alt={post.title} className="h-full w-full object-contain transition duration-700" loading="lazy" decoding="async" />
@@ -523,14 +632,14 @@ function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof
         </motion.div>
 
         <motion.div variants={reveal} initial="hidden" animate="visible" className="mt-7 overflow-hidden rounded-full border border-border bg-surface/82 py-3 backdrop-blur-xl">
-          <div className="animate-marquee-reverse flex w-max gap-6 whitespace-nowrap px-4">
+          <MarqueeMotionTrack reverse duration={30} className="gap-6 whitespace-nowrap px-4">
             {[...siteConfig.hero.ticker, ...siteConfig.hero.ticker].map((item, index) => (
               <span key={`${item}-${index}`} className="inline-flex items-center gap-6 text-xs font-black uppercase tracking-[0.16em] text-primary">
                 <Flame className="h-3.5 w-3.5" /> {item}
                 <span className="h-1 w-1 rounded-full bg-primary" />
               </span>
             ))}
-          </div>
+          </MarqueeMotionTrack>
         </motion.div>
       </div>
     </section>
@@ -545,14 +654,15 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
     [data.matches],
   )
   const leagueMatches = useMemo(
-    () => (leagueFilter === 'all' ? matches : matches.filter((match) => leagueFamily(match) === leagueFilter)),
+    () => (leagueFilter === 'all' ? matches : matches.filter((match) => matchBelongsToLeagueFilter(match, leagueFilter))),
     [matches, leagueFilter],
   )
-  const leagueCounts = useMemo(
+  const leagueCounts = useMemo<Record<LeagueFilterKey, number>>(
     () => ({
       all: matches.length,
-      fifa: matches.filter((match) => leagueFamily(match) === 'fifa').length,
-      wimbledon: matches.filter((match) => leagueFamily(match) === 'wimbledon').length,
+      fifa: matches.filter((match) => matchBelongsToLeagueFilter(match, 'fifa')).length,
+      'wimbledon-men': matches.filter((match) => matchBelongsToLeagueFilter(match, 'wimbledon-men')).length,
+      'wimbledon-women': matches.filter((match) => matchBelongsToLeagueFilter(match, 'wimbledon-women')).length,
     }),
     [matches],
   )
@@ -615,7 +725,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.45, ease: 'easeOut' }}
-          className={`mb-6 overflow-hidden rounded-[2rem] border bg-card/90 shadow-soft-glow backdrop-blur-xl ${spotlightTone.border}`}
+          className={`mb-6 overflow-hidden rounded-[1.25rem] border bg-card/90 shadow-soft-glow backdrop-blur-xl ${spotlightTone.border}`}
         >
           <div className="relative grid gap-0 lg:grid-cols-[1.08fr_0.92fr]">
             <span className="pointer-events-none absolute inset-y-0 left-0 w-1/2 animate-live-scan bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
@@ -661,7 +771,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
                     { label: 'Kickoff', value: spotlightMatch.timeLabel, icon: Clock3 },
                     { label: 'Story', value: winnerText(spotlightMatch), icon: Trophy },
                   ].map((item) => (
-                    <span key={item.label} className="inline-flex max-w-full items-center gap-2 rounded-2xl border border-border bg-background/70 px-3 py-2 text-xs font-black uppercase tracking-[0.1em] text-foreground backdrop-blur-xl">
+                    <span key={item.label} className="inline-flex max-w-full items-center gap-2 rounded-xl border border-border bg-background/70 px-3 py-2 text-xs font-black uppercase tracking-[0.1em] text-foreground backdrop-blur-xl">
                       <item.icon className={`h-3.5 w-3.5 shrink-0 ${spotlightTone.text}`} />
                       <span className="text-muted-foreground">{item.label}</span>
                       <span className="truncate">{item.value}</span>
@@ -688,7 +798,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: '-80px' }}
                   transition={{ duration: 0.35, delay: index * 0.05 }}
-                  className="group relative overflow-hidden rounded-[1.35rem] border border-border bg-card/86 p-4 transition duration-300 hover:-translate-y-1 hover:border-primary/40"
+                  className="group relative overflow-hidden rounded-[1rem] border border-border bg-card/86 p-4 transition duration-300 hover:-translate-y-1 hover:border-primary/40"
                 >
                   <span className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100 ${activeLeagueTone.panel}`} />
                   <div className="relative flex items-center justify-between gap-4">
@@ -712,7 +822,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
-            className={`mb-6 overflow-hidden rounded-[1.45rem] border bg-background/80 p-4 shadow-[0_16px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl ${latestResultTone.border}`}
+            className={`mb-6 overflow-hidden rounded-[1rem] border bg-background/80 p-4 shadow-[0_16px_45px_rgba(0,0,0,0.08)] backdrop-blur-xl ${latestResultTone.border}`}
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -727,7 +837,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
           </motion.div>
         ) : null}
 
-        <div className="mb-4 grid gap-2 sm:grid-cols-3">
+        <div className="mb-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {LEAGUE_FILTERS.map((tab) => {
             const active = leagueFilter === tab.key
             const tone = leagueTone(tab.key)
@@ -738,7 +848,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
                 type="button"
                 onClick={() => setLeagueFilter(tab.key)}
                 aria-pressed={active}
-                className={`relative flex min-h-16 items-center gap-3 overflow-hidden rounded-[1.2rem] border px-3 py-3 text-left transition duration-300 hover:-translate-y-0.5 ${active ? tone.active : tone.inactive}`}
+                className={`relative flex min-h-16 items-center gap-3 overflow-hidden rounded-[1rem] border px-3 py-3 text-left transition duration-300 hover:-translate-y-0.5 ${active ? tone.active : tone.inactive}`}
               >
                 {tab.logo ? (
                   <AssetLogo
@@ -806,7 +916,7 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="col-span-full rounded-2xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground"
+                className="col-span-full rounded-xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground"
               >
                 No {leagueFilter === 'all' ? '' : `${activeLeagueLabel} `}{filter === 'all' ? '' : filter} matches right now. Run the sports sync to populate this board.
               </motion.div>
@@ -834,7 +944,7 @@ function UpdatesSection({ data, onOpenPost }: { data: ReturnType<typeof usePubli
             {posts.map((post) => <PostCard key={post.id} post={post} onOpen={onOpenPost} />)}
           </div>
         ) : (
-          <div className="rounded-[1.6rem] border border-border bg-card p-6 text-center shadow-soft-glow">
+          <div className="rounded-[1.1rem] border border-border bg-card p-6 text-center shadow-soft-glow">
             <p className="text-sm font-bold text-muted-foreground">Live posts are syncing. Latest database content will appear here as soon as it is available.</p>
           </div>
         )}
@@ -862,7 +972,7 @@ function BuildingSection() {
       <div className="absolute left-1/2 top-16 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-5 lg:grid-cols-[0.78fr_1.22fr] lg:items-start xl:gap-8">
-          <div className="rounded-[2rem] border border-border bg-card/70 p-5 shadow-soft-glow backdrop-blur-xl sm:p-7 lg:sticky lg:top-24">
+          <div className="rounded-[1.25rem] border border-border bg-card/70 p-5 shadow-soft-glow backdrop-blur-xl sm:p-7 lg:sticky lg:top-24">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-primary">What we are building</p>
             <h2 className="mt-3 font-display text-[clamp(2rem,4.8vw,4.2rem)] uppercase leading-[0.96] text-foreground text-balance">Built for fans who do not want to watch alone.</h2>
             <p className="mt-5 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
@@ -878,7 +988,7 @@ function BuildingSection() {
           <div className="flex flex-col gap-4 sm:gap-5">
             <div className="grid gap-4 sm:grid-cols-2">
               {cards.map((card) => (
-                <div key={card.title} className="group relative min-h-[210px] overflow-hidden rounded-[1.7rem] border border-border bg-card p-5 shadow-soft-glow transition duration-300 hover:-translate-y-1 hover:border-primary/45 sm:p-6">
+                <div key={card.title} className="group relative min-h-[210px] overflow-hidden rounded-[1.15rem] border border-border bg-card p-5 shadow-soft-glow transition duration-300 hover:-translate-y-1 hover:border-primary/45 sm:p-6">
                   <div className="absolute right-0 top-0 h-36 w-36 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity group-hover:opacity-100 sm:h-48 sm:w-48" />
                   <div className="relative grid h-12 w-12 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
                     <card.icon className="h-5 w-5" />
@@ -894,12 +1004,12 @@ function BuildingSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.45, ease: 'easeOut' }}
-              className="relative overflow-hidden rounded-[1.7rem] border border-border bg-card p-3 shadow-soft-glow sm:p-4"
+              className="relative overflow-hidden rounded-[1.15rem] border border-border bg-card p-3 shadow-soft-glow sm:p-4"
             >
               <div className="absolute inset-x-8 top-1/2 hidden h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-primary/50 to-transparent lg:block" />
               <div className="relative grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {pathway.map((step, index) => (
-                  <div key={step.label} className="group relative rounded-[1.25rem] border border-border bg-background p-4 pt-8 transition duration-300 hover:-translate-y-1 hover:border-primary/45">
+                  <div key={step.label} className="group relative rounded-[1rem] border border-border bg-background p-4 pt-8 transition duration-300 hover:-translate-y-1 hover:border-primary/45">
                     <span className="absolute left-4 top-2 rounded-full border border-primary/30 bg-primary px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-primary-foreground">0{index + 1}</span>
                     <div className="grid h-11 w-11 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
                       <step.icon className="h-4 w-4" />
@@ -941,7 +1051,7 @@ function EventsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.38, delay: index * 0.06 }}
-              className="group relative min-h-[280px] overflow-hidden rounded-[1.85rem] border border-border bg-card p-5 shadow-soft-glow transition duration-300 hover:-translate-y-1.5 hover:border-primary/45"
+              className="group relative min-h-[280px] overflow-hidden rounded-[1.2rem] border border-border bg-card p-5 shadow-soft-glow transition duration-300 hover:-translate-y-1.5 hover:border-primary/45"
             >
               <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_12%,rgba(255,75,31,0.2),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.05),transparent)]" />
               <span className="pointer-events-none absolute right-0 top-0 h-36 w-36 rounded-full bg-primary/10 blur-3xl transition-opacity group-hover:opacity-100 sm:h-44 sm:w-44" />
@@ -971,7 +1081,7 @@ function EventsSection() {
         <div className="relative mb-8 overflow-hidden rounded-[1.5rem] border border-border bg-card/90 py-4 shadow-soft-glow backdrop-blur-xl">
           <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-[linear-gradient(90deg,var(--card),transparent)]" />
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-[linear-gradient(270deg,var(--card),transparent)]" />
-          <div className="animate-league-rail flex w-max gap-4 px-4">
+          <MarqueeMotionTrack duration={24} className="gap-4 px-4">
             {[0, 1].map((loop) => (
               <div key={loop} className="flex shrink-0 gap-4" aria-hidden={loop === 1}>
                 {marqueeSports.map((sport) => (
@@ -993,7 +1103,7 @@ function EventsSection() {
                 ))}
               </div>
             ))}
-          </div>
+          </MarqueeMotionTrack>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
@@ -1057,7 +1167,7 @@ function CommunitySection() {
     <section id="community" className="relative overflow-hidden bg-background py-14 sm:py-20 lg:py-20">
       <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl sm:h-80 sm:w-80" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-[2rem] border border-border bg-card p-4 shadow-soft-glow sm:p-8 lg:p-10">
+        <div className="overflow-hidden rounded-[1.25rem] border border-border bg-card p-4 shadow-soft-glow sm:p-8 lg:p-10">
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
             <div className="min-w-0">
               <p className="text-xs font-black uppercase tracking-[0.22em] text-primary">Community</p>

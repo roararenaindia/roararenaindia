@@ -9,6 +9,7 @@ type TeamLogoProps = {
   className?: string
   imageClassName?: string
   frame?: 'premium' | 'simple'
+  sourceMode?: 'auto' | 'sourceOnly'
 }
 
 function initialsFromAlt(alt: string) {
@@ -22,12 +23,12 @@ function initialsFromAlt(alt: string) {
     .join('') || 'RA'
 }
 
-export default function TeamLogo({ src, alt, className = '', imageClassName = '', frame = 'premium' }: TeamLogoProps) {
+export default function TeamLogo({ src, alt, className = '', imageClassName = '', frame = 'premium', sourceMode = 'auto' }: TeamLogoProps) {
   const [broken, setBroken] = useState(false)
   const [flagBroken, setFlagBroken] = useState(false)
   const initials = useMemo(() => initialsFromAlt(alt), [alt])
-  const flagSrc = useMemo(() => resolveTeamFlag(alt.replace(/logo/gi, '').trim()), [alt])
-  const usableFlagSrc = Boolean(flagSrc && !flagBroken)
+  const flagSrc = useMemo(() => (sourceMode === 'sourceOnly' ? undefined : resolveTeamFlag(alt.replace(/logo/gi, '').trim())), [alt, sourceMode])
+  const usableFlagSrc = sourceMode === 'auto' && Boolean(flagSrc && !flagBroken)
   const usableSrc = Boolean(src && !broken)
   const premiumFrame = frame === 'premium'
 

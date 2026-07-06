@@ -5,7 +5,7 @@ import { ExternalLink, MessageCircle, X } from '@/components/ui/icon-set'
 import { useEffect, useRef } from 'react'
 import AssetLogo from '@/components/brand/asset-logo'
 import { ArenaPost, siteConfig } from '@/lib/config/site-data'
-import { resolveTeamFlag } from '@/lib/domain/team-logos'
+import { resolveLeagueLogoFrame, resolveLeagueLogoLight } from '@/lib/domain/league-logos'
 
 type PostModalProps = {
   isOpen: boolean
@@ -13,9 +13,30 @@ type PostModalProps = {
   post: ArenaPost
 }
 
+function isWimbledonPost(post: ArenaPost) {
+  return /\b(wimbledon|tennis|grand slam|singles)\b/i.test(`${post.category} ${post.title} ${post.description} ${post.caption}`)
+}
+
+function initialsFromName(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase())
+    .join('') || 'RA'
+}
+
+function isWidePostLogo(category: string, logo: string) {
+  return /\b(formula\s*1|formula one|f1)\b/i.test(`${category} ${logo}`)
+}
+
 export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
   const closeRef = useRef<HTMLButtonElement>(null)
   const fullCaption = post.caption || post.description
+  const showTeamStrip = post.teams.length > 0 && !isWimbledonPost(post)
+  const postLogoLight = resolveLeagueLogoLight(post.category, post.logo)
+  const postLogoFrame = resolveLeagueLogoFrame(post.category, post.logo)
+  const widePostLogo = isWidePostLogo(post.category, post.logo)
 
   useEffect(() => {
     if (!isOpen) return
@@ -58,7 +79,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.97 }}
             transition={{ duration: 0.24, ease: 'easeOut' }}
-            className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl md:grid md:grid-cols-[1.08fr_0.92fr]"
+            className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-2xl md:grid md:grid-cols-[1.08fr_0.92fr]"
           >
             <div className="relative h-[min(42vh,320px)] shrink-0 bg-surface md:h-auto md:min-h-[680px]">
               <img src={post.image} alt={post.title} className="h-full w-full object-contain p-3 sm:p-4" />
@@ -77,13 +98,21 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
 
               <div className="pr-12">
                 <div className="flex items-center gap-3">
-                  <AssetLogo src={post.logo} alt={`${post.category} logo`} variant="stage" tone="strong" className="h-14 w-14 rounded-2xl" />
-                  <div>
+                  <AssetLogo
+                    src={post.logo}
+                    lightSrc={postLogoLight}
+                    lightFrame={postLogoFrame}
+                    alt={`${post.category} logo`}
+                    variant="stage"
+                    tone="strong"
+                    className={`shrink-0 rounded-xl ${widePostLogo ? 'h-14 w-20' : 'h-14 w-14'}`}
+                    imgClassName={widePostLogo ? 'scale-105' : ''}
+                  />
+                  <div className="min-w-0">
                     <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary">{post.category}</span>
-                      <span className="rounded-full border border-border bg-surface px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">{post.type}</span>
+                      <span className="max-w-full whitespace-nowrap rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary">{post.category}</span>
+                      <span className="whitespace-nowrap rounded-full border border-border bg-surface px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">{post.type}</span>
                     </div>
-                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Synced content</p>
                   </div>
                 </div>
 
@@ -92,25 +121,23 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                 </h2>
               </div>
 
-              {post.teams.length ? (
-                <div className="mt-5 rounded-3xl border border-border bg-surface p-4">
+              {showTeamStrip ? (
+                <div className="mt-5 rounded-[1rem] border border-border bg-surface p-4">
                   <p className="text-xs font-black uppercase tracking-[0.16em] text-primary">Teams in this post</p>
-                  <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+                  <div className="mt-4 flex flex-wrap gap-3">
                     {post.teams.map((team) => {
-                      const flagSrc = resolveTeamFlag(team.name)
+                      const teamLogo = team.logo?.trim()
 
                       return (
-                        <div key={team.name} className="rounded-2xl border border-border bg-card p-3 text-center">
-                          <div className="relative mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-3xl leading-none">
-                            {flagSrc ? (
-                              <span className="grid h-full w-full place-items-center overflow-hidden rounded-xl border border-black/80 bg-transparent p-[3px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.22),inset_0_0_0_4px_rgba(0,0,0,0.82),0_8px_18px_rgba(0,0,0,0.24)]">
-                                <img src={flagSrc} alt={`${team.name} flag`} className="h-full w-full rounded-md object-cover ring-1 ring-white/35" loading="lazy" decoding="async" />
-                              </span>
+                        <div key={team.name} className="flex w-[5.85rem] min-w-0 flex-col items-center rounded-xl border border-border bg-card p-3 text-center">
+                          <div className="relative grid h-14 w-14 place-items-center overflow-hidden rounded-xl bg-primary/10 text-lg leading-none text-primary">
+                            {teamLogo ? (
+                              <img src={teamLogo} alt={`${team.name} logo`} className="max-h-[2.85rem] max-w-[3.75rem] object-contain" loading="lazy" decoding="async" />
                             ) : (
-                              <img src={team.logo} alt={`${team.name} logo`} className="h-full w-full object-contain p-1.5" loading="lazy" decoding="async" />
+                              <span className="font-display uppercase">{initialsFromName(team.name)}</span>
                             )}
                           </div>
-                          <p className="mt-2 line-clamp-2 text-[10px] font-black uppercase leading-4 text-foreground">{team.name}</p>
+                          <p className="mt-2 w-full break-words text-center text-[10px] font-black uppercase leading-4 text-foreground">{team.name}</p>
                         </div>
                       )
                     })}
@@ -119,7 +146,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
               ) : null}
 
               {fullCaption ? (
-                <div className="mt-6 rounded-3xl border border-border bg-surface p-5">
+                <div className="mt-6 rounded-[1rem] border border-border bg-surface p-5">
                   <p className="text-sm font-bold uppercase tracking-[0.14em] text-primary">Caption</p>
                   <p className="mt-3 text-sm leading-7 text-foreground">{fullCaption}</p>
                 </div>
@@ -130,7 +157,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                   href={post.permalink || siteConfig.links.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-black uppercase tracking-[0.11em] text-primary-foreground transition hover:shadow-glow"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-black uppercase tracking-[0.11em] text-primary-foreground transition hover:shadow-glow"
                 >
                   Open Instagram <ExternalLink className="h-4 w-4" />
                 </a>
@@ -138,7 +165,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                   href={siteConfig.links.whatsappCommunity}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface px-5 py-3 text-sm font-black uppercase tracking-[0.11em] text-foreground transition hover:border-primary/50"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-5 py-3 text-sm font-black uppercase tracking-[0.11em] text-foreground transition hover:border-primary/50"
                 >
                   WhatsApp <MessageCircle className="h-4 w-4" />
                 </a>

@@ -31,6 +31,22 @@
   --sport-wimbledon-hover: rgba(98, 214, 149, 0.46);
   --sport-wimbledon-shadow: rgba(98, 214, 149, 0.13);
   --sport-wimbledon-panel: linear-gradient(135deg, rgba(98, 214, 149, 0.13), transparent 40%, rgba(255, 84, 40, 0.075));
+  --sport-wimbledon-men-accent: #8d6cff;
+  --sport-wimbledon-men-text: #c9bbff;
+  --sport-wimbledon-men-soft: rgba(141, 108, 255, 0.13);
+  --sport-wimbledon-men-border: rgba(141, 108, 255, 0.38);
+  --sport-wimbledon-men-border-strong: rgba(141, 108, 255, 0.62);
+  --sport-wimbledon-men-hover: rgba(141, 108, 255, 0.48);
+  --sport-wimbledon-men-shadow: rgba(141, 108, 255, 0.13);
+  --sport-wimbledon-men-panel: linear-gradient(135deg, rgba(141, 108, 255, 0.13), transparent 41%, rgba(98, 214, 149, 0.075));
+  --sport-wimbledon-women-accent: #62d695;
+  --sport-wimbledon-women-text: #9cecbc;
+  --sport-wimbledon-women-soft: rgba(98, 214, 149, 0.12);
+  --sport-wimbledon-women-border: rgba(98, 214, 149, 0.38);
+  --sport-wimbledon-women-border-strong: rgba(98, 214, 149, 0.62);
+  --sport-wimbledon-women-hover: rgba(98, 214, 149, 0.48);
+  --sport-wimbledon-women-shadow: rgba(98, 214, 149, 0.13);
+  --sport-wimbledon-women-panel: linear-gradient(135deg, rgba(98, 214, 149, 0.13), transparent 41%, rgba(236, 201, 129, 0.075));
   --sport-fifa-accent: #67a9ff;
   --sport-fifa-text: #9dcaff;
   --sport-fifa-soft: rgba(103, 169, 255, 0.12);
@@ -79,14 +95,30 @@
   --sport-wimbledon-hover: rgba(47, 123, 85, 0.35);
   --sport-wimbledon-shadow: rgba(47, 123, 85, 0.10);
   --sport-wimbledon-panel: linear-gradient(135deg, rgba(47, 123, 85, 0.10), transparent 42%, rgba(230, 74, 29, 0.055));
-  --sport-fifa-accent: #b57918;
-  --sport-fifa-text: #7c540d;
-  --sport-fifa-soft: rgba(181, 121, 24, 0.12);
-  --sport-fifa-border: rgba(140, 91, 14, 0.25);
-  --sport-fifa-border-strong: rgba(140, 91, 14, 0.42);
-  --sport-fifa-hover: rgba(140, 91, 14, 0.35);
-  --sport-fifa-shadow: rgba(140, 91, 14, 0.10);
-  --sport-fifa-panel: linear-gradient(135deg, rgba(181, 121, 24, 0.12), transparent 42%, rgba(230, 74, 29, 0.045));
+  --sport-wimbledon-men-accent: #6b4ec9;
+  --sport-wimbledon-men-text: #523a96;
+  --sport-wimbledon-men-soft: rgba(107, 78, 201, 0.11);
+  --sport-wimbledon-men-border: rgba(107, 78, 201, 0.28);
+  --sport-wimbledon-men-border-strong: rgba(107, 78, 201, 0.48);
+  --sport-wimbledon-men-hover: rgba(107, 78, 201, 0.38);
+  --sport-wimbledon-men-shadow: rgba(107, 78, 201, 0.10);
+  --sport-wimbledon-men-panel: linear-gradient(135deg, rgba(107, 78, 201, 0.11), transparent 42%, rgba(47, 123, 85, 0.055));
+  --sport-wimbledon-women-accent: #2f7b55;
+  --sport-wimbledon-women-text: #276948;
+  --sport-wimbledon-women-soft: rgba(47, 123, 85, 0.11);
+  --sport-wimbledon-women-border: rgba(47, 123, 85, 0.29);
+  --sport-wimbledon-women-border-strong: rgba(47, 123, 85, 0.50);
+  --sport-wimbledon-women-hover: rgba(47, 123, 85, 0.39);
+  --sport-wimbledon-women-shadow: rgba(47, 123, 85, 0.10);
+  --sport-wimbledon-women-panel: linear-gradient(135deg, rgba(47, 123, 85, 0.11), transparent 42%, rgba(221, 184, 105, 0.10));
+  --sport-fifa-accent: #2f72d9;
+  --sport-fifa-text: #245da9;
+  --sport-fifa-soft: rgba(47, 114, 217, 0.12);
+  --sport-fifa-border: rgba(47, 114, 217, 0.27);
+  --sport-fifa-border-strong: rgba(47, 114, 217, 0.48);
+  --sport-fifa-hover: rgba(47, 114, 217, 0.38);
+  --sport-fifa-shadow: rgba(47, 114, 217, 0.11);
+  --sport-fifa-panel: linear-gradient(135deg, rgba(47, 114, 217, 0.12), transparent 42%, rgba(230, 74, 29, 0.035));
   --popover: #ffffff;
   --popover-foreground: #161412;
   --secondary: #f2eee7;
@@ -242,6 +274,32 @@
   .sport-wimbledon-panel { background: var(--sport-wimbledon-panel); }
   .sport-wimbledon-shadow { box-shadow: 0 18px 60px var(--sport-wimbledon-shadow); }
   .sport-wimbledon-hover:hover { border-color: var(--sport-wimbledon-hover); }
+  .sport-wimbledon-men-border { border-color: var(--sport-wimbledon-men-border) !important; }
+  .sport-wimbledon-men-border-strong { border-color: var(--sport-wimbledon-men-border-strong) !important; }
+  .sport-wimbledon-men-bg-soft { background-color: var(--sport-wimbledon-men-soft) !important; }
+  .sport-wimbledon-men-text { color: var(--sport-wimbledon-men-text) !important; }
+  .sport-wimbledon-men-icon {
+    border-color: var(--sport-wimbledon-men-border) !important;
+    background-color: var(--sport-wimbledon-men-soft) !important;
+    color: var(--sport-wimbledon-men-text) !important;
+  }
+  .sport-wimbledon-men-stripe { background-color: var(--sport-wimbledon-men-accent) !important; }
+  .sport-wimbledon-men-panel { background: var(--sport-wimbledon-men-panel) !important; }
+  .sport-wimbledon-men-shadow { box-shadow: 0 18px 60px var(--sport-wimbledon-men-shadow) !important; }
+  .sport-wimbledon-men-hover:hover { border-color: var(--sport-wimbledon-men-hover) !important; }
+  .sport-wimbledon-women-border { border-color: var(--sport-wimbledon-women-border) !important; }
+  .sport-wimbledon-women-border-strong { border-color: var(--sport-wimbledon-women-border-strong) !important; }
+  .sport-wimbledon-women-bg-soft { background-color: var(--sport-wimbledon-women-soft) !important; }
+  .sport-wimbledon-women-text { color: var(--sport-wimbledon-women-text) !important; }
+  .sport-wimbledon-women-icon {
+    border-color: var(--sport-wimbledon-women-border) !important;
+    background-color: var(--sport-wimbledon-women-soft) !important;
+    color: var(--sport-wimbledon-women-text) !important;
+  }
+  .sport-wimbledon-women-stripe { background-color: var(--sport-wimbledon-women-accent) !important; }
+  .sport-wimbledon-women-panel { background: var(--sport-wimbledon-women-panel) !important; }
+  .sport-wimbledon-women-shadow { box-shadow: 0 18px 60px var(--sport-wimbledon-women-shadow) !important; }
+  .sport-wimbledon-women-hover:hover { border-color: var(--sport-wimbledon-women-hover) !important; }
   .sport-fifa-border { border-color: var(--sport-fifa-border); }
   .sport-fifa-border-strong { border-color: var(--sport-fifa-border-strong); }
   .sport-fifa-bg-soft { background-color: var(--sport-fifa-soft); }
@@ -260,6 +318,11 @@
   .animate-marquee-slow { animation: marquee 54s linear infinite; }
   .animate-league-rail {
     animation: marquee 30s linear infinite;
+    will-change: transform;
+  }
+  .roar-marquee-track {
+    backface-visibility: hidden;
+    transform: translate3d(0, 0, 0);
     will-change: transform;
   }
   .animate-glow-shift { animation: glowShift 8s ease-in-out infinite; }

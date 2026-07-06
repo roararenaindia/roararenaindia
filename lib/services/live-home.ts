@@ -64,6 +64,7 @@ function timeLabelFromIso(value?: string | null) {
 function mapPost(row: DbPost): ArenaPost {
   const category = row.category || 'Roar Arena'
   const caption = row.caption || ''
+  const isWimbledonPost = /\b(wimbledon|tennis|grand slam|singles)\b/i.test(`${category} ${row.title || ''} ${caption}`)
   return {
     id: row.instagram_id || row.id,
     title: row.title || titleFromCaption(caption, 'Roar Arena Update'),
@@ -72,7 +73,11 @@ function mapPost(row: DbPost): ArenaPost {
     description: row.description || descriptionFromCaption(caption) || 'Latest update from Roar Arena.',
     image: row.media_url,
     logo: row.logo || inferLeagueLogo(category),
-    teams: Array.isArray(row.teams) && row.teams.length ? [...row.teams] : [...inferTeams(`${row.title || ''} ${caption}`, category)],
+    teams: isWimbledonPost
+      ? []
+      : Array.isArray(row.teams) && row.teams.length
+        ? [...row.teams]
+        : [...inferTeams(`${row.title || ''} ${caption}`, category)],
     caption,
     permalink: row.permalink || undefined,
     timestamp: row.posted_at || undefined,

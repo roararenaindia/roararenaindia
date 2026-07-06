@@ -197,6 +197,7 @@ function fixtureTeams(text: string) {
 
 export function inferCategory(text = '') {
   const normalized = normalizeText(text)
+  if (/(wimbledon|tennis|grand slam|singles)/i.test(normalized)) return 'Wimbledon'
   if (/(nba|knicks|spurs|basketball|nba finals)/i.test(normalized)) return 'NBA Finals 2026'
   if (/(f1|formula|grand prix|race|ferrari|hamilton)/i.test(normalized)) return 'Formula 1'
   if (/(fifa|world cup|football|soccer|usa|paraguay|mexico|brazil|canada|qatar|germany|ghana|haiti|italy|japan|scotland|spain|france|senegal|belgium|argentina|algeria|portugal|congo|uruguay|cape verde|curacao|morocco|croatia|netherlands|nigeria)/i.test(normalized)) return 'FIFA World Cup 2026'
@@ -218,10 +219,13 @@ export function inferLeagueLogo(category: string) {
 
 export function inferTeams(text = '', category = '') {
   const normalized = normalizeText(`${category} ${text}`)
+  const isWimbledon = /(wimbledon|tennis|grand slam|singles)/i.test(normalized)
   const isNba = /(nba|basketball|knicks|spurs)/i.test(normalized)
   const isFormula = /(formula|f1|grand prix|motorsport|ferrari|hamilton)/i.test(normalized)
   const isFifa = /(fifa|world cup|football|soccer)/i.test(normalized)
   const isFixture = /(fixture|fixtures|lineup|schedule|today'?s matches)/i.test(normalized)
+
+  if (isWimbledon) return []
 
   if (isFormula) {
     const formulaMatches = uniqueTeams(findTeamMatches(normalized, formulaTeamAssets))
