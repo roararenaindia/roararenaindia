@@ -30,9 +30,31 @@ function isWidePostLogo(category: string, logo: string) {
   return /\b(formula\s*1|formula one|f1)\b/i.test(`${category} ${logo}`)
 }
 
+function captionBlocks(caption: string) {
+  return caption
+    .replace(/\r\n/g, '\n')
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean)
+}
+
+function FormattedCaption({ caption }: { caption: string }) {
+  const blocks = captionBlocks(caption)
+
+  return (
+    <div className="mt-4 space-y-4 text-sm leading-7 text-foreground">
+      {blocks.map((block, index) => (
+        <p key={index} className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
+          {block}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
   const closeRef = useRef<HTMLButtonElement>(null)
-  const fullCaption = post.caption || post.description
+  const fullCaption = (post.caption || post.description || '').trim()
   const showTeamStrip = post.teams.length > 0 && !isWimbledonPost(post)
   const postLogoLight = resolveLeagueLogoLight(post.category, post.logo)
   const postLogoFrame = resolveLeagueLogoFrame(post.category, post.logo)
@@ -148,7 +170,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
               {fullCaption ? (
                 <div className="mt-6 rounded-[1rem] border border-border bg-surface p-5">
                   <p className="text-sm font-bold uppercase tracking-[0.14em] text-primary">Caption</p>
-                  <p className="mt-3 text-sm leading-7 text-foreground">{fullCaption}</p>
+                  <FormattedCaption caption={fullCaption} />
                 </div>
               ) : null}
 

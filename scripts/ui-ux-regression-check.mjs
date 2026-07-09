@@ -71,6 +71,11 @@ assert.doesNotMatch(postModal, /grid-cols-3 gap-3 sm:grid-cols-4/, 'post team ti
 assert.doesNotMatch(postModal, /Synced content/, 'post modal metadata should not include the redundant synced-content label')
 assert.match(postModal, /whitespace-nowrap/, 'post modal metadata pills must not split labels across lines at tablet width')
 assert.match(postModal, /min-w-0/, 'post modal metadata copy must be width-aware next to the logo')
+assert.match(postModal, /function FormattedCaption/, 'post modal must format captions through a dedicated renderer')
+assert.match(postModal, /split\(\/\\n\{2,\}\//, 'post modal captions must keep paragraph spacing from Instagram-style blank lines')
+assert.match(postModal, /whitespace-pre-wrap/, 'post modal captions must preserve caption line breaks')
+assert.match(postModal, /\[overflow-wrap:anywhere\]/, 'post modal captions must wrap long URLs and hashtags inside the modal')
+assert.doesNotMatch(postModal, /<p className="mt-3 text-sm leading-7 text-foreground">\{fullCaption\}<\/p>/, 'post modal must not collapse the full caption into one plain paragraph')
 
 assert.match(ferrariLogo, /aria-label="Scuderia Ferrari badge"/, 'Ferrari team asset must identify the current team badge')
 assert.match(ferrariLogo, /#ffd532/i, 'Ferrari team asset should use the recognizable yellow shield base')
