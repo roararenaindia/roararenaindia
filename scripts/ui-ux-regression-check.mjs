@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
 
@@ -35,6 +35,19 @@ assert.match(home, /<MarqueeMotionTrack[^>]*reverse[^>]*duration=\{30\}/s, 'hero
 assert.match(home, /<MarqueeMotionTrack[^>]*duration=\{24\}/s, 'sports league rail must use the runtime motion track')
 assert.doesNotMatch(home, /className="animate-marquee-reverse/, 'hero ticker must not rely on the static CSS marquee class')
 assert.doesNotMatch(home, /className="animate-league-rail/, 'league rail must not rely on the static CSS marquee class')
+assert.match(home, /const EVENT_HERO_END_ISO = '2026-07-11T04:00:00\+05:30'/, 'event hero must automatically expire after the Spain vs Belgium screening window')
+assert.match(home, /function isEventHeroActive/, 'homepage must keep a reusable cutoff check for restoring the original hero')
+assert.match(home, /function EventHeroSection/, 'homepage must render a dedicated temporary event hero')
+assert.match(home, /<EventHeroSection \/>[\s\S]*:\s*<HeroSection data=\{data\} isLoading=\{isLoading\} onOpenMatch=\{setSelectedMatch\} \/>/, 'homepage must fall back to the original hero after the event cutoff')
+assert.match(home, /Spain vs Belgium/, 'event hero must announce Spain vs Belgium')
+assert.match(home, /AV Sports Arena & Cafe/, 'event hero must show the venue from the poster')
+assert.match(home, /Vinay Nagar, Mira Road/, 'event hero must show the venue locality from the poster')
+assert.match(home, /1 starter \+ 1 main course \+ 1 soft drink/i, 'event hero must show the included food package')
+assert.match(home, /₹299/, 'event hero must show the poster price')
+assert.match(home, /\/assets\/events\/spain-belgium-screening\.png/, 'event hero must use the supplied event poster asset')
+assert.doesNotMatch(home, /MorphingSportsBall|HeroMorphingBallStage|ARENA_SPIN_SPORTS/, 'homepage must not keep the rejected ball hero graphic')
+assert.doesNotMatch(home, /<motion\.div initial="hidden" animate="visible"[^>]*className="grid items-center/, 'homepage hero must not hide the first viewport until client animation runs')
+assert.equal(existsSync(new URL('../public/assets/events/spain-belgium-screening.png', import.meta.url)), true, 'event poster asset must exist in public assets')
 assert.match(globals, /\.roar-marquee-track/, 'marquee tracks must have a dedicated GPU-stable class')
 assert.match(teamLogo, /sourceMode\?: 'auto' \| 'sourceOnly'/, 'TeamLogo must expose source-only rendering mode')
 assert.match(teamLogo, /sourceMode === 'sourceOnly'/, 'TeamLogo source-only mode must bypass name-based flag inference')

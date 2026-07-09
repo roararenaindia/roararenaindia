@@ -13,6 +13,7 @@ import {
   Facebook,
   Flame,
   Instagram,
+  MapPin,
   MessageCircle,
   Radio,
   Sparkles,
@@ -153,6 +154,25 @@ const LEAGUE_FILTERS = [
   lightLogo?: string
   logoFrame?: LogoFrame
 }[]
+
+const EVENT_HERO_END_ISO = '2026-07-11T04:00:00+05:30'
+const EVENT_HERO_DETAILS = {
+  poster: '/assets/events/spain-belgium-screening.png',
+  eyebrow: 'Live Screening',
+  fixture: 'Spain vs Belgium',
+  competition: 'World Cup 2026 Quarter-Final',
+  date: 'Saturday, July 11',
+  time: '12:30 AM IST',
+  price: '₹299',
+  package: 'Includes 1 starter + 1 main course + 1 soft drink',
+  venue: 'AV Sports Arena & Cafe',
+  area: 'Vinay Nagar, Mira Road',
+  badges: ['Limited seats', 'Big screen', 'Matchday vibes'],
+} as const
+
+function isEventHeroActive(now = new Date()) {
+  return now.getTime() < Date.parse(EVENT_HERO_END_ISO)
+}
 
 type LogoFrame = 'default' | 'clear' | 'dark-chip' | 'light-chip' | undefined
 
@@ -583,6 +603,131 @@ function PostCard({ post, onOpen }: { post: PostLike; onOpen: (post: ArenaPost) 
   )
 }
 
+function EventHeroSection() {
+  return (
+    <section id="home" className="relative overflow-hidden bg-background py-8 sm:py-10 lg:flex lg:min-h-[calc(100svh-64px)] lg:items-center lg:py-8">
+      <div className="arena-hero-wash absolute inset-0" />
+      <div className="arena-grid-soft absolute inset-0 opacity-[0.72] [background-size:64px_64px]" />
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background to-transparent" />
+      <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-primary/15 blur-3xl sm:h-96 sm:w-96" />
+
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid min-w-0 items-center gap-7 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
+          <div className="min-w-0">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-primary backdrop-blur-xl">
+              <Sparkles className="h-3.5 w-3.5" /> {EVENT_HERO_DETAILS.eyebrow}
+            </div>
+
+            <h1 className="mt-5 max-w-2xl break-words font-display text-[clamp(3rem,14vw,5.2rem)] uppercase leading-[0.86] text-foreground text-balance sm:text-[clamp(4rem,8vw,7.4rem)]">
+              Spain vs Belgium
+            </h1>
+
+            <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
+              Roar Arena is hosting its first live screening for the {EVENT_HERO_DETAILS.competition}. Watch the match with a big screen, food package, and matchday crowd energy.
+            </p>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-[1rem] border border-border bg-card/76 p-4 backdrop-blur-xl">
+                <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-primary">
+                  <CalendarDays className="h-3.5 w-3.5" /> Saturday
+                </p>
+                <p className="mt-2 font-display text-3xl uppercase leading-none text-foreground">{EVENT_HERO_DETAILS.time}</p>
+                <p className="mt-2 text-sm font-bold text-muted-foreground">{EVENT_HERO_DETAILS.date}</p>
+              </div>
+              <div className="rounded-[1rem] border border-border bg-card/76 p-4 backdrop-blur-xl">
+                <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-primary">
+                  <MapPin className="h-3.5 w-3.5" /> Venue
+                </p>
+                <p className="mt-2 font-black uppercase leading-tight text-foreground">AV Sports Arena & Cafe</p>
+                <p className="mt-2 text-sm font-bold text-muted-foreground">Vinay Nagar, Mira Road</p>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-[1rem] border border-primary/25 bg-primary/10 p-4 text-foreground backdrop-blur-xl">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary">Entry package</p>
+                  <p className="mt-1 text-sm font-black uppercase tracking-[0.04em] sm:text-base">Includes 1 starter + 1 main course + 1 soft drink</p>
+                </div>
+                <div className="font-display text-4xl uppercase leading-none text-primary">{EVENT_HERO_DETAILS.price}</div>
+              </div>
+            </div>
+
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <a href={siteConfig.links.whatsappCommunity} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow sm:w-auto">
+                <MessageCircle className="h-4 w-4" /> Book Your Seat Now
+              </a>
+              <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-foreground backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary/50 sm:w-auto">
+                <Instagram className="h-4 w-4" /> Follow Instagram
+              </a>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {EVENT_HERO_DETAILS.badges.map((badge) => (
+                <span key={badge} className="rounded-full border border-border bg-background/70 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground sm:text-xs">{badge}</span>
+              ))}
+            </div>
+          </div>
+
+          <div className="min-w-0">
+            <div className="relative mx-auto max-w-[35rem] overflow-hidden rounded-[1.25rem] border border-primary/25 bg-card/85 p-2 shadow-soft-glow">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_5%,rgba(255,84,40,0.18),transparent_32%)]" />
+              <img
+                src={EVENT_HERO_DETAILS.poster}
+                alt="Roar Arena Spain vs Belgium live screening poster"
+                className="relative z-10 aspect-square w-full rounded-[1rem] object-cover"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+            <div className="mx-auto mt-3 grid max-w-[35rem] grid-cols-2 gap-2 sm:grid-cols-3">
+              {[
+                { label: 'Match', value: EVENT_HERO_DETAILS.fixture },
+                { label: 'Stage', value: 'Quarter-Final' },
+                { label: 'Price', value: EVENT_HERO_DETAILS.price },
+              ].map((item) => (
+                <div key={item.label} className="rounded-[0.9rem] border border-border bg-background/65 p-3 text-center backdrop-blur-xl">
+                  <p className="text-[9px] font-black uppercase tracking-[0.16em] text-primary">{item.label}</p>
+                  <p className="mt-1 truncate text-xs font-black uppercase text-foreground">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-7 overflow-hidden rounded-full border border-border bg-surface/82 py-3 backdrop-blur-xl">
+          <MarqueeMotionTrack reverse duration={30} className="gap-6 whitespace-nowrap px-4">
+            {[
+              'Roar Arena first live screening',
+              EVENT_HERO_DETAILS.fixture,
+              EVENT_HERO_DETAILS.time,
+              EVENT_HERO_DETAILS.venue,
+              EVENT_HERO_DETAILS.package,
+              'Limited seats',
+              'Big screen',
+              'Matchday vibes',
+            ].concat([
+              'Roar Arena first live screening',
+              EVENT_HERO_DETAILS.fixture,
+              EVENT_HERO_DETAILS.time,
+              EVENT_HERO_DETAILS.venue,
+              EVENT_HERO_DETAILS.package,
+              'Limited seats',
+              'Big screen',
+              'Matchday vibes',
+            ]).map((item, index) => (
+              <span key={`${item}-${index}`} className="inline-flex items-center gap-6 text-xs font-black uppercase tracking-[0.16em] text-primary">
+                <Flame className="h-3.5 w-3.5" /> {item}
+                <span className="h-1 w-1 rounded-full bg-primary" />
+              </span>
+            ))}
+          </MarqueeMotionTrack>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof usePublicHome>['data']; isLoading: boolean; onOpenMatch: (match: ArenaMatch) => void }) {
   const heroMatch = data.heroMatch
   const matches = data.matches || []
@@ -598,7 +743,7 @@ function HeroSection({ data, isLoading, onOpenMatch }: { data: ReturnType<typeof
       <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background to-transparent" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.08 } } }} className="grid items-center gap-7 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10">
+        <motion.div initial={false} animate="visible" variants={{ visible: { transition: { staggerChildren: 0.08 } } }} className="grid items-center gap-7 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10">
           <div>
             <motion.div variants={reveal} className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-primary backdrop-blur-xl">
               <Sparkles className="h-3.5 w-3.5" /> {siteConfig.hero.eyebrow}
@@ -1235,10 +1380,25 @@ export default function HomeExperience({ initialData }: { initialData?: PublicHo
   const { data, isLoading } = usePublicHome(initialData)
   const [selectedMatch, setSelectedMatch] = useState<ArenaMatch | null>(null)
   const [selectedPost, setSelectedPost] = useState<ArenaPost | null>(null)
+  const [showEventHero, setShowEventHero] = useState(() => isEventHeroActive())
+
+  useEffect(() => {
+    const refreshEventHero = () => setShowEventHero(isEventHeroActive())
+    const cutoffDelay = Math.max(0, Date.parse(EVENT_HERO_END_ISO) - Date.now()) + 1000
+    const cutoffTimer = window.setTimeout(refreshEventHero, cutoffDelay)
+    const interval = window.setInterval(refreshEventHero, 60_000)
+
+    refreshEventHero()
+
+    return () => {
+      window.clearTimeout(cutoffTimer)
+      window.clearInterval(interval)
+    }
+  }, [])
 
   return (
     <>
-      <HeroSection data={data} isLoading={isLoading} onOpenMatch={setSelectedMatch} />
+      {showEventHero ? <EventHeroSection /> : <HeroSection data={data} isLoading={isLoading} onOpenMatch={setSelectedMatch} />}
       <UpdatesSection data={data} onOpenPost={setSelectedPost} />
       <LiveSection data={data} onOpenMatch={setSelectedMatch} />
       <BuildingSection />
