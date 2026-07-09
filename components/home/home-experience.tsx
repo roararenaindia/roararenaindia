@@ -157,6 +157,7 @@ const LEAGUE_FILTERS = [
 }[]
 
 const EVENT_HERO_END_ISO = '2026-07-11T04:00:00+05:30'
+const EVENT_REGISTRATION_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfIJUScvxpf8q1qhtNElX-ZT9AwQkmlTjyZomIyejumO3PksA/viewform'
 const EVENT_HERO_DETAILS = {
   poster: '/assets/events/spain-belgium-screening.png',
   eyebrow: 'Live Screening',
@@ -168,7 +169,7 @@ const EVENT_HERO_DETAILS = {
   package: 'Includes 1 starter + 1 main course + 1 soft drink',
   venue: 'AV Sports Arena & Cafe',
   area: 'Vinay Nagar, Mira Road',
-  bookingUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfIJUScvxpf8q1qhtNElX-ZT9AwQkmlTjyZomIyejumO3PksA/viewform?usp=publish-editor',
+  bookingUrl: EVENT_REGISTRATION_FORM_URL,
   badges: ['Limited seats', 'Big screen', 'Matchday vibes'],
 } as const
 
