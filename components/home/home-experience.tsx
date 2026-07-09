@@ -10,6 +10,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock3,
+  ExternalLink,
   Facebook,
   Flame,
   Instagram,
@@ -167,6 +168,7 @@ const EVENT_HERO_DETAILS = {
   package: 'Includes 1 starter + 1 main course + 1 soft drink',
   venue: 'AV Sports Arena & Cafe',
   area: 'Vinay Nagar, Mira Road',
+  bookingUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfIJUScvxpf8q1qhtNElX-ZT9AwQkmlTjyZomIyejumO3PksA/viewform?usp=publish-editor',
   badges: ['Limited seats', 'Big screen', 'Matchday vibes'],
 } as const
 
@@ -654,8 +656,8 @@ function EventHeroSection() {
             </div>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a href={siteConfig.links.whatsappCommunity} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow sm:w-auto">
-                <MessageCircle className="h-4 w-4" /> Book Your Seat Now
+              <a href={EVENT_HERO_DETAILS.bookingUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow sm:w-auto">
+                <ExternalLink className="h-4 w-4" /> Book Your Seat Now
               </a>
               <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-foreground backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary/50 sm:w-auto">
                 <Instagram className="h-4 w-4" /> Follow Instagram
