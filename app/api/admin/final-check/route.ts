@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
       !checks.supabase.instagramStorageBucket ? 'Instagram storage is optional for this phase.' : null,
       !checks.apiFootball.configured ? 'Match provider is not connected yet. Add FOOTBALL_DATA_TOKEN for the free provider.' : null,
       checks.apiFootball.configured && !checks.apiFootball.fixturesReachable ? `Match provider could not fetch fixtures: ${checks.apiFootball.error}` : null,
-      !checks.apiTennis.configured ? 'Wimbledon sync is ready but inactive until TENNIS_API_KEY is added.' : null,
+      !checks.apiTennis.configured ? 'Tennis sync is ready but inactive until a provider is configured.' : null,
       checks.apiTennis.configured && !checks.apiTennis.fixturesReachable ? `Tennis provider could not fetch fixtures: ${checks.apiTennis.error}` : null,
       !checks.env.xUserId || !checks.env.xBearerToken ? 'X automation will be skipped until X_USER_ID and X_BEARER_TOKEN are added.' : null,
       payload.source?.includes('fallback') ? 'Homepage is still using fallback data until Supabase sync runs.' : null,

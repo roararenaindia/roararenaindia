@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       tennisApiKey: Boolean(process.env.TENNIS_API_KEY || process.env.API_TENNIS_KEY),
       tennisEspnEventId: process.env.TENNIS_ESPN_EVENT_ID || '188-2026',
       tennisTournamentKey: Boolean(process.env.TENNIS_TOURNAMENT_KEY),
-      tennisTournamentNameFilter: process.env.TENNIS_TOURNAMENT_NAME_FILTER || 'Wimbledon',
+      tennisTournamentNameFilter: process.env.TENNIS_TOURNAMENT_NAME_FILTER || '',
       tennisTimezone: process.env.TENNIS_TIMEZONE || 'UTC',
       supabaseServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
     },
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       ok: true,
       ready: false,
       checks,
-      nextStep: 'Use TENNIS_DATA_PROVIDER=espn for the free Wimbledon provider, or add TENNIS_API_KEY and set TENNIS_DATA_PROVIDER=api-tennis.',
+      nextStep: 'Use TENNIS_DATA_PROVIDER=espn for the keyless ESPN provider, or add TENNIS_API_KEY and set TENNIS_DATA_PROVIDER=api-tennis.',
     })
   }
 

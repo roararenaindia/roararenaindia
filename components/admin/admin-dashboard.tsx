@@ -401,7 +401,7 @@ export default function AdminDashboard() {
           <button onClick={() => runAction('Tennis sync', '/api/sync/tennis')} className="rounded-[1.4rem] border border-border bg-card p-5 text-left transition hover:-translate-y-1 hover:border-primary/45">
             <Activity className="mb-4 h-6 w-6 text-primary" />
             <p className="font-display text-3xl uppercase leading-none">Sync Tennis</p>
-            <p className="mt-2 text-xs leading-5 text-muted-foreground">Fetch Wimbledon fixtures and results.</p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">Fetch optional tennis fixtures and results.</p>
           </button>
           <button onClick={() => runAction('Auto curate', '/api/admin/auto-curate')} className="rounded-[1.4rem] border border-border bg-card p-5 text-left transition hover:-translate-y-1 hover:border-primary/45">
             <Star className="mb-4 h-6 w-6 text-primary" />
@@ -460,7 +460,7 @@ export default function AdminDashboard() {
               <div className="mb-5 flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">Tennis</p>
-                  <h2 className="mt-1 font-display text-3xl uppercase leading-none">Wimbledon</h2>
+                  <h2 className="mt-1 font-display text-3xl uppercase leading-none">Tennis Provider</h2>
                 </div>
                 <button onClick={() => runCheck('tennis')} className="rounded-2xl bg-primary px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-primary-foreground">Check</button>
               </div>
@@ -471,7 +471,7 @@ export default function AdminDashboard() {
               </div>
               {tennisApi?.checks?.provider ? (
                 <p className="mt-4 text-xs leading-5 text-muted-foreground">
-                  Fixtures found: {String(tennisApi.checks.provider.sampleCount ?? 0)}. Filter: {String(tennisApi.checks.env?.tennisTournamentNameFilter || 'Wimbledon')}.
+                  Fixtures found: {String(tennisApi.checks.provider.sampleCount ?? 0)}. Filter: {String(tennisApi.checks.env?.tennisTournamentNameFilter || 'No filter')}.
                 </p>
               ) : null}
               {tennisApi?.checks?.provider?.error ? (

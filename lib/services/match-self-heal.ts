@@ -41,6 +41,17 @@ async function latestSuccessfulMatchSync() {
   return result.data?.[0]?.created_at || null
 }
 
+async function safeLatestSuccessfulMatchSync(): Promise<{ lastSyncAt: string | null; error?: string }> {
+  try {
+    return { lastSyncAt: await latestSuccessfulMatchSync() }
+  } catch (error) {
+    return {
+      lastSyncAt: null,
+      error: error instanceof Error ? error.message : 'Unknown sync-log lookup error',
+    }
+  }
+}
+
 function isFresh(lastSyncAt: string | null, staleMinutes: number) {
   if (!lastSyncAt) return false
   const parsed = Date.parse(lastSyncAt)
@@ -62,7 +73,17 @@ export async function ensureFreshMatchScores(reason: string): Promise<MatchSelfH
   }
 
   const staleMinutes = numberFromEnv('MATCH_SELF_HEAL_STALE_MINUTES', defaultStaleMinutes)
-  const lastSyncAt = await latestSuccessfulMatchSync()
+  const { lastSyncAt, error: syncLogError } = await safeLatestSuccessfulMatchSync()
+
+  if (syncLogError) {
+    return {
+      checked: true,
+      triggered: false,
+      reason: 'sync_log_unavailable',
+      lastSyncAt,
+      error: syncLogError,
+    }
+  }
 
   if (isFresh(lastSyncAt, staleMinutes)) {
     return { checked: true, triggered: false, reason: 'fresh', lastSyncAt }

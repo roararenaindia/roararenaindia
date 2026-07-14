@@ -119,8 +119,8 @@ type ApiTennisPayload<T> = {
 }
 
 const apiTennisProviderLabel = 'API-Tennis'
-const espnProviderLabel = 'ESPN public Wimbledon scoreboard'
-const defaultTournamentFilter = 'Wimbledon'
+const espnProviderLabel = 'ESPN public tennis scoreboard'
+const defaultTournamentFilter = ''
 const fallbackLogo = '/assets/leagues/wimbledon.svg'
 
 function tennisProviderName(): TennisProviderName {
@@ -454,7 +454,7 @@ async function fetchEspnTennisRecordsRange(from: string, to: string): Promise<Te
   const data = (await response.json().catch(() => null)) as EspnTournamentPayload | null
 
   if (!data || !response.ok) {
-    throw new Error(response.statusText || `ESPN Wimbledon scoreboard failed with ${response.status}`)
+    throw new Error(response.statusText || `ESPN tennis scoreboard failed with ${response.status}`)
   }
 
   if (!isWantedEspnTournament(data)) {
@@ -507,7 +507,7 @@ export async function checkTennisProviderRange(from: string, to: string): Promis
       fixturesReachable: false,
       sampleCount: 0,
       range: { from, to },
-      error: 'No tennis provider is configured. Use TENNIS_DATA_PROVIDER=espn for free Wimbledon data or add TENNIS_API_KEY for API-Tennis.',
+      error: 'No tennis provider is configured. Use TENNIS_DATA_PROVIDER=espn for keyless ESPN data or add TENNIS_API_KEY for API-Tennis.',
     }
   }
 

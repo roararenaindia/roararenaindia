@@ -152,7 +152,6 @@ export const siteConfig = {
     { name: 'Champions League', label: 'European nights', logo: '/assets/leagues/uefa-champions-league-official-dark.jpg', lightLogo: '/assets/leagues/uefa-champions-league-official-light.jpg', logoFrame: 'default' },
     { name: 'Olympics', label: 'Global stage', logo: '/assets/leagues/olympics-official.svg', lightLogo: '/assets/leagues/olympics-official.svg', logoFrame: 'light-chip' },
     { name: 'MotoGP', label: 'Moto racing', logo: '/assets/leagues/motogp.svg', lightLogo: '/assets/leagues/motogp.svg', logoFrame: 'light-chip' },
-    { name: 'Wimbledon', label: 'Tennis', logo: '/assets/leagues/wimbledon.svg', lightLogo: '/assets/leagues/wimbledon.svg', logoFrame: 'default' },
     { name: 'PGA Tour', label: 'Golf', logo: '/assets/leagues/pga-tour-official.svg', lightLogo: '/assets/leagues/pga-tour-official.svg', logoFrame: 'default' },
     { name: 'The Masters', label: 'Golf major', logo: '/assets/leagues/the-masters-official.png', lightLogo: '/assets/leagues/the-masters-official.png', logoFrame: 'light-chip' },
   ],

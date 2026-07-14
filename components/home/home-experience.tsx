@@ -112,7 +112,7 @@ function toModalPost(post: PostLike): ArenaPost {
 }
 
 type FilterKey = 'all' | 'live' | 'upcoming' | 'final'
-type LeagueFilterKey = 'all' | 'fifa' | 'wimbledon-men' | 'wimbledon-women'
+type LeagueFilterKey = 'all' | 'fifa'
 
 const LIVE_FILTERS: { key: FilterKey; label: string }[] = [
   { key: 'upcoming', label: 'Upcoming' },
@@ -131,20 +131,6 @@ const LEAGUE_FILTERS = [
     logo: '/assets/leagues/fifa-world-cup-dark.png',
     lightLogo: '/assets/leagues/fifa-world-cup-2026-light.png',
     logoFrame: 'clear',
-  },
-  {
-    key: 'wimbledon-men',
-    label: 'Wimbledon Men',
-    eyebrow: "Men's singles",
-    icon: Trophy,
-    logo: '/assets/leagues/wimbledon.svg',
-  },
-  {
-    key: 'wimbledon-women',
-    label: 'Wimbledon Women',
-    eyebrow: "Women's singles",
-    icon: Sparkles,
-    logo: '/assets/leagues/wimbledon.svg',
   },
 ] satisfies {
   key: LeagueFilterKey
@@ -218,36 +204,16 @@ function winnerText(match: ArenaMatch) {
   return 'Final result'
 }
 
-type LeagueFamily = 'fifa' | 'wimbledon' | 'other'
+type LeagueFamily = 'fifa' | 'other'
 
 function leagueFamily(match: ArenaMatch): LeagueFamily {
   const league = match.league.toLowerCase()
-  if (match.sport === 'tennis' || league.includes('wimbledon')) return 'wimbledon'
   if (league.includes('fifa') || league.includes('world cup')) return 'fifa'
   return 'other'
 }
 
-function wimbledonDivision(match: ArenaMatch): 'men' | 'women' | 'mixed' {
-  const league = match.league.toLowerCase()
-  if (league.includes('women') || league.includes("women's") || league.includes('wta')) return 'women'
-  if (league.includes('men') || league.includes("men's") || league.includes('atp')) return 'men'
-  return 'mixed'
-}
-
-function wimbledonDivisionTone(value: LeagueFilterKey | ArenaMatch | LeagueFamily) {
-  if (typeof value !== 'string') {
-    if (leagueFamily(value) !== 'wimbledon') return null
-    return wimbledonDivision(value) === 'women' ? 'wimbledon-women' : 'wimbledon-men'
-  }
-
-  if (value === 'wimbledon-men' || value === 'wimbledon-women') return value
-  if (value === 'wimbledon') return 'wimbledon-men'
-  return null
-}
-
 function leagueFilterForMatch(match: ArenaMatch): Exclude<LeagueFilterKey, 'all'> | 'other' {
   const family = leagueFamily(match)
-  if (family === 'wimbledon') return wimbledonDivision(match) === 'women' ? 'wimbledon-women' : 'wimbledon-men'
   return family
 }
 
@@ -257,37 +223,12 @@ function matchBelongsToLeagueFilter(match: ArenaMatch, filter: Exclude<LeagueFil
 
 function toneFamily(value: LeagueFilterKey | ArenaMatch | LeagueFamily): LeagueFamily {
   if (typeof value !== 'string') return leagueFamily(value)
-  if (value.startsWith('wimbledon')) return 'wimbledon'
   if (value === 'fifa') return 'fifa'
   return 'other'
 }
 
 function leagueTone(value: LeagueFilterKey | ArenaMatch | LeagueFamily) {
   const family = toneFamily(value)
-  if (family === 'wimbledon') {
-    const division = wimbledonDivisionTone(value)
-    if (division === 'wimbledon-women') {
-      return {
-        border: 'sport-wimbledon-women-border',
-        active: 'sport-wimbledon-women-border-strong sport-wimbledon-women-bg-soft text-foreground sport-wimbledon-women-shadow',
-        inactive: 'border-border bg-card text-muted-foreground sport-wimbledon-women-hover hover:text-foreground',
-        icon: 'sport-wimbledon-women-icon',
-        stripe: 'sport-wimbledon-women-stripe',
-        text: 'sport-wimbledon-women-text',
-        panel: 'sport-wimbledon-women-panel',
-      }
-    }
-
-    return {
-      border: 'sport-wimbledon-men-border',
-      active: 'sport-wimbledon-men-border-strong sport-wimbledon-men-bg-soft text-foreground sport-wimbledon-men-shadow',
-      inactive: 'border-border bg-card text-muted-foreground sport-wimbledon-men-hover hover:text-foreground',
-      icon: 'sport-wimbledon-men-icon',
-      stripe: 'sport-wimbledon-men-stripe',
-      text: 'sport-wimbledon-men-text',
-      panel: 'sport-wimbledon-men-panel',
-    }
-  }
   if (family === 'fifa') {
     return {
       border: 'sport-fifa-border',
@@ -436,7 +377,7 @@ function MatchDetailsModal({ match, onClose }: { match: ArenaMatch | null; onClo
             </div>
 
             <p className="mt-5 text-sm leading-6 text-muted-foreground">
-              This card is powered by the Roar Arena match layer. Football, Wimbledon, and future sport providers save into the same live board, so results and fixtures stay consistent across the site.
+              This card is powered by the Roar Arena match layer. Football and future sport providers save into the same live board, so results and fixtures stay consistent across the site.
             </p>
           </motion.div>
         </motion.div>
@@ -822,8 +763,6 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
     () => ({
       all: matches.length,
       fifa: matches.filter((match) => matchBelongsToLeagueFilter(match, 'fifa')).length,
-      'wimbledon-men': matches.filter((match) => matchBelongsToLeagueFilter(match, 'wimbledon-men')).length,
-      'wimbledon-women': matches.filter((match) => matchBelongsToLeagueFilter(match, 'wimbledon-women')).length,
     }),
     [matches],
   )
@@ -868,7 +807,6 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
     { label: 'Upcoming', value: counts.upcoming, icon: Zap, helper: 'Next' },
     { label: 'Results', value: counts.final, icon: Trophy, helper: 'Done' },
   ]
-
   return (
     <section id="matches" className="relative overflow-hidden bg-surface py-14 sm:py-20 lg:py-20">
       <div className="absolute inset-0 section-gradient" />

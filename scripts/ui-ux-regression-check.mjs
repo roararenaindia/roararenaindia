@@ -19,14 +19,10 @@ assert.doesNotMatch(
   'light-mode FIFA styling must stay blue, not gold/brown',
 )
 
-assert.match(home, /wimbledon-men/, 'homepage must expose a Wimbledon men filter')
-assert.match(home, /wimbledon-women/, 'homepage must expose a Wimbledon women filter')
-assert.match(home, /function wimbledonDivision/, 'homepage must classify Wimbledon divisions from live match data')
-assert.match(home, /wimbledonDivisionTone/, 'homepage must provide distinct Wimbledon men/women tones')
-assert.match(home, /sport-wimbledon-men/, 'homepage must use a distinct Wimbledon men tone')
-assert.match(home, /sport-wimbledon-women/, 'homepage must use a distinct Wimbledon women tone')
-assert.match(home, /teamLogoSrc\s*=\s*team\.logo/, 'Wimbledon player cards must preserve provider-supplied flag URLs')
-assert.match(home, /sourceMode=\{match\.sport === 'tennis' \? 'sourceOnly' : 'auto'\}/, 'tennis player cards must render provider flags without name-based inference')
+assert.doesNotMatch(home, /wimbledon-men|wimbledon-women|Wimbledon|sport-wimbledon/, 'post-Wimbledon cleanup must remove completed-event filters and labels from the homepage')
+assert.doesNotMatch(globals, /sport-wimbledon/, 'post-Wimbledon cleanup must remove completed-event theme classes')
+assert.match(home, /teamLogoSrc\s*=\s*team\.logo/, 'match cards must preserve provider-supplied logo URLs')
+assert.match(home, /sourceMode=\{match\.sport === 'tennis' \? 'sourceOnly' : 'auto'\}/, 'tennis player cards must render provider flags without name-based inference if a future tennis event is added')
 assert.match(home, /function MarqueeMotionTrack/, 'desktop marquee rows must use the runtime motion track')
 assert.match(home, /scrollWidth \/ 2/, 'marquee motion must measure the duplicated track distance in pixels')
 assert.match(home, /ResizeObserver/, 'marquee motion must react to responsive width changes')

@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+
+const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
+
+const arenaData = read('lib/data/arena-live-data.ts')
+const liveHome = read('lib/services/live-home.ts')
+const matchSelfHeal = read('lib/services/match-self-heal.ts')
+const siteData = read('lib/config/site-data.ts')
+const homeExperience = read('components/home/home-experience.tsx')
+const adminDashboard = read('components/admin/admin-dashboard.tsx')
+const tennisSyncRoute = read('app/api/sync/tennis/route.ts')
+const tennisCheckRoute = read('app/api/admin/tennis/check/route.ts')
+const finalCheckRoute = read('app/api/admin/final-check/route.ts')
+const globals = read('app/globals.css')
+const uiCheck = read('scripts/ui-ux-regression-check.mjs')
+
+assert.doesNotMatch(arenaData, /wimbledonChampionResults|withWimbledonChampionResults|Jannik Sinner|Linda Noskova|Alexander Zverev|Karolina Muchova/, 'fallback match data must not inject completed Wimbledon winners')
+assert.match(liveHome, /isCompletedWimbledonMatch/, 'live home payload must explicitly filter completed Wimbledon rows from the public board')
+assert.match(liveHome, /isCompletedWimbledonPost/, 'live home payload must explicitly filter completed Wimbledon posts from the public feed')
+assert.match(liveHome, /filter\(isDisplayableMatch\)\.filter\(\(match\) => !isCompletedWimbledonMatch\(match\)\)/, 'live home payload must remove Wimbledon rows before public match selection')
+assert.match(liveHome, /filter\(\(post\) => !isCompletedWimbledonPost\(post\)\)/, 'live home payload must remove Wimbledon posts before public post selection')
+assert.doesNotMatch(liveHome, /withWimbledonChampionResults/, 'live home must not add Wimbledon champion rows')
+assert.doesNotMatch(siteData, /name: 'Wimbledon'|label: 'Tennis'.*wimbledon\.svg/s, 'public sports rail must not show Wimbledon after the event')
+assert.doesNotMatch(homeExperience, /wimbledon-men|wimbledon-women|Wimbledon|sport-wimbledon/, 'homepage match board must not expose Wimbledon filters or labels')
+assert.doesNotMatch(adminDashboard, /Fetch Wimbledon|>Wimbledon<|Filter:.*Wimbledon/s, 'admin surfaces must not keep Wimbledon-specific copy after the event cleanup')
+assert.doesNotMatch(tennisSyncRoute, /Wimbledon fixtures\/results|free Wimbledon|Wimbledon data/, 'tennis sync route messages must not keep Wimbledon-specific copy after the event cleanup')
+assert.doesNotMatch(tennisCheckRoute, /Wimbledon/, 'tennis check route messages must not keep Wimbledon-specific copy after the event cleanup')
+assert.doesNotMatch(finalCheckRoute, /Wimbledon sync/, 'final check warnings must not keep Wimbledon-specific copy after the event cleanup')
+assert.doesNotMatch(globals, /sport-wimbledon/, 'unused public Wimbledon theme classes must be removed')
+assert.match(uiCheck, /post-Wimbledon cleanup/i, 'UI regression check must protect the completed-event cleanup')
+assert.doesNotMatch(uiCheck, /must expose a Wimbledon men filter|must expose a Wimbledon women filter/, 'UI regression check must no longer require public Wimbledon filters')
+assert.match(matchSelfHeal, /sync_log_unavailable/, 'match self-heal must not crash public home when the sync-log lookup fails')
+
+console.log('Post-event cleanup check passed.')

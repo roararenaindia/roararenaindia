@@ -84,6 +84,10 @@ function mapPost(row: DbPost): ArenaPost {
   }
 }
 
+function isCompletedWimbledonPost(post: ArenaPost) {
+  return /\b(wimbledon|sinner|noskova|zverev|muchova)\b/i.test(`${post.category} ${post.title} ${post.description} ${post.caption}`)
+}
+
 function normalizeStatus(status: string): ArenaMatch['status'] {
   const normalized = status.toLowerCase()
   if (['final', 'ft', 'aet', 'pen', 'complete', 'finished'].includes(normalized)) return 'final'
@@ -104,6 +108,10 @@ function isDisplayableMatch(match: ArenaMatch) {
   if (isPlaceholderTeam(match.home.name) || isPlaceholderTeam(match.away.name)) return false
   if (normalizedTeamValue(match.home.short) === 'ht' || normalizedTeamValue(match.away.short) === 'at') return false
   return true
+}
+
+function isCompletedWimbledonMatch(match: ArenaMatch) {
+  return match.league.toLowerCase().includes('wimbledon')
 }
 
 
@@ -135,7 +143,6 @@ function kickoffTime(match: ArenaMatch) {
 function matchFamily(match: ArenaMatch) {
   const sport = match.sport.toLowerCase()
   const league = match.league.toLowerCase()
-  if (sport === 'tennis' || league.includes('wimbledon')) return 'wimbledon'
   if (sport === 'football' || league.includes('fifa') || league.includes('world cup')) return 'fifa'
   return 'other'
 }
@@ -162,13 +169,13 @@ function pickHomeMatches(matches: ArenaMatch[]) {
     .sort((a, b) => b.priority - a.priority || kickoffTime(a) - kickoffTime(b))
     .forEach(add)
 
-  for (const family of ['fifa', 'wimbledon'] as const) {
+  for (const family of ['fifa'] as const) {
     addSorted(visible.filter((match) => match.status === 'upcoming' && matchFamily(match) === family), upcomingSort, 12)
   }
   addSorted(visible.filter((match) => match.status === 'upcoming' && matchFamily(match) === 'other'), upcomingSort, 8)
   addSorted(visible.filter((match) => match.status === 'upcoming'), upcomingSort, 12)
 
-  for (const family of ['fifa', 'wimbledon'] as const) {
+  for (const family of ['fifa'] as const) {
     addSorted(visible.filter((match) => match.status === 'final' && matchFamily(match) === family), finalSort, 6)
   }
   addSorted(visible.filter((match) => match.status === 'final' && matchFamily(match) === 'other'), finalSort, 4)
@@ -257,8 +264,8 @@ export async function getLiveHomePayload() {
 
   const matchesResult = await fetchHomeMatchRows()
 
-  const posts = postsResult.data?.map(mapPost).filter(Boolean) || []
-  const allMatches = matchesResult.data?.map(mapMatch).filter(isDisplayableMatch) || []
+  const posts = postsResult.data?.map(mapPost).filter(Boolean).filter((post) => !isCompletedWimbledonPost(post)) || []
+  const allMatches = matchesResult.data?.map(mapMatch).filter(isDisplayableMatch).filter((match) => !isCompletedWimbledonMatch(match)) || []
   const matches = pickHomeMatches(allMatches)
   const heroMatch = pickHeroMatch(matches, fallback.heroMatch)
 

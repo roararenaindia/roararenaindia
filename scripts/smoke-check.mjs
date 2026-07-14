@@ -88,7 +88,7 @@ for (const token of [
   'MATCH_SELF_HEAL_ENABLED=true',
   'MATCH_SELF_HEAL_STALE_MINUTES=20',
   'TENNIS_API_KEY=',
-  'TENNIS_TOURNAMENT_NAME_FILTER=Wimbledon',
+  'TENNIS_TOURNAMENT_NAME_FILTER=',
 ]) {
   if (!envExample.includes(token)) {
     console.error(`.env.example missing required automation token: ${token}`)
@@ -144,6 +144,7 @@ for (const token of [
   'fetchMatchRecordsRange',
   'supabaseUpsert',
   'Self-heal match sync complete',
+  'sync_log_unavailable',
 ]) {
   if (!matchSelfHeal.includes(token)) {
     console.error(`Match self-heal service missing required token: ${token}`)
