@@ -84,10 +84,6 @@ function mapPost(row: DbPost): ArenaPost {
   }
 }
 
-function isCompletedWimbledonPost(post: ArenaPost) {
-  return /\b(wimbledon|sinner|noskova|zverev|muchova)\b/i.test(`${post.category} ${post.title} ${post.description} ${post.caption}`)
-}
-
 function normalizeStatus(status: string): ArenaMatch['status'] {
   const normalized = status.toLowerCase()
   if (['final', 'ft', 'aet', 'pen', 'complete', 'finished'].includes(normalized)) return 'final'
@@ -264,7 +260,7 @@ export async function getLiveHomePayload() {
 
   const matchesResult = await fetchHomeMatchRows()
 
-  const posts = postsResult.data?.map(mapPost).filter(Boolean).filter((post) => !isCompletedWimbledonPost(post)) || []
+  const posts = postsResult.data?.map(mapPost).filter(Boolean) || []
   const allMatches = matchesResult.data?.map(mapMatch).filter(isDisplayableMatch).filter((match) => !isCompletedWimbledonMatch(match)) || []
   const matches = pickHomeMatches(allMatches)
   const heroMatch = pickHeroMatch(matches, fallback.heroMatch)
