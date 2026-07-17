@@ -64,7 +64,7 @@ Create a new published form titled `Roar Arena - The Final Roar: Spain vs Argent
 - Show the existing payment QR.
 - Show the existing UPI ID `nikunjjadhav786@okicici`.
 - Show payment-support WhatsApp number `9619073067`.
-- Link to a Google Maps search for 711 Rest O' Cafe, Seven Eleven Club, Kanakia Park, Mira Bhayandar.
+- Link to the confirmed venue location: `https://maps.app.goo.gl/NEqUUcoWJxMukPMZ8`.
 - Instruct the customer to send the payment screenshot to the WhatsApp number before continuing.
 
 ### 3. Confirmation

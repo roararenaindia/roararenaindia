@@ -70,7 +70,7 @@ Keep the existing QR image and use this exact copy:
 Pay INR 850 x your selected number of seats.
 UPI ID: nikunjjadhav786@okicici
 After payment, send the payment screenshot on WhatsApp to 9619073067.
-Venue map: https://www.google.com/maps/search/?api=1&query=711+Rest+O%27+Cafe+Seven+Eleven+Club+Kanakia+Park+Mira+Bhayandar
+Venue map: https://maps.app.goo.gl/NEqUUcoWJxMukPMZ8
 ```
 
 - [ ] **Step 5: Configure Confirmation and publish**

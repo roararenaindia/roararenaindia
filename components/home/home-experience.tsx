@@ -27,8 +27,10 @@ import AssetLogo from '@/components/brand/asset-logo'
 import BrandLogo from '@/components/brand/brand-logo'
 import TeamLogo from '@/components/brand/team-logo'
 import PostModal from '@/components/home/post-modal'
+import { useEventPromotionActive } from '@/components/hooks/use-event-promotion'
 import { usePublicHome, type PublicHomePayload } from '@/components/hooks/use-public-home'
 import type { ArenaMatch } from '@/lib/data/arena-live-data'
+import { eventPromotion } from '@/lib/config/event-promotion'
 import { siteConfig, type ArenaPost } from '@/lib/config/site-data'
 import { resolveLeagueLogoFrame, resolveLeagueLogoLight } from '@/lib/domain/league-logos'
 
@@ -141,27 +143,6 @@ const LEAGUE_FILTERS = [
   lightLogo?: string
   logoFrame?: LogoFrame
 }[]
-
-const EVENT_HERO_END_ISO = '2026-07-11T04:00:00+05:30'
-const EVENT_REGISTRATION_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfIJUScvxpf8q1qhtNElX-ZT9AwQkmlTjyZomIyejumO3PksA/viewform'
-const EVENT_HERO_DETAILS = {
-  poster: '/assets/events/spain-belgium-screening.png',
-  eyebrow: 'Live Screening',
-  fixture: 'Spain vs Belgium',
-  competition: 'World Cup 2026 Quarter-Final',
-  date: 'Saturday, July 11',
-  time: '12:30 AM IST',
-  price: '₹299',
-  package: 'Includes 1 starter + 1 main course + 1 soft drink',
-  venue: 'AV Sports Arena & Cafe',
-  area: 'Vinay Nagar, Mira Road',
-  bookingUrl: EVENT_REGISTRATION_FORM_URL,
-  badges: ['Limited seats', 'Big screen', 'Matchday vibes'],
-} as const
-
-function isEventHeroActive(now = new Date()) {
-  return now.getTime() < Date.parse(EVENT_HERO_END_ISO)
-}
 
 type LogoFrame = 'default' | 'clear' | 'dark-chip' | 'light-chip' | undefined
 
@@ -549,90 +530,101 @@ function PostCard({ post, onOpen }: { post: PostLike; onOpen: (post: ArenaPost) 
 
 function EventHeroSection() {
   return (
-    <section id="home" className="relative overflow-hidden bg-background py-8 sm:py-10 lg:flex lg:min-h-[calc(100svh-64px)] lg:items-center lg:py-8">
+    <section id="home" className="relative overflow-hidden bg-background py-8 sm:py-10 lg:flex lg:min-h-[calc(100svh-112px)] lg:items-center lg:py-8">
       <div className="arena-hero-wash absolute inset-0" />
       <div className="arena-grid-soft absolute inset-0 opacity-[0.72] [background-size:64px_64px]" />
       <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background to-transparent" />
-      <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-primary/15 blur-3xl sm:h-96 sm:w-96" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid min-w-0 items-center gap-7 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
+        <div className="grid min-w-0 items-center gap-7 lg:grid-cols-[0.88fr_1.12fr] lg:gap-10">
           <div className="min-w-0">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-primary backdrop-blur-xl">
-              <Sparkles className="h-3.5 w-3.5" /> {EVENT_HERO_DETAILS.eyebrow}
+              <Sparkles className="h-3.5 w-3.5" /> {eventPromotion.eyebrow}
             </div>
 
             <h1 className="mt-5 max-w-2xl break-words font-display text-[clamp(3rem,14vw,5.2rem)] uppercase leading-[0.86] text-foreground text-balance sm:text-[clamp(4rem,8vw,7.4rem)]">
-              Spain vs Belgium
+              {eventPromotion.campaignName}
             </h1>
 
-            <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-              Roar Arena is hosting its first live screening for the {EVENT_HERO_DETAILS.competition}. Watch the match with a big screen, food package, and matchday crowd energy.
+            <p className="mt-4 font-display text-3xl uppercase leading-none text-primary sm:text-4xl">
+              {eventPromotion.fixture}
+            </p>
+            <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-foreground sm:text-sm">
+              {eventPromotion.competition}
+            </p>
+            <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
+              Watch the final on the big screen with an unlimited buffet and a full match-night crowd.
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-[1rem] border border-border bg-card/76 p-4 backdrop-blur-xl">
+              <div className="rounded-lg border border-border bg-card/76 p-4 backdrop-blur-xl">
                 <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-primary">
-                  <CalendarDays className="h-3.5 w-3.5" /> Saturday
+                  <CalendarDays className="h-3.5 w-3.5" /> {eventPromotion.dayLabel}
                 </p>
-                <p className="mt-2 font-display text-3xl uppercase leading-none text-foreground">{EVENT_HERO_DETAILS.time}</p>
-                <p className="mt-2 text-sm font-bold text-muted-foreground">{EVENT_HERO_DETAILS.date}</p>
+                <p className="mt-2 font-display text-3xl uppercase leading-none text-foreground">{eventPromotion.time}</p>
+                <p className="mt-2 text-sm font-bold text-muted-foreground">{eventPromotion.date}</p>
               </div>
-              <div className="rounded-[1rem] border border-border bg-card/76 p-4 backdrop-blur-xl">
+              <div className="rounded-lg border border-border bg-card/76 p-4 backdrop-blur-xl">
                 <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-primary">
                   <MapPin className="h-3.5 w-3.5" /> Venue
                 </p>
-                <p className="mt-2 font-black uppercase leading-tight text-foreground">AV Sports Arena & Cafe</p>
-                <p className="mt-2 text-sm font-bold text-muted-foreground">Vinay Nagar, Mira Road</p>
+                <p className="mt-2 font-black uppercase leading-tight text-foreground">{eventPromotion.venue}</p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">{eventPromotion.venueDetail}</p>
+                <a href={eventPromotion.mapUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm font-bold text-primary transition hover:text-primary/80">
+                  {eventPromotion.area} <ExternalLink className="h-3.5 w-3.5" />
+                </a>
               </div>
             </div>
 
-            <div className="mt-4 rounded-[1rem] border border-primary/25 bg-primary/10 p-4 text-foreground backdrop-blur-xl">
+            <div className="mt-4 rounded-lg border border-primary/25 bg-primary/10 p-4 text-foreground backdrop-blur-xl">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.18em] text-primary">Entry package</p>
-                  <p className="mt-1 text-sm font-black uppercase tracking-[0.04em] sm:text-base">Includes 1 starter + 1 main course + 1 soft drink</p>
+                  <p className="mt-1 text-sm font-black uppercase tracking-[0.04em] sm:text-base">{eventPromotion.package}</p>
                 </div>
-                <div className="font-display text-4xl uppercase leading-none text-primary">{EVENT_HERO_DETAILS.price}</div>
+                <div className="shrink-0 text-left sm:text-right">
+                  <div className="font-display text-4xl uppercase leading-none text-primary">{eventPromotion.price}</div>
+                  <div className="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">{eventPromotion.priceQualifier}</div>
+                </div>
               </div>
             </div>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a href={EVENT_HERO_DETAILS.bookingUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow sm:w-auto">
-                <ExternalLink className="h-4 w-4" /> Book Your Seat Now
+              <a href={eventPromotion.bookingUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow sm:w-auto">
+                <ExternalLink className="h-4 w-4" /> Book Now
               </a>
-              <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-foreground backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary/50 sm:w-auto">
-                <Instagram className="h-4 w-4" /> Follow Instagram
+              <a href={eventPromotion.mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-foreground backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary/50 sm:w-auto">
+                <MapPin className="h-4 w-4" /> View Location
               </a>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              {EVENT_HERO_DETAILS.badges.map((badge) => (
+              {eventPromotion.badges.map((badge) => (
                 <span key={badge} className="rounded-full border border-border bg-background/70 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground sm:text-xs">{badge}</span>
               ))}
             </div>
           </div>
 
           <div className="min-w-0">
-            <div className="relative mx-auto max-w-[35rem] overflow-hidden rounded-[1.25rem] border border-primary/25 bg-card/85 p-2 shadow-soft-glow">
+            <div className="relative mx-auto max-w-[35rem] overflow-hidden rounded-lg border border-primary/25 bg-card/85 p-2 shadow-soft-glow">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_5%,rgba(255,84,40,0.18),transparent_32%)]" />
               <img
-                src={EVENT_HERO_DETAILS.poster}
-                alt="Roar Arena Spain vs Belgium live screening poster"
-                className="relative z-10 aspect-square w-full rounded-[1rem] object-cover"
+                src={eventPromotion.poster}
+                alt={`${eventPromotion.campaignName}: ${eventPromotion.fixture} live screening poster`}
+                className="relative z-10 aspect-square w-full rounded-md object-cover"
                 loading="eager"
                 decoding="async"
               />
             </div>
             <div className="mx-auto mt-3 grid max-w-[35rem] grid-cols-2 gap-2 sm:grid-cols-3">
               {[
-                { label: 'Match', value: EVENT_HERO_DETAILS.fixture },
-                { label: 'Stage', value: 'Quarter-Final' },
-                { label: 'Price', value: EVENT_HERO_DETAILS.price },
+                { label: 'Match', value: eventPromotion.fixture },
+                { label: 'Stage', value: eventPromotion.stage },
+                { label: 'Price', value: eventPromotion.price },
               ].map((item) => (
-                <div key={item.label} className="rounded-[0.9rem] border border-border bg-background/65 p-3 text-center backdrop-blur-xl">
+                <div key={item.label} className="rounded-lg border border-border bg-background/65 p-3 text-center backdrop-blur-xl">
                   <p className="text-[9px] font-black uppercase tracking-[0.16em] text-primary">{item.label}</p>
-                  <p className="mt-1 truncate text-xs font-black uppercase text-foreground">{item.value}</p>
+                  <p className="mt-1 break-words text-xs font-black uppercase text-foreground">{item.value}</p>
                 </div>
               ))}
             </div>
@@ -642,23 +634,19 @@ function EventHeroSection() {
         <div className="mt-7 overflow-hidden rounded-full border border-border bg-surface/82 py-3 backdrop-blur-xl">
           <MarqueeMotionTrack reverse duration={30} className="gap-6 whitespace-nowrap px-4">
             {[
-              'Roar Arena first live screening',
-              EVENT_HERO_DETAILS.fixture,
-              EVENT_HERO_DETAILS.time,
-              EVENT_HERO_DETAILS.venue,
-              EVENT_HERO_DETAILS.package,
-              'Limited seats',
-              'Big screen',
-              'Matchday vibes',
+              eventPromotion.campaignName,
+              eventPromotion.fixture,
+              eventPromotion.time,
+              eventPromotion.venue,
+              eventPromotion.package,
+              ...eventPromotion.badges,
             ].concat([
-              'Roar Arena first live screening',
-              EVENT_HERO_DETAILS.fixture,
-              EVENT_HERO_DETAILS.time,
-              EVENT_HERO_DETAILS.venue,
-              EVENT_HERO_DETAILS.package,
-              'Limited seats',
-              'Big screen',
-              'Matchday vibes',
+              eventPromotion.campaignName,
+              eventPromotion.fixture,
+              eventPromotion.time,
+              eventPromotion.venue,
+              eventPromotion.package,
+              ...eventPromotion.badges,
             ]).map((item, index) => (
               <span key={`${item}-${index}`} className="inline-flex items-center gap-6 text-xs font-black uppercase tracking-[0.16em] text-primary">
                 <Flame className="h-3.5 w-3.5" /> {item}
@@ -1321,21 +1309,7 @@ export default function HomeExperience({ initialData }: { initialData?: PublicHo
   const { data, isLoading } = usePublicHome(initialData)
   const [selectedMatch, setSelectedMatch] = useState<ArenaMatch | null>(null)
   const [selectedPost, setSelectedPost] = useState<ArenaPost | null>(null)
-  const [showEventHero, setShowEventHero] = useState(() => isEventHeroActive())
-
-  useEffect(() => {
-    const refreshEventHero = () => setShowEventHero(isEventHeroActive())
-    const cutoffDelay = Math.max(0, Date.parse(EVENT_HERO_END_ISO) - Date.now()) + 1000
-    const cutoffTimer = window.setTimeout(refreshEventHero, cutoffDelay)
-    const interval = window.setInterval(refreshEventHero, 60_000)
-
-    refreshEventHero()
-
-    return () => {
-      window.clearTimeout(cutoffTimer)
-      window.clearInterval(interval)
-    }
-  }, [])
+  const showEventHero = useEventPromotionActive()
 
   return (
     <>
