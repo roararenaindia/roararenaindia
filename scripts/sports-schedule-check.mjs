@@ -44,6 +44,8 @@ requireFile('lib/services/tennis-data-provider.ts')
 requireFile('app/api/sync/tennis/route.ts')
 requireFile('app/api/admin/tennis/check/route.ts')
 
+requireToken('lib/services/match-data-provider.ts', 'football-data:537389', 'The completed France vs England third-place fixture must stay suppressed during provider sync.')
+requireToken('lib/services/match-data-provider.ts', 'suppressedMatchProviderIds', 'Match sync must support permanent provider fixture corrections.')
 requireToken('lib/data/arena-live-data.ts', "'tennis'", 'ArenaMatch sport union must include tennis.')
 requireToken('lib/services/tennis-data-provider.ts', 'site.web.api.espn.com', 'Tennis provider must include the keyless ESPN tennis endpoint.')
 requireToken('lib/services/tennis-data-provider.ts', 'TENNIS_DATA_PROVIDER', 'Tennis provider must expose a provider selector for ESPN/API-Tennis.')

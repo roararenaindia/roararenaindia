@@ -93,6 +93,9 @@ type FootballDataPayload = {
   error?: string
 }
 
+// football-data.org still reports this completed third-place fixture as upcoming.
+const suppressedMatchProviderIds = new Set(['football-data:537389'])
+
 const fifaTeamCodes: Record<string, string> = {
   argentina: 'ARG',
   australia: 'AUS',
@@ -252,6 +255,7 @@ function mapApiFootballFixture(match: ApiFootballFixture): MatchProviderRecord {
 }
 
 function mapFootballDataMatch(match: FootballDataMatch): MatchProviderRecord {
+  const providerMatchId = `football-data:${match.id}`
   const league = match.competition?.name || 'FIFA World Cup'
   const homeName = cleanTeamName(match.homeTeam.name) || cleanTeamName(match.homeTeam.shortName)
   const awayName = cleanTeamName(match.awayTeam.name) || cleanTeamName(match.awayTeam.shortName)
@@ -259,7 +263,7 @@ function mapFootballDataMatch(match: FootballDataMatch): MatchProviderRecord {
   const status = normalizeFootballDataStatus(match.status)
 
   return {
-    provider_match_id: `football-data:${match.id}`,
+    provider_match_id: providerMatchId,
     sport: 'football',
     league,
     league_logo: match.competition?.emblem || inferLeagueLogo(league),
@@ -277,7 +281,7 @@ function mapFootballDataMatch(match: FootballDataMatch): MatchProviderRecord {
     venue: [match.stage, match.group].filter(Boolean).join(' - ') || league,
     winner: footballDataWinner(match),
     priority: priorityForStatus(status),
-    is_hidden: !hasKnownTeams,
+    is_hidden: !hasKnownTeams || suppressedMatchProviderIds.has(providerMatchId),
     updated_at: new Date().toISOString(),
   }
 }
