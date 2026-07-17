@@ -36,6 +36,7 @@ assert.match(home, /<MarqueeMotionTrack[^>]*duration=\{24\}/s, 'sports league ra
 assert.doesNotMatch(home, /className="animate-marquee-reverse/, 'hero ticker must not rely on the static CSS marquee class')
 assert.doesNotMatch(home, /className="animate-league-rail/, 'league rail must not rely on the static CSS marquee class')
 const eventSurface = `${eventPromotion}\n${eventPromotionHook}\n${home}\n${mobileStickyCta}`
+const eventHero = home.slice(home.indexOf('function EventHeroSection'), home.indexOf('function HeroSection'))
 
 assert.match(eventPromotion, /EVENT_PROMOTION_END_ISO = '2026-07-20T05:00:00\+05:30'/, 'event promotion must automatically expire after the Spain vs Argentina final screening window')
 assert.match(eventPromotion, /function isEventPromotionActive/, 'event promotion must expose a reusable cutoff check for restoring standard CTAs')
@@ -50,6 +51,9 @@ assert.match(eventPromotion, /price: '\\u20b9850'/, 'event promotion must show t
 assert.match(eventSurface, /\/assets\/events\/spain-argentina-final-screening\.png/, 'event promotion must use the supplied final poster asset')
 assert.match(eventPromotion, /EVENT_REGISTRATION_FORM_URL = 'https:\/\/forms\.gle\/TyLA2zmmmeWR6axp7'/, 'event promotion must store the published Google Form responder URL')
 assert.match(home, /href=\{eventPromotion\.bookingUrl\}/, 'event hero booking CTA must open the registration form')
+assert.match(eventHero, /<h1 className="[^"]*whitespace-nowrap[^"]*">[\s\S]*?eventPromotion\.campaignName/, 'event hero campaign name must stay on one line')
+assert.ok(eventHero.indexOf('href={eventPromotion.bookingUrl}') < eventHero.indexOf('<CalendarDays'), 'event hero booking CTA must appear before the date and venue detail cards')
+assert.doesNotMatch(eventHero, /text-\[clamp\([^\]]*vw/, 'event hero must use stable responsive title sizes instead of viewport-scaled typography')
 assert.match(mobileStickyCta, /label: 'Book Now'/, 'mobile sticky CTA must switch to event booking while the promotion is active')
 assert.match(mobileStickyCta, /useEventPromotionActive/, 'mobile sticky CTA must restore its default action after the event cutoff')
 assert.doesNotMatch(eventSurface, /Spain vs Belgium|AV Sports Arena & Cafe|Vinay Nagar, Mira Road|quarter-final|1 starter \+ 1 main course \+ 1 soft drink|\\u20b9299/i, 'event promotion must remove the previous screening details')

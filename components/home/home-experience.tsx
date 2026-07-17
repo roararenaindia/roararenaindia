@@ -542,7 +542,7 @@ function EventHeroSection() {
               <Sparkles className="h-3.5 w-3.5" /> {eventPromotion.eyebrow}
             </div>
 
-            <h1 className="mt-5 max-w-2xl break-words font-display text-[clamp(3rem,14vw,5.2rem)] uppercase leading-[0.86] text-foreground text-balance sm:text-[clamp(4rem,8vw,7.4rem)]">
+            <h1 className="mt-5 whitespace-nowrap font-display text-[2.25rem] uppercase leading-none text-foreground min-[380px]:text-[2.75rem] sm:text-[3.25rem] md:text-[3.75rem] lg:text-[3.25rem] xl:text-[4.25rem]">
               {eventPromotion.campaignName}
             </h1>
 
@@ -555,6 +555,15 @@ function EventHeroSection() {
             <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
               Watch the final on the big screen with an unlimited buffet and a full match-night crowd.
             </p>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <a href={eventPromotion.bookingUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow sm:w-auto">
+                <ExternalLink className="h-4 w-4" /> Book Now
+              </a>
+              <a href={eventPromotion.mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-foreground backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary/50 sm:w-auto">
+                <MapPin className="h-4 w-4" /> View Location
+              </a>
+            </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <div className="rounded-lg border border-border bg-card/76 p-4 backdrop-blur-xl">
@@ -587,15 +596,6 @@ function EventHeroSection() {
                   <div className="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">{eventPromotion.priceQualifier}</div>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a href={eventPromotion.bookingUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-primary-foreground shadow-soft-glow transition hover:-translate-y-0.5 hover:shadow-glow sm:w-auto">
-                <ExternalLink className="h-4 w-4" /> Book Now
-              </a>
-              <a href={eventPromotion.mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-foreground backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary/50 sm:w-auto">
-                <MapPin className="h-4 w-4" /> View Location
-              </a>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-2">
