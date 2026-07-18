@@ -2,6 +2,7 @@ import { getHomePayload, type ArenaMatch } from '@/lib/data/arena-live-data'
 import type { ArenaPost } from '@/lib/config/site-data'
 import { descriptionFromCaption, inferLeagueLogo, inferTeams, titleFromCaption } from '@/lib/domain/content-inference'
 import { resolveLeagueLogo, resolveLeagueLogoFrame, resolveLeagueLogoLight } from '@/lib/domain/league-logos'
+import { matchTimeValue, normalizeMatchSelectionStatus, pickPrimaryMatch, sortMatchesForBoard } from '@/lib/domain/match-selection'
 import { isSupabaseConfigured, supabaseSelect } from '@/lib/services/supabase-rest'
 
 type DbPost = {
@@ -84,13 +85,6 @@ function mapPost(row: DbPost): ArenaPost {
   }
 }
 
-function normalizeStatus(status: string): ArenaMatch['status'] {
-  const normalized = status.toLowerCase()
-  if (['final', 'ft', 'aet', 'pen', 'complete', 'finished'].includes(normalized)) return 'final'
-  if (['live', '1h', '2h', 'ht', 'et', 'p'].includes(normalized)) return 'live'
-  return 'upcoming'
-}
-
 function normalizedTeamValue(value?: string | null) {
   return (value || '').trim().toLowerCase()
 }
@@ -111,31 +105,6 @@ function isCompletedWimbledonMatch(match: ArenaMatch) {
 }
 
 
-function matchRecencyScore(match: ArenaMatch) {
-  const now = Date.now()
-  const time = match.kickoffIso ? Date.parse(match.kickoffIso) : Date.parse(`${match.dateLabel} ${match.timeLabel}`)
-  const isParsed = Number.isFinite(time)
-  const diffHours = isParsed ? (time - now) / 36e5 : 0
-  const featuredBoost = match.isFeatured ? 2500 : 0
-
-  if (match.status === 'live') return 12000 + featuredBoost + match.priority
-  if (match.status === 'final' && diffHours >= -72) return 11000 + featuredBoost + match.priority + diffHours
-  if (match.status === 'upcoming') return 9500 + featuredBoost + match.priority - Math.max(0, diffHours / 8)
-  if (match.status === 'final') return 5000 + featuredBoost + match.priority
-  return featuredBoost + match.priority
-}
-
-function pickHeroMatch(matches: ArenaMatch[], fallback: ArenaMatch) {
-  const visible = matches.filter((match) => !match.isHidden)
-  if (!visible.length) return fallback
-  return [...visible].sort((a, b) => matchRecencyScore(b) - matchRecencyScore(a))[0]
-}
-
-function kickoffTime(match: ArenaMatch) {
-  const parsed = match.kickoffIso ? Date.parse(match.kickoffIso) : Number.NaN
-  return Number.isFinite(parsed) ? parsed : 0
-}
-
 function matchFamily(match: ArenaMatch) {
   const sport = match.sport.toLowerCase()
   const league = match.league.toLowerCase()
@@ -155,14 +124,14 @@ function pickHomeMatches(matches: ArenaMatch[]) {
     pool.sort(sorter).slice(0, limit).forEach(add)
   }
 
-  const upcomingSort = (a: ArenaMatch, b: ArenaMatch) => kickoffTime(a) - kickoffTime(b) || b.priority - a.priority
-  const finalSort = (a: ArenaMatch, b: ArenaMatch) => kickoffTime(b) - kickoffTime(a) || b.priority - a.priority
+  const upcomingSort = (a: ArenaMatch, b: ArenaMatch) => matchTimeValue(a) - matchTimeValue(b) || b.priority - a.priority
+  const finalSort = (a: ArenaMatch, b: ArenaMatch) => matchTimeValue(b) - matchTimeValue(a) || b.priority - a.priority
 
   visible.filter((match) => match.isFeatured).forEach(add)
 
   visible
     .filter((match) => match.status === 'live')
-    .sort((a, b) => b.priority - a.priority || kickoffTime(a) - kickoffTime(b))
+    .sort((a, b) => b.priority - a.priority || matchTimeValue(a) - matchTimeValue(b))
     .forEach(add)
 
   for (const family of ['fifa'] as const) {
@@ -177,11 +146,11 @@ function pickHomeMatches(matches: ArenaMatch[]) {
   addSorted(visible.filter((match) => match.status === 'final' && matchFamily(match) === 'other'), finalSort, 4)
   addSorted(visible.filter((match) => match.status === 'final'), finalSort, 8)
 
-  return Array.from(selected.values())
+  return sortMatchesForBoard(Array.from(selected.values()))
 }
 
 function mapMatch(row: DbMatch): ArenaMatch {
-  const status = normalizeStatus(row.status)
+  const status = normalizeMatchSelectionStatus(row.status)
   const leagueLogo = resolveLeagueLogo(row.league, row.league_logo || inferLeagueLogo(row.league))
   const winner =
     row.winner === 'home' || row.winner === 'away' || row.winner === 'draw'
@@ -263,7 +232,7 @@ export async function getLiveHomePayload() {
   const posts = postsResult.data?.map(mapPost).filter(Boolean) || []
   const allMatches = matchesResult.data?.map(mapMatch).filter(isDisplayableMatch).filter((match) => !isCompletedWimbledonMatch(match)) || []
   const matches = pickHomeMatches(allMatches)
-  const heroMatch = pickHeroMatch(matches, fallback.heroMatch)
+  const heroMatch = pickPrimaryMatch(matches, fallback.heroMatch)
 
   return {
     generatedAt: new Date().toISOString(),

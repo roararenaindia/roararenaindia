@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { sortMatchesForBoard } from '@/lib/domain/match-selection'
 import { supabasePatch, supabasePatchByQuery, supabaseSelect } from '@/lib/services/supabase-rest'
 import { writeSyncLog } from '@/lib/services/sync-log'
 
@@ -24,19 +25,6 @@ type PostRow = {
   is_hidden?: boolean | null
 }
 
-function scoreMatch(match: MatchRow) {
-  const now = Date.now()
-  const kick = match.kickoff_time ? new Date(match.kickoff_time).getTime() : now
-  const diffHours = (kick - now) / 36e5
-  const status = match.status.toLowerCase()
-
-  if (['live', '1h', '2h', 'ht', 'et', 'p'].includes(status)) return 10000 + (match.priority || 0)
-  if (['final', 'ft', 'aet', 'pen', 'finished'].includes(status) && diffHours >= -72) return 9500 + diffHours + (match.priority || 0)
-  if (['upcoming', 'ns', 'tbd', 'scheduled'].includes(status) && diffHours >= -1 && diffHours <= 96) return 9000 - Math.abs(diffHours) + (match.priority || 0)
-  if (diffHours > 0) return 5000 - Math.min(diffHours, 500) + (match.priority || 0)
-  return 1000 + (match.priority || 0)
-}
-
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ ok: false, error: 'Unauthorized request' }, { status: 401 })
@@ -53,7 +41,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: matches.error }, { status: 500 })
   }
 
-  const sortedMatches = [...(matches.data || [])].sort((a, b) => scoreMatch(b) - scoreMatch(a))
+  const sortedMatches = sortMatchesForBoard([...(matches.data || [])])
   const hero = sortedMatches[0]
 
   if (hero) {

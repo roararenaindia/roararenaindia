@@ -8,6 +8,7 @@
     "build": "node scripts/vercel-build.mjs",
     "start": "next start",
     "lint": "echo \"Lint check skipped: v0 project has no ESLint config in this package.\"",
+    "test:home-selection": "node scripts/home-match-selection-check.mjs",
     "test:sports": "node scripts/sports-schedule-check.mjs",
     "test:post-event": "node scripts/post-event-cleanup-check.mjs",
     "typecheck": "tsc --noEmit",

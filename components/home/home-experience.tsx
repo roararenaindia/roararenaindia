@@ -33,6 +33,7 @@ import type { ArenaMatch } from '@/lib/data/arena-live-data'
 import { eventPromotion } from '@/lib/config/event-promotion'
 import { siteConfig, type ArenaPost } from '@/lib/config/site-data'
 import { resolveLeagueLogoFrame, resolveLeagueLogoLight } from '@/lib/domain/league-logos'
+import { pickLatestResult, pickNextUpcoming, pickPrimaryMatch, sortMatchesForBoard } from '@/lib/domain/match-selection'
 
 const reveal = {
   hidden: { opacity: 0, y: 22 },
@@ -170,11 +171,6 @@ function scoreText(match: ArenaMatch) {
   const hasScore = typeof match.homeScore === 'number' || typeof match.awayScore === 'number'
   if (!hasScore) return 'VS'
   return `${match.homeScore ?? '-'}:${match.awayScore ?? '-'}`
-}
-
-function matchTimeValue(match: ArenaMatch) {
-  const parsed = match.kickoffIso ? Date.parse(match.kickoffIso) : Number.NaN
-  return Number.isFinite(parsed) ? parsed : 0
 }
 
 function winnerText(match: ArenaMatch) {
@@ -766,25 +762,18 @@ function LiveSection({ data, onOpenMatch }: { data: ReturnType<typeof usePublicH
   )
 
   const visible = useMemo(() => {
-    const rank = (m: ArenaMatch) => (m.status === 'live' ? 0 : m.status === 'final' ? 1 : m.status === 'upcoming' ? 2 : 3)
-    const ordered = [...leagueMatches].sort((a, b) => {
-      const statusRank = rank(a) - rank(b)
-      if (statusRank) return statusRank
-      if (a.status === 'final' && b.status === 'final') return matchTimeValue(b) - matchTimeValue(a) || b.priority - a.priority
-      if (a.status === 'upcoming' && b.status === 'upcoming') return matchTimeValue(a) - matchTimeValue(b) || b.priority - a.priority
-      return b.priority - a.priority
-    })
+    const ordered = sortMatchesForBoard([...leagueMatches])
     return filter === 'all' ? ordered : ordered.filter((m) => m.status === filter)
   }, [leagueMatches, filter])
   const latestResult = useMemo(
-    () => leagueMatches.filter((match) => match.status === 'final').sort((a, b) => matchTimeValue(b) - matchTimeValue(a) || b.priority - a.priority)[0],
+    () => pickLatestResult(leagueMatches),
     [leagueMatches],
   )
   const nextUpcoming = useMemo(
-    () => leagueMatches.filter((match) => match.status === 'upcoming').sort((a, b) => matchTimeValue(a) - matchTimeValue(b) || b.priority - a.priority)[0],
+    () => pickNextUpcoming(leagueMatches),
     [leagueMatches],
   )
-  const spotlightMatch = leagueMatches.find((match) => match.status === 'live') || latestResult || nextUpcoming || leagueMatches[0] || (leagueFilter === 'all' ? matches[0] : undefined)
+  const spotlightMatch = pickPrimaryMatch(leagueMatches) || (leagueFilter === 'all' ? pickPrimaryMatch(matches) : undefined)
   const activeFilterLabel = LIVE_FILTERS.find((tab) => tab.key === filter)?.label || 'All'
   const activeLeagueLabel = LEAGUE_FILTERS.find((tab) => tab.key === leagueFilter)?.label || 'All sports'
   const activeLeagueTone = leagueTone(leagueFilter)
